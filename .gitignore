@@ -1,0 +1,21 @@
+# IDE 和 agent 工作目录
+.vscode
+.idea
+.zcode
+.codex
+.copilot
+
+# Go
+*.test
+*.out
+go.work
+go.work.sum
+vendor/
+.toolchain
+
+# 编译产物
+/bin/
+/dist/
+
+# 开发验证期临时数据（基准脚本产物等，不提交）
+/tmp/
