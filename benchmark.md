@@ -140,3 +140,85 @@ chr22 8.67%，96–137MB/s/核。
 - 字典取每条染色体头部样本训练，库内值分布前后差异大时尾部压缩率受损
   （体积问题，不影响正确性与速度）；对策为分段训练，待遇到再做。
 - 并行回归工具（gnomadcmp 8 worker）需 GOMEMLIMIT~60GiB，无上限会 OOM。
+
+### 2026-11-05　外部基线 vcfanno 对比：同一负载端到端 1 分 50 秒，vcfanno 1 小时 50 分（60 倍），输出逐字节一致
+
+#### 先说结论
+
+1. **同一端到端负载下 immkv 1m49.8s，vcfanno -p 4 为 1h50m34s（60.3 倍）**：
+   NA12878（HG001 GRCh37 v4.2.1 基准 VCF，3,891,440 行）对 gnomAD v2.1.1
+   genomes 全字段（头部声明的全部 568 个 INFO 字段）注释，输出未压缩纯文本
+   VCF（约 69GB），两边各 4 线程、裸跑无 cgroup。
+2. **CPU 是 70 倍**（359.3s 对 25,274s，user+sys）；RSS 持平（8.44GB 对
+   8.13GB——immkv 侧是流水线在途窗口的代价，见「演进」）。
+3. **正确性：3,891,440 个数据行逐字节一致**（chr22 49,056 行、chr6 261,143
+   行子集先行验证，全量 cmp 复核）。头部差异不计：vcfanno 会重排 contig 属性、
+   丢弃非结构化 meta 行、追加 568 条 `##INFO` 与 `##vcfanno` 行，属其解析器
+   行为，与本对比无关。
+4. **vcfanno 的浮点写出是有损的**（vcfgo `fmtFloat32`：|v|>0.02 取 `%.4f`、
+   否则 `%.5g`，`1.57455e-01`→`0.1575`；QUAL 重排 `%.1f`，`50`→`50.0`）。
+   字节一致是对照工具逐条复刻了这套序列化的结果；immkv 实际使用中给出的是
+   INFO 原文，保真度上占优。
+
+#### 测试形态（对照工具 tmp/vcfanno_cmp，gitignore）
+
+- 子命令 genconf（从 gnomAD 头部生成 vcfanno conf，22 个 `[[annotation]]`、
+  568 字段、ops=self、输出键名 `gnomad_` 前缀）/ subset / annotate / probe。
+- 匹配与序列化语义与 vcfanno 对齐，四条规则全部从输出反推、经 vcfgo 源码证实：
+  ① 逐 ALT 元素匹配（`G→*,C` 拿 `C` 去配库里的 `G→C`，非整串）；
+  ② ≥2 元素命中时全字段输出——Number=A 按查询 ALT 位展开（缺位补 `.`）、
+  非 A 字段按命中记录的 ALT 字节序逗号 join、Flag 恒写 `=,`；
+  ③ 原始 INFO 为占位 `.` 时追加注释前丢弃该 `.`；
+  ④ 浮点/QUAL 按 vcfgo 重排。这些都不在 vcfanno 文档里。
+- annotate 三级流水线：主线程读行/构键/GetBatch/值整窗拷入自有 arena（引擎
+  值只保证到下一次查询前有效）→ threads 个格式化 worker（复用 568 槽 span
+  缓冲）→ 收集者按窗口序写出。窗口在位置严格推进处切，保证批间键升序。
+  运行环境 `GOGC=400 GOMEMLIMIT=8G`。
+
+#### 环境
+
+- 机器/盘同 2026-11-04 节（Ryzen 7 8845HS 8C/16T、96GB；Kingston NV3 2TB）。
+  原始 gnomAD 22 个分染色体 bgz（461GiB）与 immkv 库（366G）同在 NVMe。
+- vcfanno v0.3.9 官方二进制（`-p 4`）；查询 VCF 自 HDD 读（139MB，可忽略）。
+
+#### 主对比
+
+| 项 | immkv（tmp/vcfanno_cmp annotate） | vcfanno -p 4 |
+| --- | --- | --- |
+| 端到端墙钟 | **1m49.8s** | **1h50m34s**（60.3×） |
+| CPU（user+sys） | 359.3s | 25,274s（70×） |
+| 平均 CPU | 325% | 380% |
+| 峰值 RSS | 8.44GB | 8.13GB |
+| 输出 | 73,052,595,883B | 73,052,744,188B（差在头行） |
+| 命中 | 3,862,728 行（99.26%，逐 ALT 元素口径） | 同 |
+| 每轮磁盘读 | 27.7GB（引擎口径，gnomadperf 同库实测） | 未单独计量 |
+
+immkv 分相位：构键 0.42s / 查询 83.87s / 格式化 233.53s（4 线程并行，墙钟
+内与查询重叠）。vcfanno chr22 探针（49,056 行，-p 2）：2m47.6s、RSS 1.34GB。
+
+#### 演进（同一 harness 的三版数字，留档）
+
+| 版本 | 端到端 | 查询段 | 说明 |
+| --- | --- | --- | --- |
+| 初版（格式化串行、默认 GC） | 5m11.9s | 101.9s | 格式化每行新分配 568 槽 span 数组（全量约 35GB 垃圾），GC assist 把解压池拖慢 4 倍 |
+| + GOGC=400/GOMEMLIMIT | 3m56.5s | 38.1s | GC 税减量；对照：引擎纯查询（gnomadperf，3GiB cgroup）24.0s，裸跑 25.6s |
+| + 缓冲复用 + 4 worker 流水线 | **1m49.8s** | 83.9s* | 格式化 CPU 全部藏进查询墙钟；查询段回升是与 4 个格式化 worker 的 CPU 竞争，端到端净赚 |
+
+*查询段 84s 对引擎纯查询 25.6s 的残差 = 流水线 CPU 竞争 + 键流全程顺查
+（约 10–13s，gnomadperf 同样要付）。全字段口径下 69GB 文本格式化才是端到端
+大头（233.5s CPU），引擎查询只占约四分之一——单进程「查询过剩」的结论：
+查询性能的真正兑现处是并发共盘与网络服务场景，不是单进程全字段写出。
+
+#### 已知边界
+
+- RSS 8.44GB 是在途窗口（约 3×threads 个 × 百 MB）加 8G GOMEMLIMIT 所致；
+  在途收到 1×threads、GOMEMLIMIT 调小可压回 GB 级，代价是总时长涨到 2 分级。
+- vcfanno 为预编译二进制，未做 Go 运行时调参；其为 CPU 墙（平均 3.8 核），
+  GC 调参预计影响有限，但严格口径下应注明。
+- 首轮 vcfanno 全量在子 agent 后台 58min/54% 处被 SIGKILL（系统日志无 OOM，
+  疑似该执行环境任务时限），主会话重跑完成；chr6 段即取自该轮部分输出完成
+  语义修复的验证。
+- 复现：conf 由 `genconf` 生成；immkv 侧
+  `GOGC=400 GOMEMLIMIT=8589934592 ./vcfanno_cmp annotate HG001…vcf.gz ~/immkv_test_nvme/gnomad/immkv out.vcf 4096 4`；
+  vcfanno 侧 `vcfanno -p 4 gnomad_full.conf HG001…vcf.gz > out.vcf`；
+  校验 `cmp <(grep -v '^#' a) <(grep -v '^#' b)`。
