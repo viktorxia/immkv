@@ -201,3 +201,12 @@ chr1.vals: [64B 头][字典（每值模式）][值帧 ×N]
 
 linux 全功能（io_uring/O_DIRECT/fadvise 仅 linux，其余平台自动降级到
 pread）。文件显式小端、绝对偏移、无地址依赖，跨机器跨架构可直接用。
+
+### 依赖
+
+- `github.com/valyala/gozstd`（CGO，vendored libzstd）：字典库解码主路径；
+  `CGO_ENABLED=0` 时回退 `github.com/klauspost/compress`（纯 Go，慢约 6 倍）。
+- `golang.org/x/sys`：fadvise/DirectIO 等系统调用的仅 linux 封装。
+- `github.com/biogo/hts`：**仅 gitignore 的 `tmp/` 基准工具**读 bgzip VCF
+  用，库本体不依赖。因为引用方不在版本库内，`go mod tidy` 会把它移除，
+  跑基准前需重新 `go get github.com/biogo/hts@v1.4.5`。

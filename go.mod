@@ -7,3 +7,5 @@ require (
 	github.com/valyala/gozstd v1.26.0
 	golang.org/x/sys v0.49.0
 )
+
+require github.com/biogo/hts v1.4.5 // indirect
