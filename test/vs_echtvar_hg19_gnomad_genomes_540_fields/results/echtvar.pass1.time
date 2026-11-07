@@ -1,0 +1,25 @@
+	Command being timed: "systemd-run --user --scope --collect -p MemoryMax=10G -p MemorySwapMax=0 bash -c 
+        seq 1 22 | xargs -P ${ECHTVAR_PAR:-4} -I{} bash -c "one {}"
+    "
+	User time (seconds): 2297.59
+	System time (seconds): 346.55
+	Percent of CPU this job got: 706%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 6:14.27
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 539096
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 172530858
+	Voluntary context switches: 3398531
+	Involuntary context switches: 76975
+	Swaps: 0
+	File system inputs: 103322248
+	File system outputs: 23063696
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

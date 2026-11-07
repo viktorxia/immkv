@@ -1,0 +1,34 @@
+command: echtvar encode chr22.all.echtvar.zip fields_all.json chr22.decomp.vcf.gz
+echtvar version: echtvar 0.2.4
+exit code: 0   (124 = killed by 1h timeout)
+
+-- stderr (verbatim, last 40 lines) --
+[echtvar] adding VCF:chr22.decomp.vcf.gz
+[echtvar] on chromosome "22"
+[echtvar] found 896202 unique values for gnomad_ab_hist_alt_bin_freq)
+[echtvar] found 666777 unique values for gnomad_gq_hist_alt_bin_freq)
+[echtvar] found 3493120 unique values for gnomad_gq_hist_all_bin_freq)
+[echtvar] found 8 unique values for gnomad_VQSR_culprit)
+[echtvar] found 4 unique values for gnomad_allele_type)
+[echtvar] found 5 unique values for gnomad_variant_type)
+[echtvar] found 835839 unique values for gnomad_dp_hist_alt_bin_freq)
+[echtvar] found 5 unique values for gnomad_controls_popmax)
+[echtvar] found 5 unique values for gnomad_non_topmed_popmax)
+[echtvar] found 3 unique values for gnomad_rf_label)
+[echtvar] found 3054094 unique values for gnomad_vep)
+[echtvar] found 156571 unique values for gnomad_age_hist_hom_bin_freq)
+[echtvar] found 496942 unique values for gnomad_age_hist_het_bin_freq)
+[echtvar] found 5 unique values for gnomad_popmax)
+[echtvar] found 5 unique values for gnomad_non_neuro_popmax)
+[echtvar] found 3262069 unique values for gnomad_dp_hist_all_bin_freq)
+[echtvar] wrote 3567085 total variants and 236753 long variants (6.64%)
+-- stdout (verbatim, last 10 lines) --
+
+-- resource usage (/usr/bin/time -v) --
+	User time (seconds): 1186.11
+	System time (seconds): 154.55
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 22:00.34
+	Maximum resident set size (kbytes): 5903860
+
+-- archive on disk --
+-rw-rw-r-- 1 tian tian 1362922300 11月  6 11:18 chr22.all.echtvar.zip

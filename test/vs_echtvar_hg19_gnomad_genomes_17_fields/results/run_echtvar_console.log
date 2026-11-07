@@ -1,0 +1,40 @@
+== echtvar pass pass1 2026-11-07T05:28:04+08:00 ==
+Running as unit: run-r9ef70627aa5f414492b240858a7363a6.scope; invocation ID: 408a0b78a226422492b0fdac3c9773a7
+	User time (seconds): 108.66
+	System time (seconds): 11.19
+	Percent of CPU this job got: 661%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:18.11
+	Maximum resident set size (kbytes): 33444
+text conversion (untimed): 8837 ms
+output: 3933840 lines
+== echtvar pass pass2 2026-11-07T05:28:32+08:00 ==
+Running as unit: run-r1c581a397c6e4200a8f31aca87048f5a.scope; invocation ID: a9c7d15e943c4e4da4f7e1c738bb12ed
+	User time (seconds): 108.83
+	System time (seconds): 10.74
+	Percent of CPU this job got: 667%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:17.90
+	Maximum resident set size (kbytes): 33460
+text conversion (untimed): 8834 ms
+output: 3933840 lines
+== run_echtvar done 2026-11-07T05:28:59+08:00 ==
+== echtvar pass pass1 2026-11-07T09:04:45+08:00 ==
+Scope command line contains environment variable, which is not expanded by default for now, but will be expanded by default in the future. Use --expand-environment=yes/no to explicitly control it as needed.
+Running as unit: run-rf1f73bb27ab24a3ca554c02e6e3f78e0.scope; invocation ID: b92dfb4cbd8044faabd444f0f8acaea5
+	User time (seconds): 107.34
+	System time (seconds): 10.95
+	Percent of CPU this job got: 665%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:17.76
+	Maximum resident set size (kbytes): 33392
+text conversion (untimed): 8821 ms
+output: 3933840 lines
+== echtvar pass pass2 2026-11-07T09:05:12+08:00 ==
+Scope command line contains environment variable, which is not expanded by default for now, but will be expanded by default in the future. Use --expand-environment=yes/no to explicitly control it as needed.
+Running as unit: run-r1879308686914f58b939be85d1f96d16.scope; invocation ID: 7a3a67aa49be428d832eab5eb6bda3ca
+	User time (seconds): 109.23
+	System time (seconds): 11.01
+	Percent of CPU this job got: 666%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:18.04
+	Maximum resident set size (kbytes): 33464
+text conversion (untimed): 8832 ms
+output: 3933840 lines
+== run_echtvar done 2026-11-07T09:05:40+08:00 ==

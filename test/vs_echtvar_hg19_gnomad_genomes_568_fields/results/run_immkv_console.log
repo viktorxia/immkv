@@ -1,0 +1,66 @@
+== immkv pass1 2026-11-06T22:50:18+08:00 ==
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.33s / query 272.30s / format 99.90s (4 threads); wall 4m43.99s
+	User time (seconds): 208.15
+	System time (seconds): 40.94
+	Percent of CPU this job got: 87%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:44.17
+	Maximum resident set size (kbytes): 2651092
+== immkv pass2 2026-11-06T22:55:03+08:00 ==
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.33s / query 298.98s / format 97.78s (4 threads); wall 5m10.326s
+	User time (seconds): 208.08
+	System time (seconds): 38.07
+	Percent of CPU this job got: 79%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:10.50
+	Maximum resident set size (kbytes): 2320452
+== run_immkv done 2026-11-06T23:00:13+08:00 ==
+== immkv pass1 2026-11-07T05:17:08+08:00 ==
+Running as unit: run-r5d32934a2b3042cba395ae375de5f633.scope; invocation ID: 631dbe0c0219404c9343a6e9f35faec9
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.34s / query 245.42s / format 103.03s (4 threads); wall 5m5.792s
+	User time (seconds): 208.12
+	System time (seconds): 42.15
+	Percent of CPU this job got: 81%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:06.10
+	Maximum resident set size (kbytes): 4333252
+== immkv pass2 2026-11-07T05:22:14+08:00 ==
+Running as unit: run-r2cdcbaefb5c94f469b8d621392b40472.scope; invocation ID: c6fd216225eb46048cc9bb56750ea2c6
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.34s / query 236.01s / format 101.42s (4 threads); wall 5m1.512s
+	User time (seconds): 207.43
+	System time (seconds): 40.80
+	Percent of CPU this job got: 82%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:01.81
+	Maximum resident set size (kbytes): 4336924
+== run_immkv done 2026-11-07T05:27:16+08:00 ==
+== immkv pass1 2026-11-07T10:10:19+08:00 ==
+Running as unit: run-r19a0a10f09164fef8c8bde657d6f5d64.scope; invocation ID: 805c161b85fe47949ad90c88db7744a7
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.34s / query 171.11s / format 102.74s (4 threads); wall 4m20.32s
+	User time (seconds): 206.40
+	System time (seconds): 41.96
+	Percent of CPU this job got: 95%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:20.67
+	Maximum resident set size (kbytes): 4343808
+== immkv pass2 2026-11-07T10:14:39+08:00 ==
+Running as unit: run-r03b09086a7a1431087b6f1f7d2d92162.scope; invocation ID: 1e50c9c2e01d46168a3e14139924e87e
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.31s / query 263.81s / format 98.38s (4 threads); wall 4m55.448s
+	User time (seconds): 211.97
+	System time (seconds): 43.24
+	Percent of CPU this job got: 86%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:55.75
+	Maximum resident set size (kbytes): 4257632
+== run_immkv done 2026-11-07T10:19:35+08:00 ==
+== immkv pass1 2026-11-07T12:40:14+08:00 ==
+Running as unit: run-r94bfed8e586949cd90df6cc10593f3e0.scope; invocation ID: 13dedfb2143c4b8fb5c272a921d13ac9
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.34s / query 238.99s / format 101.60s (4 threads); wall 5m6.239s
+	User time (seconds): 208.25
+	System time (seconds): 41.86
+	Percent of CPU this job got: 81%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:06.55
+	Maximum resident set size (kbytes): 4284896
+== immkv pass2 2026-11-07T12:45:21+08:00 ==
+Running as unit: run-rcea421443bc14b2c8b1e9bf414475784.scope; invocation ID: 1a191f0d46984ad6b8c9f44425b01f6f
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.33s / query 243.46s / format 100.43s (4 threads); wall 4m54.371s
+	User time (seconds): 206.53
+	System time (seconds): 41.77
+	Percent of CPU this job got: 84%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 4:54.66
+	Maximum resident set size (kbytes): 3943392
+== run_immkv done 2026-11-07T12:50:15+08:00 ==

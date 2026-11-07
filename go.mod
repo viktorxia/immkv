@@ -8,4 +8,4 @@ require (
 	golang.org/x/sys v0.49.0
 )
 
-require github.com/biogo/hts v1.4.5 // indirect
+require github.com/biogo/hts v1.4.5

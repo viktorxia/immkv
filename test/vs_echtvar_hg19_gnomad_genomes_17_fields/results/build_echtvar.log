@@ -1,0 +1,24 @@
+== build_echtvar start 2026-11-06T10:59:18+08:00 ==
+chr4: norm 1428s encode 1248s 200M
+chr3: norm 1458s encode 1274s 201M
+chr1: norm 1610s encode 1507s 233M
+chr2: norm 1698s encode 1675s 247M
+chr6: norm 1109s encode 1195s 176M
+chr5: norm 1185s encode 1281s 184M
+chr7: norm 1114s encode 1091s 171M
+chr8: norm 983s encode 1049s 158M
+chr9: norm 849s encode 917s 132M
+chr10: norm 953s encode 890s 141M
+chr11: norm 966s encode 885s 140M
+chr12: norm 948s encode 871s 138M
+chr13: norm 448s encode 614s 101M
+chr14: norm 511s encode 536s 95M
+chr15: norm 487s encode 491s 90M
+chr16: norm 514s encode 603s 98M
+chr17: norm 366s encode 500s 86M
+chr18: norm 400s encode 432s 80M
+chr19: norm 364s encode 377s 73M
+chr20: norm 298s encode 335s 64M
+chr21: norm 159s encode 201s 42M
+chr22: norm 155s encode 194s 43M
+== build_echtvar done 2026-11-06T13:32:58+08:00, archives total 2.9G ==

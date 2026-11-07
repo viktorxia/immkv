@@ -1,0 +1,25 @@
+== build_immkv (narrow 17-field) start 2026-11-06T10:59:18+08:00 ==
+chr1: 20370890 records ingested in 13m1s
+chr2: 21892245 records ingested in 13m6s
+chr3: 17834355 records ingested in 6m7s
+chr4: 17423639 records ingested in 5m22s
+chr5: 16290654 records ingested in 5m0s
+chr6: 15190442 records ingested in 5m56s
+chr7: 14752321 records ingested in 7m24s
+chr8: 14073574 records ingested in 9m12s
+chr9: 11480614 records ingested in 6m14s
+chr10: 12118750 records ingested in 3m52s
+chr11: 12345492 records ingested in 4m2s
+chr12: 11933435 records ingested in 3m40s
+chr13: 8693573 records ingested in 2m59s
+chr14: 8220638 records ingested in 3m59s
+chr15: 7723667 records ingested in 5m20s
+chr16: 8618657 records ingested in 5m18s
+chr17: 7373819 records ingested in 3m45s
+chr18: 6893751 records ingested in 2m33s
+chr19: 5991870 records ingested in 1m52s
+chr20: 5516836 records ingested in 1m41s
+chr21: 3483000 records ingested in 1m11s
+chr22: 3567085 records ingested in 1m19s
+all chromosomes done in 1h52m53s
+== build_immkv done 2026-11-06T12:52:11+08:00, 9.4G ==

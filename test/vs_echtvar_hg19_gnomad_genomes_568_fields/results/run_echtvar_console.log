@@ -1,0 +1,42 @@
+== echtvar pass pass1 2026-11-06T22:15:03+08:00 ==
+	User time (seconds): 2825.89
+	System time (seconds): 542.21
+	Percent of CPU this job got: 605%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 9:16.28
+	Maximum resident set size (kbytes): 25031256
+text conversion (untimed): 435337 ms
+output: 3933840 lines
+== echtvar pass pass2 2026-11-06T22:32:15+08:00 ==
+	User time (seconds): 2834.20
+	System time (seconds): 535.64
+	Percent of CPU this job got: 565%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 9:56.19
+	Maximum resident set size (kbytes): 25300100
+text conversion (untimed): 436008 ms
+output: 3933840 lines
+== run_echtvar done 2026-11-06T22:50:18+08:00 ==
+== echtvar pass pass1 2026-11-07T05:16:56+08:00 ==
+Running as unit: run-r788dc74b4b0643be8ba980af16588a5c.scope; invocation ID: 6a9a68cfdca343248a8518c13eda9d6c
+== echtvar pass pass1 2026-11-07T10:09:26+08:00 ==
+Scope command line contains environment variable, which is not expanded by default for now, but will be expanded by default in the future. Use --expand-environment=yes/no to explicitly control it as needed.
+Running as unit: run-ra2e137c3ed89497eb9e13f408cafa20f.scope; invocation ID: 9d2a256c9ffb4830aa05537e3c182e1f
+== echtvar pass pass1 2026-11-07T10:09:49+08:00 ==
+Scope command line contains environment variable, which is not expanded by default for now, but will be expanded by default in the future. Use --expand-environment=yes/no to explicitly control it as needed.
+Running as unit: run-r5d744b54890340b6bc4db0f877b88d64.scope; invocation ID: 662fc72bd9674745b44ef5cc5f354daf
+== echtvar pass pass1 2026-11-07T11:52:34+08:00 ==
+	User time (seconds): 2653.24
+	System time (seconds): 501.38
+	Percent of CPU this job got: 313%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 16:45.45
+	Maximum resident set size (kbytes): 25303136
+text conversion (untimed): 385071 ms
+output: 3933840 lines
+== echtvar pass pass2 2026-11-07T12:16:19+08:00 ==
+	User time (seconds): 2651.68
+	System time (seconds): 503.23
+	Percent of CPU this job got: 308%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 17:01.01
+	Maximum resident set size (kbytes): 25303040
+text conversion (untimed): 377813 ms
+output: 3933840 lines
+== run_echtvar done 2026-11-07T12:40:14+08:00 ==

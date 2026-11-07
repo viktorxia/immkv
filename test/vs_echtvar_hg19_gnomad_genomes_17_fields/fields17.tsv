@@ -1,0 +1,18 @@
+# field	Type	Number
+AC	Integer	A
+AN	Integer	1
+AF	Float	A
+AC_afr	Integer	A
+AF_afr	Float	A
+AC_amr	Integer	A
+AF_amr	Float	A
+AC_eas	Integer	A
+AF_eas	Float	A
+AC_nfe	Integer	A
+AF_nfe	Float	A
+AC_fin	Integer	A
+AF_fin	Float	A
+AC_asj	Integer	A
+AF_asj	Float	A
+AC_oth	Integer	A
+AF_oth	Float	A
