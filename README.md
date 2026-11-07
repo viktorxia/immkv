@@ -10,13 +10,12 @@ and can also be used independently in other projects.
 Three decisions define this engine:
 
 1. **Explicit reads, no trust in mmap.** The predecessor immdb used mmap
-   direct access and hit 28× read amplification when "large library + large
-   values + sparse query positions" (gnomAD full annotation measured 263GB
-   read where only 12GB was actually needed) — both page-fault granularity
-   and kernel readahead are outside the engine's control. immkv moves all
-   reads to explicit on-demand pread/io_uring: how much to read, when to
-   read, and how many segments to coalesce into — all in the engine's hands.
-   Same machine, same workload: 92.41s became 24.62s.
+   direct access and suffered severe read amplification with "large
+   library + large values + sparse query positions" — both page-fault
+   granularity and kernel readahead are outside the engine's control.
+   immkv moves all reads to explicit on-demand pread/io_uring: how much to
+   read, when to read, and how many segments to coalesce into — all in the
+   engine's hands.
 2. **The on-disk format is tailored to query patterns.** The key stream is
    cut into 64-record micro-blocks with the block index resident in memory;
    streaming batch lookups binary-search within a block instead of parsing
@@ -25,7 +24,7 @@ Three decisions define this engine:
    one value and reads only that value's bytes.
 3. **Building may be slow, queries must be fast; CGO is the exception, not
    the default.** Pure Go by default; CGO is introduced — backed by
-   measurements — only on the zstd codec hot path (2–6× faster), and a fully
+   measurements — only on the zstd codec hot path, and a fully
    functional pure-Go fallback is kept: `CGO_ENABLED=0` builds exactly as
    usual, just slower.
 
@@ -134,14 +133,22 @@ defect.
 
 ## Performance
 
-Measured results live in test/; the highlights (NA12878 whole-genome,
-3,933,369 keys annotated against gnomAD, 3GiB cgroup / 10 threads / NVMe):
+Controlled comparison experiments live in test/ (rival echtvar v0.2.4,
+hg19 / gnomAD v2.1.1 genomes, 10G cgroup, two-round protocol, 17→540→568
+field dose series); highlights:
 
-- Streaming **24.62 s** (predecessor 92.41s) — 160k records/s, 6.3µs
-  amortized per record;
-- Library size is **79.2%** of raw bgzip (392GB/495GB);
-- Point-lookup handle (ClinVar scale, 4.59M keys): out-of-order p50 291ns;
-  7.02M records/s for sorted batches.
+- **17-field light load** (echtvar's home turf, archive fully page-cache
+  resident): wall clock 18s vs 30s for the immkv narrow library; CPU 42s
+  vs 109s (~2.6× saved); 66,873,138 field comparisons, zero mismatches;
+- **568-field full load** (16 String + 12 Flag): echtvar OOMs at any
+  concurrency under the 10G budget (unconstrained reference: 24.1GB peak
+  RSS/process); immkv finishes entirely within 10G — ~5 minutes with full
+  output, 39–48s null round, 3.9GB peak RSS; 2,234,349,552 field
+  comparisons, zero value mismatches, strings byte-exact;
+- **Field dose contrast** (540→568, adding the string fields): echtvar
+  goes from 6.5 min within 10G to cannot run; immkv 5:28→5:07, null round
+  43→39s — string fields cost almost nothing (raw-byte storage, no
+  per-field decode).
 
 ## Contracts
 
@@ -167,25 +174,22 @@ read depth has nothing to do with Threads**; that is the whole point of
 io_uring. Only on the fallback path, when io_uring is unavailable, does
 Threads double as the pread reader count.
 
-Measured thread scaling (NA12878 annotating the full gnomAD set, 3GiB
-cgroup): 1/2/4/8/10 threads = 53.8 / 31.1 / **21.2 (plateau)** / 21.3 /
-24.6 s. **Four threads is the ceiling** — more threads only burn CPU
-without going faster (decompression-pool contention + worsening GC
-amortization).
+Thread-scaling conclusion from measurement: **four threads is the
+ceiling** — more threads only burn CPU without going faster
+(decompression-pool contention + worsening GC amortization).
 
 **One handle with 4 threads, or two handles with 2 threads each?** In the
 single-stream shape, throughput is equivalent (CPU is not the bottleneck;
 splitting 4 decompression workers across pipelines does not change the
 total live capacity). Choose by scenario: fastest for a single sample →
-1 handle × 4 threads (21.2s); multiple samples in parallel → split by
+1 handle × 4 threads; multiple samples in parallel → split by
 orchestration convenience. **But concurrency has one real disk-contention
 pitfall**: when two processes read the same disk with high queue depth at
 the same time, a DRAM-less low-end NVMe (such as this machine's Kingston
 NV3, which also hosts the system disk) collapses across the board —
-measured aggregate bandwidth dropped from 0.9GB/s single-stream to
-0.24→0.09GB/s (each workload degraded from 31s to 3m51s→10m12s), with no
-CPU or memory pressure; iostat showed r_await 308ms, queue depth 666,
-%util 99%. In production, when multiple tasks on one node share one NVMe,
+aggregate bandwidth falls far below single-stream levels, with no CPU or
+memory pressure. In production, when multiple tasks on one node share one
+NVMe,
 "bandwidth splits roughly evenly" does not hold for such disks;
 countermeasures: cap the node's total in-flight read depth (drop per-task
 threads to 2, or make the io_uring depth a node-level quota), or give the
@@ -208,7 +212,7 @@ chr1.vals: [64B header][dictionary (per-value mode)][value frames ×N]
 - A record's valOff is not stored per record: the micro-block stores the
   first record's absolute offset and the rest are derived from lens (the
   bit29 same-frame bit adds no previous frame length); the key stream is
-  ~40% smaller than with per-record absolute offsets.
+  markedly smaller than with per-record absolute offsets.
 - Three kinds of value frames: values shorter than `RawValueBelow`
   (default 64B) stored raw; in packed mode, values below `packBelow` are
   grouped by `packTarget` (default 64KB) into one frame (the group header
@@ -219,10 +223,10 @@ chr1.vals: [64B header][dictionary (per-value mode)][value frames ×N]
   values (512KB corpus, 5000 samples, libzstd L9) is embedded in the vals
   header. gnomAD-like large-value libraries use per-value mode; ClinVar-like
   small-value libraries use the default packed mode.
-- On open: the block index is read in once and stays resident (~65MB for
-  the full gnomAD set; the point-lookup handle additionally gets an LRU of
-  CacheMB, caching micro-blocks and decompressed values); the streaming
-  handle caches nothing (the batch is the prefetch window).
+- On open: the block index is read in once and stays resident (the
+  point-lookup handle additionally gets an LRU of CacheMB, caching
+  micro-blocks and decompressed values); the streaming handle caches
+  nothing (the batch is the prefetch window).
 
 ### Read path
 
@@ -240,19 +244,19 @@ chr1.vals: [64B header][dictionary (per-value mode)][value frames ×N]
   range — values are read only once; leaving them in the page cache would
   only blow the cgroup limit.
 - **Point lookup (Get)**: in-memory block-index binary search → read one
-  micro-block (~1.5KB, LRU) → in-block binary search → read the value frame
+  micro-block (LRU) → in-block binary search → read the value frame
   and decompress. Zero syscalls on cache hits.
 
 ### Codec (hybrid tiers)
 
-| Path | Backend | Speed | Notes |
-| --- | --- | --- | --- |
-| Build compression (per-value mode) | CGO libzstd L9 | ~120MB/s/core | klauspost trains the dictionary (once) + gozstd CDict compresses value by value |
-| Query decompression (dictionary libraries) | CGO libzstd DDict | 1.5–2.5GB/s/core | standard frame format, interoperable with pure Go |
-| Query decompression (packed libraries, no dictionary) | klauspost pure Go | 747MB/s/core | gozstd is not faster than klauspost on packed frames even with dst fully provisioned, and holds an extra resident decode buffer — not used |
+| Path | Backend | Notes |
+| --- | --- | --- |
+| Build compression (per-value mode) | CGO libzstd L9 | klauspost trains the dictionary (once) + gozstd CDict compresses value by value |
+| Query decompression (dictionary libraries) | CGO libzstd DDict | standard frame format, interoperable with pure Go |
+| Query decompression (packed libraries, no dictionary) | klauspost pure Go | gozstd is not faster than klauspost on packed frames even with dst fully provisioned, and holds an extra resident decode buffer — not used |
 
-Under `CGO_ENABLED=0` everything falls back to klauspost (compression 6×
-slower, decompression 2–3× slower); the read/write format is unchanged.
+Under `CGO_ENABLED=0` everything falls back to klauspost; the read/write
+format is unchanged.
 Selection logic: at build time, CGO availability; at query time, whether
 the library header carries a dictionary.
 
@@ -267,7 +271,7 @@ directly across machines and architectures.
 
 - `github.com/valyala/gozstd` (CGO, vendored libzstd): main decoding path
   for dictionary libraries; under `CGO_ENABLED=0` falls back to
-  `github.com/klauspost/compress` (pure Go, ~6× slower).
+  `github.com/klauspost/compress` (pure Go).
 - `golang.org/x/sys`: linux-only wrappers for fadvise/DirectIO and other
   syscalls.
 - `github.com/biogo/hts`: used by the **`test/` comparison tools**
