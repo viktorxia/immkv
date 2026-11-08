@@ -20,3 +20,6 @@ vendor/
 # 开发验证期临时数据（基准脚本产物等，不提交）
 /tmp/
 vcfanno_cmp
+
+# session handoff（本地交接，不入库）
+docs/handoff/

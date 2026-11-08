@@ -37,7 +37,7 @@ immkv 是独立发布的存储引擎库：构建一次、不可变、排序 KV�
 ## 提交与版本
 
 - 提交信息用中文，带 type 前缀（feat / fix / docs / refactor / chore …），沿用现有历史风格。
-- 里程碑打 tag（`vX.Y.Z`），对应提交号记在当期 `docs/handoff/*.md`。
+- 里程碑打 tag（`vX.Y.Z`），对应提交号记在当期本地（gitignored）的 `docs/handoff/*.md`。
 - 每次性能实验按「实验记录」一节的规矩落进 `test/`，不另建汇总文件。
 
 ## agent 准则
