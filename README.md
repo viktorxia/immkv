@@ -76,6 +76,22 @@ decompressed-cache budget (0 = no cache); duplicate keys return the first in
 sorted order. Build with `Create` + `Add` (order-free) or `AddSorted`
 (groups ascending) + `Finish`.
 
+Build directly from input formats:
+
+```go
+// VCF → per-chromosome library (outdir/chrN.keys + chrN.vals)
+err := immkv.BuildFromVCFs(outdir, vcfs, fields, "IMMKV", immkv.Options{})
+
+// Headerless TSV (first column key, rest value) → single library
+err := immkv.BuildFromTSVs(basePath, tsvs, immkv.Options{})
+```
+
+`fields` nil or empty stores every INFO field; otherwise only the listed
+fields, with `Number=A` fields taking the element at the ALT index. A non-empty
+`prefix` writes keys as `prefix_field`. VCF input may be one multi-chromosome
+file or several one-chromosome files; REF/ALT order within the same CHROM+POS
+is arbitrary. Full contract: [docs/ingest-design.md](docs/ingest-design.md).
+
 The `GetBatch` contract: input must be ascending (VCF sorted by chromosome
 natural order + position satisfies this naturally); the returned slice is
 only guaranteed valid until the next query; the batch size is the prefetch

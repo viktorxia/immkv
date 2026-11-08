@@ -63,6 +63,21 @@ kv.Close()
 后的第一条。构建用 `Create` + `Add`（顺序随意）或 `AddSorted`（组升序）+
 `Finish`。
 
+从输入格式直接建库：
+
+```go
+// VCF → 分染色体库（outdir/chrN.keys + chrN.vals）
+err := immkv.BuildFromVCFs(outdir, vcfs, fields, "IMMKV", immkv.Options{})
+
+// 无表头 TSV（首列键，其余为值）→ 单库
+err := immkv.BuildFromTSVs(basePath, tsvs, immkv.Options{})
+```
+
+`fields` 为 nil 或空取全部 INFO 字段；非空时只存这些字段，`Number=A` 按 ALT
+下标取元素。`prefix` 非空时键写成 `prefix_字段名`。VCF 支持单个多染色体文件
+或多个每文件一条染色体的输入，同一 CHROM+POS 内 REF/ALT 顺序任意。完整契约
+见 [docs/ingest-design.md](docs/ingest-design.md)。
+
 `GetBatch` 的契约：输入必须升序（VCF 按染色体自然序 + 位置排序即天然
 满足），返回切片只保证到下一次查询前有效；批次大小就是预取窗口（几千到
 几十万均可）；`Threads` 是唯一并发旋钮，定解压并行度；io_uring 路径在途读
