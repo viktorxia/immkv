@@ -1,8 +1,10 @@
 # immkv
 
-独立存储引擎库：**构建一次、不可变、排序 KV**。
-名字取自 immutable sorted KV。它为 annoplex catalog 里 `storage_backend: kv-custom`
-的存取实现提供底层引擎，也可在其他项目独立使用。
+独立发布、人类基因组优先的存储引擎，形态是**构建一次、不可变、排序 KV**
+（名字来自 immutable sorted KV）。性能路径为 VCF 查询特化；它不是通用 KV
+存储。无染色体/坐标的普通 KV 数据只支持一种形态：单库精确 `Get`，
+不含前缀、范围、批量查询。它是 annoplex 仓库 `storage_backend: kv-custom`
+访问实现的底层引擎，也可独立用于其他人类基因组项目。
 
 ## 理念
 
@@ -21,7 +23,8 @@
 
 ## API
 
-两类句柄对应两种查询形态，同一个库可以同时开（只读无冲突）：
+两类基因组句柄对应两种 VCF 查询形态；`OpenSimpleKV` 是另一套单库普通
+KV 句柄。所有句柄只读，可同时打开：
 
 ```go
 // 构建：AddSorted 流式投入（组升序），Finish 原子落盘
@@ -41,6 +44,24 @@ sdb, _ := immkv.OpenStreaming(cacheDir, immkv.Options{Threads: 9})
 vals, _ := sdb.GetBatch(keys)   // keys 升序；返回等长同序，nil = 未命中
 sdb.Close()
 ```
+
+普通 KV（无染色体/坐标）走独立的单库句柄：
+
+```go
+w, _ := immkv.Create("genes", immkv.Options{})
+w.Add([]byte("BRCA1"), value)                // 任意字节键值，顺序随意
+w.Finish()
+
+kv, _ := immkv.OpenSimpleKV("genes", 64)     // cacheMB：解压缓存上限
+sv, ok := kv.Get([]byte("BRCA1"))              // 未命中 ok=false
+kv.Close()
+```
+
+`OpenSimpleKV` 直接打开 `basePath.keys` / `basePath.vals`；键是任意字节串，
+按 `bytes.Compare` 排序；句柄只有 `Get` 和 `Close`，没有 `GetPrefix`、
+`Scan`、`GetBatch`。`cacheMB` 是解压缓存上限（0 不缓存）；重复键返回排序
+后的第一条。构建用 `Create` + `Add`（顺序随意）或 `AddSorted`（组升序）+
+`Finish`。
 
 `GetBatch` 的契约：输入必须升序（VCF 按染色体自然序 + 位置排序即天然
 满足），返回切片只保证到下一次查询前有效；批次大小就是预取窗口（几千到
@@ -129,6 +150,9 @@ bcftools sort -O z -o sorted.vcf.gz in.vcf.gz
   同时打开（无锁），每个句柄内多 goroutine 并发安全。
 - **返回切片**：只保证到下一次查询前有效，要保留自己拷。
 - **重复键**：允许；`Get` 返回排序后的第一条，`GetPrefix`/`Scan` 看到全部。
+- **普通 KV**：`OpenSimpleKV` 打开一对 `basePath.keys`/`basePath.vals`；
+  键是任意字节串，按 `bytes.Compare` 排序；句柄只有 `Get`，没有前缀/
+  范围/批量查询；重复键返回排序后的第一条。
 - **流式输入**：降序返回 `ErrUnsorted`（防静默错果），等值键允许。
 
 ### Threads 怎么花、怎么分（常见疑问）
@@ -156,7 +180,7 @@ pread 读者数。
 
 ### 文件布局
 
-每条染色体两个文件（`Create` 的 basePath 如 `…/chr1`）：
+每个库两个文件（`Create` 的 basePath 如 `…/chr1` 或 `…/genes`）：
 
 ```text
 chr1.keys: [64B 头][微块 ×N][块索引]
@@ -174,8 +198,9 @@ chr1.vals: [64B 头][字典（每值模式）][值帧 ×N]
   进入**每值成帧模式**——所有值独立成帧，构建期用首批值训练 zstd 字典
   （512KB 正文、5000 样本、libzstd L9）嵌入 vals 头。gnomAD 类大值库
   用每值模式，ClinVar 类小值库用默认打包模式。
-- 打开时：块索引一次读入常驻（点查句柄另配 CacheMB 的 LRU 缓存微块与
-  解压值），流式句柄不缓存（批次即预取窗口）。
+- 打开时：块索引一次读入常驻（`OpenEager` 与 `OpenSimpleKV` 两个点查
+  句柄各配 cacheMB 的 LRU 缓存微块与解压值），流式句柄不缓存（批次即
+  预取窗口）。
 
 ### 读路径
 

@@ -1,9 +1,13 @@
 # immkv
 
-A standalone storage-engine library: **build once, immutable, sorted KV**.
-The name comes from immutable sorted KV. It is the underlying engine for the
-`storage_backend: kv-custom` access implementations in the annoplex catalog,
-and can also be used independently in other projects.
+A standalone, human-genomics-first storage engine for **build-once,
+immutable, sorted KV** (the name comes from immutable sorted KV). Its
+performance path is specialized for VCF queries. It is not a general-purpose
+KV store: plain KV data without chromosome or position is supported only as a
+single library with exact `Get` — no prefix, range, or batch queries on that
+path. It is the underlying engine for the `storage_backend: kv-custom`
+access implementations in the annoplex catalog, and can also be used
+independently in other human-genomics projects.
 
 ## Philosophy
 
@@ -30,8 +34,9 @@ Three decisions define this engine:
 
 ## API
 
-Two handle types cover the two query shapes; both can be open on the same
-library at once (read-only, no conflict):
+Two genomic handle types cover the two VCF query shapes; `OpenSimpleKV` is
+a separate single-library handle for plain KV. All handles are read-only and
+can be open at once:
 
 ```go
 // Build: stream records in via AddSorted (groups ascending); Finish persists atomically
@@ -51,6 +56,25 @@ sdb, _ := immkv.OpenStreaming(cacheDir, immkv.Options{Threads: 9})
 vals, _ := sdb.GetBatch(keys)   // keys ascending; returns equal length & order, nil = miss
 sdb.Close()
 ```
+
+Plain KV (no chromosome/position) has its own single-library handle:
+
+```go
+w, _ := immkv.Create("genes", immkv.Options{})
+w.Add([]byte("BRCA1"), value)                // arbitrary key/value bytes, any order
+w.Finish()
+
+kv, _ := immkv.OpenSimpleKV("genes", 64)     // cacheMB: decompressed-cache budget
+sv, ok := kv.Get([]byte("BRCA1"))            // miss → ok=false
+kv.Close()
+```
+
+`OpenSimpleKV` opens `basePath.keys` / `basePath.vals` directly; keys are
+arbitrary bytes sorted by `bytes.Compare`; the handle has only `Get` and
+`Close` — no `GetPrefix`, `Scan`, or `GetBatch`. `cacheMB` is the
+decompressed-cache budget (0 = no cache); duplicate keys return the first in
+sorted order. Build with `Create` + `Add` (order-free) or `AddSorted`
+(groups ascending) + `Finish`.
 
 The `GetBatch` contract: input must be ascending (VCF sorted by chromosome
 natural order + position satisfies this naturally); the returned slice is
@@ -161,6 +185,10 @@ field dose series); highlights:
   anything you want to keep.
 - **Duplicate keys**: allowed; `Get` returns the first one in sorted order,
   `GetPrefix`/`Scan` see all of them.
+- **Plain KV**: `OpenSimpleKV` opens one `basePath.keys`/`basePath.vals`
+  pair; keys are arbitrary bytes sorted by `bytes.Compare`; the handle
+  exposes only `Get` — no prefix, range, or batch queries; duplicate keys
+  return the first in sorted order.
 - **Streaming input**: a descent returns `ErrUnsorted` (guarding against
   silent wrong results); equal keys are allowed.
 
@@ -199,7 +227,7 @@ node disks with DRAM caches.
 
 ### File layout
 
-Two files per chromosome (`Create`'s basePath, e.g. `…/chr1`):
+Two files per library (`Create`'s basePath, e.g. `…/chr1` or `…/genes`):
 
 ```text
 chr1.keys: [64B header][micro-blocks ×N][block index]
@@ -224,9 +252,9 @@ chr1.vals: [64B header][dictionary (per-value mode)][value frames ×N]
   header. gnomAD-like large-value libraries use per-value mode; ClinVar-like
   small-value libraries use the default packed mode.
 - On open: the block index is read in once and stays resident (the
-  point-lookup handle additionally gets an LRU of CacheMB, caching
-  micro-blocks and decompressed values); the streaming handle caches
-  nothing (the batch is the prefetch window).
+  point-lookup handles `OpenEager` and `OpenSimpleKV` additionally get an
+  LRU of their cache budget, caching micro-blocks and decompressed values);
+  the streaming handle caches nothing (the batch is the prefetch window).
 
 ### Read path
 
