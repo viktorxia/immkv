@@ -89,7 +89,7 @@ file; everything goes into `test/` under these rules:
 - Commit messages in Chinese with a type prefix (feat / fix / docs /
   refactor / chore …), following the existing history style.
 - Tag milestones (`vX.Y.Z`); record the corresponding commit in the current
-  `docs/handoff-session-*.md`.
+  `docs/handoff/*.md`.
 - Every performance experiment lands in `test/` per the "Experiment
   records" rules; no separate aggregate file.
 
