@@ -23,3 +23,6 @@ vcfanno_cmp
 
 # session handoff（本地交接，不入库）
 docs/handoff/
+
+# 想法与探索笔记（本地，不入库）
+docs/eureka/
