@@ -17,6 +17,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"sort"
 	"strconv"
 	"strings"
@@ -1004,13 +1005,25 @@ func buildVCFShardsSingle(outdir, path string, plan *vcfPlan, opts Options) erro
 }
 
 // buildVCFShardsParallel 是多文件模式：一个文件一条染色体，按文件并行。
+// 每个文件内部是单线程 writer，文件级并发取 GOMAXPROCS/2：太少压不满 CPU，
+// 太多会把每文件摊薄到半核以下，最大染色体反而拖长总工期。
 func buildVCFShardsParallel(outdir string, plan *vcfPlan, opts Options) error {
+	workers := runtime.GOMAXPROCS(0) / 2
+	if workers < 1 {
+		workers = 1
+	}
+	if workers > len(plan.inputs) {
+		workers = len(plan.inputs)
+	}
 	var state buildState
 	var wg sync.WaitGroup
+	sem := make(chan struct{}, workers)
 	for _, in := range plan.inputs {
 		wg.Add(1)
 		go func(in vcfInput) {
 			defer wg.Done()
+			sem <- struct{}{}
+			defer func() { <-sem }()
 			if err := buildOneVCFShard(outdir, in, plan, opts, &state); err != nil {
 				state.fail(err)
 			}

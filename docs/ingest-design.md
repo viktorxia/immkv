@@ -106,7 +106,8 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error
 
 - 单文件模式：顺序读；bgzf 解压用 `bgzf.NewReader(f, 0)`（内部并行）。
 - 多文件模式：一个文件一个 goroutine、一个 writer；`bgzf.NewReader(f, 1)`，
-  并行度来自文件而不是解压线程。
+  并行度来自文件而不是解压线程。文件级并发上限 `GOMAXPROCS/2`：每文件内部
+  是单线程 writer，并发过高会把每文件摊薄到半核以下，最大染色体反而更慢。
 - 仅 `.gz`/`.bgz` 后缀走 bgzf 读取；其余按纯文本。
 - 失败时当前及未完成 writer 的 `.tmp` 删除；已 `Finish` 的染色体保留；两个
   header 不写。多文件模式首个错误取消其他 worker，返回首个错误。

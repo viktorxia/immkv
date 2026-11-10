@@ -340,6 +340,10 @@ func (d *StreamDB) preferColumnar(cs *colShard, hits []sHit) (bool, error) {
 	recRaw := float64(recBytes) * 8
 	recSec := float64(frames)*randSec + float64(recBytes)/seqBps + recRaw/decodeBps
 	colSec := float64(colBytes)/seqBps + float64(colRaw)/decodeBps
+	if os.Getenv("IMMKV_DEBUG_PATH") != "" {
+		fmt.Fprintf(os.Stderr, "path: colBytes=%d colRaw=%d colSec=%.3f recFrames=%d recBytes=%d recSec=%.3f rot=%v\n",
+			colBytes, colRaw, colSec, frames, recBytes, recSec, d.profile.rotational)
+	}
 	return colSec < recSec, nil
 }
 
