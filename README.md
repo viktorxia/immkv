@@ -55,6 +55,9 @@ db.Close()
 sdb, _ := immkv.OpenStreaming(cacheDir, immkv.Options{Threads: 9})
 vals, _ := sdb.GetBatch(keys)   // keys ascending; returns equal length & order, nil = miss
 sdb.Close()
+
+// Optional: read only the columns this query needs (numbers from base.manifest)
+sdb, _ = immkv.OpenStreaming(cacheDir, immkv.Options{Threads: 9, Columns: []int{2, 7, 11}})
 ```
 
 Plain KV (no chromosome/position) has its own single-library handle:
@@ -96,6 +99,16 @@ non-Flag-without-value are build errors; a record with no stored fields is
 files (the `##INFO` declaration order must match); REF/ALT order within the
 same CHROM+POS is arbitrary. Full contract:
 [docs/ingest-design.md](docs/ingest-design.md).
+
+`BuildFromVCFs` also writes a per-chromosome `chrN.col` + `chrN.manifest`
+columnar scan copy (format contract:
+[docs/base-col-format.md](docs/base-col-format.md)). `OpenStreaming` uses it
+when its estimated I/O cost beats the record-order path (media-aware:
+rotational disk vs SSD); `Options.Columns` only selects fields (column
+numbers from the manifest, nil/empty = all), never the path. `OpenEager`
+and every point/prefix/range query stay on the record order. Libraries
+without `base.col` keep working in record order; passing a non-empty
+`Columns` to such a library is an error.
 
 The `GetBatch` contract: input must be ascending (VCF sorted by chromosome
 natural order + position satisfies this naturally); the returned slice is

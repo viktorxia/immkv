@@ -11,6 +11,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"os"
+	"path/filepath"
 	"sort"
 	"sync"
 )
@@ -29,11 +31,20 @@ var ErrUnsorted = errors.New("immkv: GetBatch keys not ascending")
 type StreamDB struct {
 	shardSet
 	threads int
+	cols    [25]*colShard
+	colSel  []int // 选中的列号（升序）；nil = 全部
+	profile ioProfile
+
+	forceCol bool // 测试用：跳过成本估算，强制列存路径
 }
 
 // OpenStreaming 打开 dir 下的批量流式句柄。Options.Threads 是唯一并发旋钮：
 // 同时决定在途 pread 请求数与并行解压 goroutine 数（默认 1）；机械硬盘上
 // 它不起作用（单磁头，引擎靠相邻合并转顺序读）。
+//
+// 库里有 base.col/manifest 时，顺序查按估算的 I/O 成本在记录序与列存之间
+// 选路；Options.Columns 只选字段（nil/空 = 全部列），不决定路径。没有
+// base.col 的旧库仍按记录序服务；此时给非空 Columns 会报错。
 func OpenStreaming(dir string, opts Options) (*StreamDB, error) {
 	if opts.Threads <= 0 {
 		opts.Threads = 1
@@ -42,11 +53,72 @@ func OpenStreaming(dir string, opts Options) (*StreamDB, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &StreamDB{shardSet: *ss, threads: opts.Threads}, nil
+	d := &StreamDB{shardSet: *ss, threads: opts.Threads, profile: detectIOProfile(dir)}
+	anyCol, allCol := false, true
+	var buildID string
+	for _, id := range d.chroms {
+		cs, err := openColShard(filepath.Join(dir, "chr"+ChromName(id)), d.shards[id])
+		if err != nil {
+			d.Close()
+			return nil, err
+		}
+		d.cols[id] = cs
+		if cs == nil {
+			allCol = false
+			continue
+		}
+		anyCol = true
+		if buildID == "" {
+			buildID = cs.buildID
+		} else if buildID != cs.buildID {
+			d.Close()
+			return nil, errors.New("immkv: 各染色体的 base.col build id 不一致")
+		}
+		if len(d.chroms) > 0 && d.cols[d.chroms[0]] != nil &&
+			!sameColSchema(d.cols[d.chroms[0]].fields, cs.fields) {
+			d.Close()
+			return nil, errors.New("immkv: 各染色体的 base.col schema 不一致")
+		}
+	}
+	if anyCol && !allCol {
+		d.Close()
+		return nil, errors.New("immkv: 部分染色体缺少 base.col/manifest")
+	}
+	if len(opts.Columns) > 0 {
+		if !anyCol {
+			d.Close()
+			return nil, errors.New("immkv: 库没有 base.col/manifest，不能按列选择")
+		}
+		seen := make(map[int]bool, len(opts.Columns))
+		sel := make([]int, 0, len(opts.Columns))
+		for _, c := range opts.Columns {
+			if c < 0 || c >= len(d.cols[d.chroms[0]].fields) {
+				d.Close()
+				return nil, fmt.Errorf("immkv: Columns 列号 %d 越界", c)
+			}
+			if seen[c] {
+				d.Close()
+				return nil, fmt.Errorf("immkv: Columns 列号 %d 重复", c)
+			}
+			seen[c] = true
+			sel = append(sel, c)
+		}
+		sort.Ints(sel)
+		d.colSel = sel
+	}
+	return d, nil
 }
 
 // Close 关闭全部 shard。调用方保证不与查询并发。
-func (d *StreamDB) Close() error { return d.close() }
+func (d *StreamDB) Close() error {
+	for id := uint8(0); id < 25; id++ {
+		if c := d.cols[id]; c != nil {
+			c.Close()
+			d.cols[id] = nil
+		}
+	}
+	return d.close()
+}
 
 // directOK 报全部在场染色体的值文件都开出了 O_DIRECT 句柄（深队列读路径
 // 的前提；任一失败就整体退回缓冲读，避免同一批里混两种路径）。
@@ -172,6 +244,21 @@ func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 				fail(err)
 				break
 			}
+			if cs := d.cols[id]; cs != nil {
+				useCol, cerr := d.preferColumnar(cs, hits)
+				if cerr != nil {
+					fail(cerr)
+					break
+				}
+				if useCol {
+					if cerr := cs.readColBatch(hits, selectedColumns(cs.fields, d.colSel), out, d.threads); cerr != nil {
+						fail(cerr)
+						break
+					}
+					i = j
+					continue
+				}
+			}
 			for _, ch := range chunkExtents(buildExtents(d.shards[id], hits)) {
 				select {
 				case extCh <- ch:
@@ -194,6 +281,66 @@ func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 		return nil, ferr
 	}
 	return out, nil
+}
+
+// costs 返回读路的粗略成本参数：单次随机读耗时（秒）与顺序带宽（B/s）。
+// 数值取自 2026-11-09/10 的 HDD/NVMe 实测量级，只用于二选一，不参与计时。
+func (p ioProfile) costs() (randSec, seqBps float64) {
+	if p.rotational {
+		return 0.45e-3, 170e6
+	}
+	return 10e-6, 3e9
+}
+
+// preferColumnar 估算记录序（命中帧随机读）与列存（命中 bin 的选中列顺序
+// 读）谁更省，返回是否走列存。hits 按记录号升序。
+func (d *StreamDB) preferColumnar(cs *colShard, hits []sHit) (bool, error) {
+	if len(hits) == 0 {
+		return false, nil
+	}
+	// 实验开关：显式对比两条路，不改变默认选路。
+	if os.Getenv("IMMKV_FORCE_RECORD") != "" {
+		return false, nil
+	}
+	if os.Getenv("IMMKV_FORCE_COLUMNAR") != "" {
+		return true, nil
+	}
+	if d.forceCol {
+		return true, nil
+	}
+	sel := selectedColumns(cs.fields, d.colSel)
+	colBytes, colRaw, err := cs.estimate(hits, sel)
+	if err != nil {
+		return false, err
+	}
+	var frames int
+	var recBytes uint64
+	var lastOff uint64
+	var lastLen uint32
+	have := false
+	for _, h := range hits {
+		if h.frameLen == 0 {
+			continue
+		}
+		if have && h.valOff == lastOff && h.frameLen == lastLen {
+			continue
+		}
+		have, lastOff, lastLen = true, h.valOff, h.frameLen
+		frames++
+		recBytes += uint64(h.frameLen)
+	}
+	randSec, seqBps := d.profile.costs()
+	workers := float64(d.threads)
+	if workers < 1 {
+		workers = 1
+	}
+	const decodePerThread = 1.2e9 // zstd 解压吞吐量级（B/s/线程）
+	decodeBps := decodePerThread * workers
+	// 记录序只需解命中帧；原文大小按文本列存压缩比 ~8 估。
+	recRaw := float64(recBytes) * 8
+	recSec := float64(frames)*randSec + float64(recBytes)/seqBps + recRaw/decodeBps
+	colSec := float64(colBytes)/seqBps + float64(colRaw)/decodeBps
+	return colSec < recSec, nil
 }
 
 // emptyValue 是零长值的共享只读空切片（长度 0 无从写入，共享安全）。

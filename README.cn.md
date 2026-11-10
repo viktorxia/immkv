@@ -43,6 +43,9 @@ db.Close()
 sdb, _ := immkv.OpenStreaming(cacheDir, immkv.Options{Threads: 9})
 vals, _ := sdb.GetBatch(keys)   // keys 升序；返回等长同序，nil = 未命中
 sdb.Close()
+
+// 可选：只读本次查询需要的列（列号来自 base.manifest）
+sdb, _ = immkv.OpenStreaming(cacheDir, immkv.Options{Threads: 9, Columns: []int{2, 7, 11}})
 ```
 
 普通 KV（无染色体/坐标）走独立的单库句柄：
@@ -80,6 +83,13 @@ Flag 带值、非 Flag 缺值都报错；没有输出字段的记录值为 `"."`
 染色体文件或多个每文件一条染色体的输入（`##INFO` 声明顺序须一致），同一
 CHROM+POS 内 REF/ALT 顺序任意。完整契约见
 [docs/ingest-design.md](docs/ingest-design.md)。
+
+`BuildFromVCFs` 同时为每条染色体写 `chrN.col` + `chrN.manifest` 列存扫描件
+（格式契约见 [docs/base-col-format.md](docs/base-col-format.md)）。`OpenStreaming`
+按估算的 I/O 成本决定走记录序还是列存（按目录所在盘是机械盘/SSD 分档）；
+`Options.Columns` 只选字段（列号来自 manifest，nil/空 = 全部列），不决定路径。
+`OpenEager` 与所有点查/前缀/区间查询仍走记录序。没有 `base.col` 的旧库照常按
+记录序服务；给这种库传非空 `Columns` 会报错。
 
 `GetBatch` 的契约：输入必须升序（VCF 按染色体自然序 + 位置排序即天然
 满足），返回切片只保证到下一次查询前有效；批次大小就是预取窗口（几千到

@@ -181,7 +181,7 @@ func validateVCFPrefix(prefix string) error {
 func checkVCFOutdir(outdir string) error {
 	for id := uint8(0); id <= 24; id++ {
 		base := filepath.Join(outdir, "chr"+ChromName(id))
-		for _, ext := range []string{".keys", ".vals"} {
+		for _, ext := range []string{".keys", ".vals", ".col", ".manifest"} {
 			p := base + ext
 			if _, err := os.Stat(p); err == nil {
 				return fmt.Errorf("immkv: BuildFromVCFs: %s already exists; use an empty outdir", p)
@@ -199,6 +199,7 @@ func checkVCFOutdir(outdir string) error {
 type infoDef struct {
 	line   []byte // 完整声明行（不含换行）
 	number string // Number 属性的原文
+	typ    string // Type 属性的原文
 	isFlag bool   // Number=0 或 Type=Flag
 	order  int    // ##INFO 声明顺序（0 起）
 }
@@ -222,6 +223,7 @@ type valueField struct {
 	id       string // 原始 INFO ID
 	prefixed string // prefix 后的键名
 	number   string
+	typ      string // Type 原文（列存 schema 用）
 	isFlag   bool
 	defLine  []byte // 原始 ##INFO 声明行
 	order    int    // ##INFO 声明顺序（0 起）
@@ -237,12 +239,13 @@ type infoField struct {
 
 // vcfPlan 是一次 BuildFromVCFs 的输入与字段方案。
 type vcfPlan struct {
-	header *vcfHeader
-	raw    []byte
-	sel    []valueField
-	all    bool // fields 为空：值取整条 INFO
-	prefix string
-	inputs []vcfInput
+	header  *vcfHeader
+	raw     []byte
+	sel     []valueField
+	all     bool // fields 为空：值取整条 INFO
+	prefix  string
+	buildID [16]byte // 本次构建的记录序/列存配对代号
+	inputs  []vcfInput
 }
 
 // prepareVCFInputs 预读所有输入的头，校验一致性，并确定字段方案。
@@ -288,6 +291,11 @@ func prepareVCFInputs(vcfs []string, fields []string, prefix string, multi bool)
 		return nil, err
 	}
 	plan.sel = sel
+	id, err := newBuildID()
+	if err != nil {
+		return nil, err
+	}
+	plan.buildID = id
 	return plan, nil
 }
 
@@ -301,7 +309,7 @@ func selectValueFields(h *vcfHeader, fields []string, prefix string) ([]valueFie
 			d := h.info[id]
 			sel = append(sel, valueField{
 				id: id, prefixed: prefixVCFID(prefix, id),
-				number: d.number, isFlag: d.isFlag, defLine: d.line,
+				number: d.number, typ: d.typ, isFlag: d.isFlag, defLine: d.line,
 				order: d.order,
 			})
 		}
@@ -323,7 +331,7 @@ func selectValueFields(h *vcfHeader, fields []string, prefix string) ([]valueFie
 		}
 		sel = append(sel, valueField{
 			id: name, prefixed: prefixVCFID(prefix, name),
-			number: d.number, isFlag: d.isFlag, defLine: d.line,
+			number: d.number, typ: d.typ, isFlag: d.isFlag, defLine: d.line,
 			order: d.order,
 		})
 	}
@@ -520,7 +528,7 @@ func parseInfoLine(line []byte) (string, *infoDef, bool) {
 	if id == "" {
 		return "", nil, false
 	}
-	d := &infoDef{line: append([]byte(nil), line...), number: number}
+	d := &infoDef{line: append([]byte(nil), line...), number: number, typ: typ}
 	d.isFlag = number == "0" || typ == "Flag"
 	return id, d, true
 }
@@ -620,6 +628,11 @@ type vcfShardBuilder struct {
 	gen        uint32
 	infoFields []infoField
 
+	buildID [16]byte
+	stats   colInfoStats
+	srcLast int
+	srcBad  bool
+
 	idx     map[string]int
 	vals    [][]byte
 	has     []bool
@@ -634,6 +647,7 @@ func newVCFShardBuilder(outdir string, plan *vcfPlan, opts Options, fixed int) *
 		outdir: outdir, opts: opts, sel: plan.sel, all: plan.all,
 		prefix: plan.prefix, fixed: fixed, cur: -1,
 		hdr: plan.header, seenInfo: make([]uint32, len(plan.header.infoOrder)),
+		buildID: plan.buildID,
 	}
 	if !b.all {
 		b.idx = make(map[string]int, len(b.sel))
@@ -694,6 +708,7 @@ func (b *vcfShardBuilder) addLine(line []byte) error {
 		if err := b.finishCurrent(); err != nil {
 			return err
 		}
+		b.stats = colInfoStats{}
 		w, err := Create(filepath.Join(b.outdir, "chr"+ChromName(cid)), b.opts)
 		if err != nil {
 			return err
@@ -739,7 +754,9 @@ func (b *vcfShardBuilder) parseInfo(info []byte) error {
 	}
 	b.touched = b.touched[:0]
 	b.gen++
+	b.srcLast, b.srcBad = -1, false
 	if len(info) == 0 || (len(info) == 1 && info[0] == '.') {
+		b.endRecordOrder()
 		return nil
 	}
 	rest := info
@@ -766,6 +783,7 @@ func (b *vcfShardBuilder) parseInfo(info []byte) error {
 		if !ok {
 			return fmt.Errorf("unknown INFO field %q", key)
 		}
+		b.noteInfoOrder(d)
 		if b.seenInfo[d.order] == b.gen {
 			return fmt.Errorf("duplicate INFO field %q", key)
 		}
@@ -784,7 +802,26 @@ func (b *vcfShardBuilder) parseInfo(info []byte) error {
 			b.vals[fi] = v
 		}
 	}
+	b.endRecordOrder()
 	return nil
+}
+
+// noteInfoOrder 记录源 INFO 顺序是否与 ##INFO 声明序一致；只作诊断统计。
+func (b *vcfShardBuilder) noteInfoOrder(d *infoDef) {
+	if d.order < b.srcLast {
+		b.srcBad = true
+		b.stats.Inversions++
+	}
+	b.srcLast = d.order
+}
+
+// endRecordOrder 结算当前记录的源顺序统计。
+func (b *vcfShardBuilder) endRecordOrder() {
+	if b.srcBad {
+		b.stats.Bad++
+	} else {
+		b.stats.OK++
+	}
 }
 
 // buildValue 按 ##INFO 声明顺序拼一个 ALT 的值；Number=A 取该 ALT 下标的
@@ -839,7 +876,9 @@ func commaElem(v []byte, n int) ([]byte, bool) {
 // Flag 带值、非 Flag 缺值都返回错误，不静默丢字段。
 func (b *vcfShardBuilder) sortInfo(info []byte) ([]byte, error) {
 	b.infoBuf = b.infoBuf[:0]
+	b.srcLast, b.srcBad = -1, false
 	if len(info) == 0 || (len(info) == 1 && info[0] == '.') {
+		b.endRecordOrder()
 		return []byte("."), nil
 	}
 	b.infoFields = b.infoFields[:0]
@@ -868,6 +907,7 @@ func (b *vcfShardBuilder) sortInfo(info []byte) ([]byte, error) {
 		if !ok {
 			return nil, fmt.Errorf("unknown INFO field %q", key)
 		}
+		b.noteInfoOrder(d)
 		if b.seenInfo[d.order] == b.gen {
 			return nil, fmt.Errorf("duplicate INFO field %q", key)
 		}
@@ -900,6 +940,7 @@ func (b *vcfShardBuilder) sortInfo(info []byte) ([]byte, error) {
 		b.infoBuf = append(b.infoBuf, '=')
 		b.infoBuf = append(b.infoBuf, f.val...)
 	}
+	b.endRecordOrder()
 	return b.infoBuf, nil
 }
 
@@ -910,7 +951,11 @@ func (b *vcfShardBuilder) finishCurrent() error {
 	}
 	w := b.w
 	b.w = nil
-	return w.Finish()
+	if err := w.Finish(); err != nil {
+		return err
+	}
+	base := filepath.Join(b.outdir, "chr"+ChromName(uint8(b.cur)))
+	return writeColumnar(base, b.sel, b.buildID, b.stats)
 }
 
 // finish 结束构建；一条可建记录都没有时报错。

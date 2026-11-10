@@ -92,6 +92,11 @@ type Options struct {
 	// 成帧，并用首批值训练 zstd 字典嵌进 vals 头（稀疏点查读得最省，体积
 	// 比打包大 ~20%）。读侧不依赖这个参数。
 	PackTarget int
+	// Columns 是 OpenStreaming 的字段选择：nil 或空表示库内全部列，非空
+	// 是 base.manifest 里的列号；顺序无关，输出始终按 schema 顺序。选择只
+	// 决定读哪些列，不决定走记录序还是列存——路径由读侧按估算 I/O 成本选。
+	// 没有 base.col/manifest 的库用非空 Columns 会报错。
+	Columns []int
 }
 
 // ---- Writer ----

@@ -39,10 +39,12 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -105,6 +107,47 @@ func loadFields(path string) ([]field, error) {
 	return out, nil
 }
 
+// resolveColumns maps the whitelist to base.manifest column numbers so the
+// engine can read only the needed columns. Without a manifest (old library)
+// it returns nil and the engine keeps the record-order contract. Whitelist
+// names absent from the schema are simply not selected.
+func resolveColumns(libDir string, fields []field) ([]int, error) {
+	paths, err := filepath.Glob(filepath.Join(libDir, "chr*.manifest"))
+	if err != nil {
+		return nil, err
+	}
+	if len(paths) == 0 {
+		return nil, nil
+	}
+	raw, err := os.ReadFile(paths[0])
+	if err != nil {
+		return nil, err
+	}
+	var m struct {
+		Fields []struct {
+			Name   string `json:"name"`
+			Column int    `json:"column"`
+		} `json:"fields"`
+	}
+	if err := json.Unmarshal(raw, &m); err != nil {
+		return nil, fmt.Errorf("%s: %w", paths[0], err)
+	}
+	want := make(map[string]bool, len(fields))
+	for _, fd := range fields {
+		want[fd.name] = true
+	}
+	var cols []int
+	for _, f := range m.Fields {
+		if want[f.Name] {
+			cols = append(cols, f.Column)
+		}
+	}
+	if len(cols) == 0 {
+		return nil, nil
+	}
+	return cols, nil
+}
+
 // row is one query line awaiting formatting.
 type row struct {
 	line    []byte // whole line, no newline
@@ -127,6 +170,10 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 	for i, fd := range fields {
 		idxOf[fd.name] = i
 	}
+	cols, err := resolveColumns(libDir, fields)
+	if err != nil {
+		return err
+	}
 
 	start := time.Now()
 	f, err := os.Open(in)
@@ -143,7 +190,7 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 		defer br.Close()
 		r = br
 	}
-	sdb, err := immkv.OpenStreaming(libDir, immkv.Options{Threads: threads})
+	sdb, err := immkv.OpenStreaming(libDir, immkv.Options{Threads: threads, Columns: cols})
 	if err != nil {
 		return err
 	}

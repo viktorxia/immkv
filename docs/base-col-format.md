@@ -91,26 +91,30 @@ UTF-8。manifest 里存同一个 hash 的十六进制。
 | 偏移 | 长度 | 字段 |
 |---:|---:|---|
 | 0 | 8 | bitmap_offset |
-| 8 | 8 | length_table_offset |
-| 16 | 8 | value_stream_offset |
-| 24 | 4 | length_table_len（压缩后） |
-| 28 | 4 | value_stream_len（压缩后） |
+| 8 | 8 | value_stream_offset |
+| 16 | 4 | bitmap_len（压缩后） |
+| 20 | 4 | value_stream_len（压缩后） |
+| 24 | 4 | present_count |
+| 28 | 4 | raw_len（存在值原文字节合计，饱和到 u32；选路估算解压成本） |
 
 - 存在位图长度 = `ceil(record_count/8)`，不存长度；bit i（LSB-first）对应 bin 内
   第 i 条记录，1 = 字段存在。
-- `length_table` 是 zstd 帧，解压后为 uvarint 序列，每个存在值一个长度。
-- `value_stream` 是 zstd 帧，解压后为按记录顺序拼接的值（`raw` 或 `dec` 编码）。
-- Flag 列：`length_table_offset` / `value_stream_offset` 为 0，长度字段为 0；
-  只有位图。
+- `value_stream` 是 zstd 帧，解压后是「uvarint(len) value」按存在记录顺序重复。
+  长度与值同帧压缩，不单独存长度表——chr22 抽样里未压缩的长度表占列存总量
+  52%，单独成帧是主要体积来源。
+- 位图也是 zstd 帧：gnomAD 的字段存在率约 98.5%，位图近似全 1，压缩后接近零；
+  chr22 未压缩位图 253MB，压缩后只剩几 MB。
+- Flag 列：`value_stream_offset` / `value_stream_len` 为 0；只有位图。
 - 字段全部缺失的 bin：该列三项偏移为 0；读侧按位图全 0 处理。
+- `present_count` 是位图置位数，读侧用它做值流条数校验。
 
 ### 3.4 值编码
 
 manifest 的 `fields[].encoding` 三选一：
 
-- `raw`：字段值原文字节；长度表给每个值的字节数。
+- `raw`：字段值原文字节；值流内 `uvarint(len)` 给每个值的字节数。
 - `bitmap`：仅 Flag；不存值；输出时写字段名（带 prefix）。
-- `dec`：Integer/Float 的无损十进制编码；见 §3.5。
+- `dec`：Integer/Float 的无损十进制编码；见 §3.5（第 3 阶段）。
 
 构建时按列决定：`dec` 只在整列所有值（含逗号列表的每个元素）都能无损往返时
 启用，否则整列 `raw`。String 固定 `raw`，Flag 固定 `bitmap`。
@@ -177,8 +181,10 @@ digits  := [0-9]+
 
 ## 4. 构建路径
 
-- `BuildFromVCFs` 一次解析同时写记录序、`base.col`、manifest；记录序与列存都按
-  `##INFO` 声明序重建值（`fields` 只做选择），所以两条路径的字段顺序天然一致。
+- `BuildFromVCFs` 只解析 VCF 一遍：记录序 writer 落盘后，立即顺序扫一遍刚写完的
+  `base.keys` / `base.vals` 生成 `base.col` 与 manifest；VCF 不再读第二遍。
+- 记录序与列存都按 `##INFO` 声明序重建值（`fields` 只做选择），所以两条路径的
+  字段顺序天然一致。
 - `outdir` 里已有的 `chrN.keys` / `chrN.vals` / `chrN.col` / `chrN.manifest` 都算
   冲突；要求空目录，避免新旧产物混在一起。
 - 列存写入按 bin 攒：每 bin 每字段的存在位图、长度表、值流；bin 结束时压缩并写
@@ -191,21 +197,27 @@ digits  := [0-9]+
 
 ## 5. 读路径
 
-- `OpenStreaming` 新增 `Options.Columns []int`：
-  - `nil` 或空：全部列，走列存（eureka §10.3 的“不传 = 全部列”）。
-  - 非空：走列存，元素是 manifest 里的列号；越界、负数报错。
-  - 没有 `base.col` / manifest：报错；旧库可删除，不再回退。
+- `OpenStreaming` 新增 `Options.Columns []int`：只选字段，不选路径。
+  - `nil` 或空：库内全部列。
+  - 非空：元素是 manifest 里的列号；越界、负数、重复报错。输出始终按 schema
+    顺序，与 `Columns` 的书写顺序无关。
+  - 没有 `base.col` / manifest 的旧库仍按记录序服务；此时给非空 `Columns`
+    报错（没有 schema，列号无从解释）。旧库可删除后重建。
+- 路径选择：对每个染色体的命中，估算两条路的 I/O 成本，取小。
+  - 记录序：命中的独立值帧数 × 单次随机读耗时 + 命中帧字节数 / 顺序带宽。
+  - 列存：命中 bin 的选中列（位图 + 值流）字节数 / 顺序带宽。
+  - 随机读耗时与顺序带宽按目录所在块设备的 rotational 标志取 HDD / SSD 两档；
+    非 Linux 或探测失败按 SSD。选路只影响快慢，不影响结果。
 - 列存 `GetBatch`：
   1. 校验升序（`ErrUnsorted`）。
   2. 对 `base.keys` 做现有合并连接，得到每个键的全局记录号与命中/未命中。
-  3. 按 bin 聚合命中；读该 bin 的列目录与选中列的位图、长度表、值流。
-  4. 按记录号在 bin 内的下标查位图；1 才取值；按长度表切值；`raw` 直接用，
-     `dec` 解码，`bitmap` 只写字段名。
+  3. 按 bin 聚合命中；读该 bin 的列目录与选中列的位图、值流。
+  4. 按记录号在 bin 内的下标查位图；1 才取值；值流按 `uvarint(len)` 顺序切；
+     `raw` 直接用，`dec` 解码，`bitmap` 只写字段名。
   5. 按 schema 顺序拼值：`name=value` / `name` / `.`；返回与 keys 等长同序。
 - 点查、`GetPrefix`、`Scan`、`OpenSimpleKV` 全部保持记录序；列存不参与。
-- `Threads` 仍只控解压并行度；列存读复用现有 io_uring / pread 路径与 fadvise
-  策略。v1 不按介质自动选路；`OpenStreaming` 默认列存全列，`Options.Columns`
-  只选子集。
+- `Threads` 仍只控解压并行度；列存读按 bin 顺序 pread，列值流用 `Threads`
+  路并行解压，读后 fadvise(DONTNEED)。
 - 未选中的列不读；缺失值不占值空间；Flag 只读位图。
 
 ## 6. 错误语义
@@ -248,18 +260,16 @@ digits  := [0-9]+
 
 1. 本契约定稿。
 2. `base.col` 写入 + manifest + `BuildFromVCFs`；`raw` 列；chr22 最小闭环；
-   `Options.Columns` 读路径；单测。
-3. `dec` / Float 指数编码、长度表压缩、体积与 HDD 实验。
-4. 自动选路 / 介质判定 / 生产化。
+   `Options.Columns` 读路径；单测。（已完成）
+3. `dec` / Float 指数编码、体积与 HDD 实验；按实测调 bin_width 与压缩档。
+4. 生产化（构建并行、读侧预取流水线；介质判定已进 v1）。
 
-待用户拍板：
+已定：
 
-1. `dec` 是否进 v1：草案把格式定义完整、chr22 最小闭环先跑 `raw`，`dec` 在
-   第 3 阶段启用；还是 v1 就带上 `dec`？
-2. bin_width：v1 固定 1Mb（采样 chr22 的压缩值 43.1M/bin，高于 20–30M 目标）；
-   先按 1Mb 实测再调，还是 v1 就改小？
-3. 构建代号：16B 随机值（草案）还是内容哈希？
-4. 长度表：zstd 压缩的 uvarint（草案）还是 u32？
+1. `dec` 第 3 阶段启用；v1 全部 `raw`/`bitmap`。
+2. bin_width v1 固定 1Mb，按实测再调。
+3. 构建代号 16B 随机值。
+4. 长度编码 uvarint 与值同帧，位图也 zstd 压缩。
 
 ## 10. 不做
 

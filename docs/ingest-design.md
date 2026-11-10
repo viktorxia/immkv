@@ -89,8 +89,9 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error
 
 - 每条染色体 `outdir/chr<ChromName>.keys` + `.vals`，由 `Create` + `Finish`
   原子替换。
-- `outdir` 里已有的 `chrN.keys`/`chrN.vals` 视为冲突：构建前检查，存在就报错，
-  要求用空目录，避免新旧染色体混在一起。旧的两个 header 文件会被删除。
+- `outdir` 里已有的 `chrN.keys`/`chrN.vals`/`chrN.col`/`chrN.manifest` 视为冲突：
+  构建前检查，存在就报错，要求用空目录，避免新旧染色体混在一起。旧的两个
+  header 文件会被删除。
 - 全部染色体 `Finish` 成功后写：
   - `vcf.raw.header`：第一个输入文件的完整头（所有 `##` 行 + `#CHROM` 行），
     逐字节保留。
@@ -110,6 +111,17 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error
 - 失败时当前及未完成 writer 的 `.tmp` 删除；已 `Finish` 的染色体保留；两个
   header 不写。多文件模式首个错误取消其他 worker，返回首个错误。
 - 输入只有 `.gz`/`.bgz`/纯文本文件路径，不支持 stdin。
+
+### 4.6 列存伴生文件
+
+- 每条染色体记录序 `Finish` 之后，顺序扫一遍刚写完的 `chrN.keys`/`chrN.vals`，
+  写 `chrN.col` + `chrN.manifest`；VCF 不读第二遍。
+- 列 schema = 本次 `fields` 选择结果，按 `##INFO` 声明序；与记录序值的字段
+  顺序一致。每个字段一列，`raw` 或 `bitmap` 编码。
+- 同一构建的全部染色体共用一个 16B 随机 `build_id`，写进 col 头与 manifest；
+  打开时与记录序的文件字节数、记录数、schema hash 配对校验，不一致报错。
+- 列存写失败时删除该染色体的 col/manifest 半成品；已 `Finish` 的记录序保留。
+- 格式契约见 [base-col-format.md](base-col-format.md)。
 
 ## 5. 实现结构（ingest.go）
 
