@@ -476,45 +476,65 @@ func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads 
 	bmLen := int((meta.count + 7) / 8)
 	bits := make([][]byte, len(parts))
 	decoded := make([][]byte, len(parts))
+	workers := threads
+	if workers > len(parts) {
+		workers = len(parts)
+	}
+	if workers < 1 {
+		workers = 1
+	}
 	var wg sync.WaitGroup
 	errs := make(chan error, len(parts))
-	sem := make(chan struct{}, threads)
-	for i := range parts {
+	jobs := make(chan int)
+	for w := 0; w < workers; w++ {
 		wg.Add(1)
-		sem <- struct{}{}
-		go func(i int) {
+		go func() {
 			defer wg.Done()
-			defer func() { <-sem }()
-			b, err := c.dec.decode(ld.bitFrames[i], nil)
-			if err != nil {
-				errs <- fmt.Errorf("immkv: %s: 解压 bin %d 列 %d 位图: %w", c.base, g.bin, parts[i].col, err)
-				return
+			for i := range jobs {
+				b, err := c.dec.decode(ld.bitFrames[i], nil)
+				if err != nil {
+					errs <- fmt.Errorf("immkv: %s: 解压 bin %d 列 %d 位图: %w", c.base, g.bin, parts[i].col, err)
+					continue
+				}
+				if len(b) != bmLen {
+					errs <- fmt.Errorf("immkv: %s: bin %d 列 %d 位图长度 %d ≠ %d", c.base, g.bin, parts[i].col, len(b), bmLen)
+					continue
+				}
+				if pc := popcountBytes(b); pc != parts[i].present {
+					errs <- fmt.Errorf("immkv: %s: bin %d 列 %d 位图 %d 位 ≠ present_count %d",
+						c.base, g.bin, parts[i].col, pc, parts[i].present)
+					continue
+				}
+				bits[i] = b
+				if parts[i].flag {
+					continue
+				}
+				v, err := c.dec.decode(ld.frames[i], nil)
+				if err != nil {
+					errs <- fmt.Errorf("immkv: %s: 解压 bin %d 列 %d 值流: %w", c.base, g.bin, parts[i].col, err)
+					continue
+				}
+				decoded[i] = v
 			}
-			if len(b) != bmLen {
-				errs <- fmt.Errorf("immkv: %s: bin %d 列 %d 位图长度 %d ≠ %d", c.base, g.bin, parts[i].col, len(b), bmLen)
-				return
-			}
-			if pc := popcountBytes(b); pc != parts[i].present {
-				errs <- fmt.Errorf("immkv: %s: bin %d 列 %d 位图 %d 位 ≠ present_count %d",
-					c.base, g.bin, parts[i].col, pc, parts[i].present)
-				return
-			}
-			bits[i] = b
-			if parts[i].flag {
-				return
-			}
-			v, err := c.dec.decode(ld.frames[i], nil)
-			if err != nil {
-				errs <- fmt.Errorf("immkv: %s: 解压 bin %d 列 %d 值流: %w", c.base, g.bin, parts[i].col, err)
-				return
-			}
-			decoded[i] = v
-		}(i)
+		}()
 	}
+	for i := range parts {
+		jobs <- i
+	}
+	close(jobs)
 	wg.Wait()
 	close(errs)
 	if err := <-errs; err != nil {
 		return err
+	}
+	// 有列解码失败时不再装配（bits/decoded 可能不完整）。
+	for i := range parts {
+		if bits[i] == nil {
+			return fmt.Errorf("immkv: %s: bin %d 列 %d 解码失败", c.base, g.bin, parts[i].col)
+		}
+		if !parts[i].flag && decoded[i] == nil {
+			return fmt.Errorf("immkv: %s: bin %d 列 %d 值流解码失败", c.base, g.bin, parts[i].col)
+		}
 	}
 	// 按列并行扫描：每列在自己的位图/值流上顺扫，产出「本分块每条命中的
 	// 输出段」；最后按 schema 顺序合并。列内值顺序 = bin 内存在记录顺序。
@@ -599,7 +619,6 @@ func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads 
 	}
 	return nil
 }
-
 
 // readColBatch 走列存路径回填 out；hits 按记录号升序。bin 级预取：读下一
 // 个 bin 的压缩数据与解压/装配当前 bin 重叠，HDD 上不让磁头等 CPU。
