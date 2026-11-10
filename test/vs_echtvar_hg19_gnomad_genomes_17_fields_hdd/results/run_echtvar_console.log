@@ -1,0 +1,21 @@
+== echtvar pass pass1 2026-11-09T16:30:45+08:00 ==
+Scope command line contains environment variable, which is not expanded by default for now, but will be expanded by default in the future. Use --expand-environment=yes/no to explicitly control it as needed.
+Running as unit: run-r72d75df43b584a08b8133452fd3d532d.scope; invocation ID: c6651e29699346318b51e9693f6b8e2b
+	User time (seconds): 107.87
+	System time (seconds): 11.25
+	Percent of CPU this job got: 504%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:23.60
+	Maximum resident set size (kbytes): 33504
+text conversion (untimed): 8841 ms
+output: 3933840 lines
+== echtvar pass pass2 2026-11-09T16:31:18+08:00 ==
+Scope command line contains environment variable, which is not expanded by default for now, but will be expanded by default in the future. Use --expand-environment=yes/no to explicitly control it as needed.
+Running as unit: run-r50a1b0a7e58f497e9aee20eea94c1369.scope; invocation ID: d59c36b697ed45eb9c15deb1182de08e
+	User time (seconds): 108.78
+	System time (seconds): 10.75
+	Percent of CPU this job got: 612%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:19.53
+	Maximum resident set size (kbytes): 33476
+text conversion (untimed): 9056 ms
+output: 3933840 lines
+== run_echtvar done 2026-11-09T16:31:47+08:00 ==

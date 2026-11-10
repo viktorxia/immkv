@@ -1,0 +1,23 @@
+	Command being timed: "systemd-run --user --scope --collect -p MemoryMax=10G -p MemorySwapMax=0 /mnt/data6t/tian/immkv_test_hdd/test/540_fields/annotate -in /mnt/data6t/tian/immkv_test_hdd/test/540_fields/query/hg001.decomp.vcf.gz -lib /mnt/data6t/tian/immkv_test_hdd/gnomad/immkv -out /dev/null -fields /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_540_fields/fields540.tsv -threads 4 -batch 4096"
+	User time (seconds): 224.75
+	System time (seconds): 54.62
+	Percent of CPU this job got: 15%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 29:56.13
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1347736
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 3339825
+	Voluntary context switches: 1426542
+	Involuntary context switches: 29561
+	Swaps: 0
+	File system inputs: 62769688
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

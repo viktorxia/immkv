@@ -1,0 +1,17 @@
+== immkv pass1 2026-11-09T21:41:15+08:00 ==
+Running as unit: run-r8d79754a21b341558c332f5cd174e899.scope; invocation ID: dd6595635f80480dab8014f0dfd51bb4
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.35s / query 2724.19s / format 89.56s (4 threads); wall 45m46.977s
+	User time (seconds): 225.81
+	System time (seconds): 75.36
+	Percent of CPU this job got: 10%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 45:47.08
+	Maximum resident set size (kbytes): 1380936
+== immkv pass2 2026-11-09T22:27:02+08:00 ==
+Running as unit: run-r168bdce6e5e5466cb781c70ec0ca715e.scope; invocation ID: 30bef8513dc44f27a4bf9cbb1b542d6c
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.36s / query 2576.20s / format 89.30s (4 threads); wall 43m15.709s
+	User time (seconds): 225.38
+	System time (seconds): 72.83
+	Percent of CPU this job got: 11%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 43:15.83
+	Maximum resident set size (kbytes): 1365112
+== run_immkv done 2026-11-09T23:10:18+08:00 ==

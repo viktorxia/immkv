@@ -1,0 +1,19 @@
+# The curated 17-field subset: core AC/AN/AF plus AC/AF for the seven
+# populations. One name per line; order is irrelevant (header order is used).
+AC
+AN
+AF
+AC_afr
+AF_afr
+AC_amr
+AF_amr
+AC_asj
+AF_asj
+AC_eas
+AF_eas
+AC_fin
+AF_fin
+AC_nfe
+AF_nfe
+AC_oth
+AF_oth

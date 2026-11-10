@@ -1,0 +1,11 @@
+== immkv null pass1 2026-11-10T07:49:03+08:00 ==
+Running as unit: run-r1e19f4e7c7394cd480aef58077276414.scope; invocation ID: 68ec324e0cdd47fcad4fdb878cc0aaee
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.34s / query 1774.18s / format 91.83s (4 threads); wall 29m49.142s
+	User time (seconds): 228.13
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 29:49.27
+== immkv null pass2 2026-11-10T08:18:53+08:00 ==
+Running as unit: run-rc0da131acb2048039614577aca556952.scope; invocation ID: f525d9a93aca4809851fc2eeb0d9d7dd
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.32s / query 1752.55s / format 91.43s (4 threads); wall 29m25.991s
+	User time (seconds): 227.46
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 29:26.10
+E568_NULL_DONE 2026-11-10T08:48:19+08:00
