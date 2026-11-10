@@ -70,6 +70,16 @@ func run(gnomadDir, outDir, only, fieldsPath, prefix string) error {
 	if len(inputs) == 0 {
 		return fmt.Errorf("no buildable files (only=%q)", only)
 	}
+	// Largest first: the fixed worker pool then starts the longest jobs earliest,
+	// so the tail is filled by small chromosomes instead of one giant file.
+	sort.Slice(inputs, func(i, j int) bool {
+		a, errA := os.Stat(inputs[i])
+		b, errB := os.Stat(inputs[j])
+		if errA != nil || errB != nil {
+			return inputs[i] > inputs[j]
+		}
+		return a.Size() > b.Size()
+	})
 	var fields []string
 	if fieldsPath != "" {
 		fields, err = loadFields(fieldsPath)

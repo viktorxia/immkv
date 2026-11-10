@@ -1019,10 +1019,12 @@ func buildVCFShardsParallel(outdir string, plan *vcfPlan, opts Options) error {
 	var wg sync.WaitGroup
 	sem := make(chan struct{}, workers)
 	for _, in := range plan.inputs {
+		// 先在调度循环里拿槽再起 goroutine：否则 23 个 goroutine 抢同一个
+		// channel，谁先拿到槽由调度决定，按大小排序就失效了。
+		sem <- struct{}{}
 		wg.Add(1)
 		go func(in vcfInput) {
 			defer wg.Done()
-			sem <- struct{}{}
 			defer func() { <-sem }()
 			if err := buildOneVCFShard(outdir, in, plan, opts, &state); err != nil {
 				state.fail(err)
