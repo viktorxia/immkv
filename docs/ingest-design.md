@@ -1,6 +1,7 @@
 # immkv 建库入口设计：BuildFromVCFs / BuildFromTSVs
 
 日期：2026-11-08
+修订：2026-11-10，值序改为强制 `##INFO` 声明序（`fields` 只做选择）；见 §4.3。
 状态：已与用户确认，按本文实现。
 
 ## 1. 背景与目标
@@ -65,13 +66,20 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error
 
 ### 4.3 值构造
 
+所有模式的值都按 `##INFO` 声明顺序重建；`fields` 的顺序只做选择，不再决定值序。
+源记录的 INFO 字段顺序可以任意。
+
 - `fields` 为 nil 或空：全部 INFO 字段。
-  - `prefix == ""`：值就是 INFO 原始字节（`"."` 原样保留）。
-  - `prefix != ""`：每个 INFO 键改写为 `prefix_键`，Flag 保持不带 `=`；
-    INFO 为 `"."` 时原样保留。
-- `fields` 非空：只存列出的字段，按 `fields` 顺序拼 `键=值`；记录里缺的字段省略；
-  Flag 字段只写 `prefix_键`（不带 `=`）；`fields` 中头里不存在的名字、重复名字、
-  空名字直接报错。
+  - `prefix == ""`：值按 `##INFO` 序重建为 `键=值;…`；Flag 不带 `=`；INFO 为 `"."`
+    或空时值为 `"."`。
+  - `prefix != ""`：每个 INFO 键改写为 `prefix_键`，按 `##INFO` 序排列；Flag 保持
+    不带 `=`；INFO 为 `"."` 或空时值为 `"."`。
+- `fields` 非空：只存列出的字段，按 `##INFO` 声明顺序拼 `键=值`；记录里缺的字段
+  省略；Flag 字段只写 `prefix_键`（不带 `=`）；`fields` 中头里不存在的名字、重复
+  名字、空名字直接报错；没有输出字段的值写成 `"."`。
+- 记录级校验：INFO 中出现 `##INFO` 未声明的字段、同一字段重复出现、空段
+  （`;;`、首尾 `;`）、Flag 字段带 `=`、非 Flag 字段缺 `=`，构建返回错误，不静默
+  丢字段；`##INFO` 声明本身重复也报错。
 - `Number=A`：从 `##INFO` 头读 Number，按原始 ALT 下标取逗号分隔的元素；元素不够
   时该字段在该键上省略。其余 Number（`1`、`.`、`R`、`G`）整段保留。
 - Flag 判定：`Number=0` 或 `Type=Flag`。
@@ -86,10 +94,11 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error
 - 全部染色体 `Finish` 成功后写：
   - `vcf.raw.header`：第一个输入文件的完整头（所有 `##` 行 + `#CHROM` 行），
     逐字节保留。
-  - `vcf.immkv.header`：`##fileformat` 行 + 选中字段的 `##INFO` 行（ID 改为
-    `prefix_字段名`，Number/Type/Description 不变）+ 无样本的
-    `#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO` 行。
-- 多输入要求 `##fileformat` 与全部 `##INFO` 定义一致，不一致报错。
+  - `vcf.immkv.header`：`##fileformat` 行 + 选中字段的 `##INFO` 行（按 `##INFO`
+    声明顺序排列；ID 改为 `prefix_字段名`，Number/Type/Description 不变）+
+    无样本的 `#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO` 行。
+- 多输入要求 `##fileformat` 与全部 `##INFO` 定义一致、`##INFO` 声明顺序也一致，
+  不一致报错。
 - 两个 header 用临时文件 + rename 落盘；失败时删除临时文件。
 
 ### 4.5 并行与失败清理
@@ -107,12 +116,17 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error
 - `BuildFromTSVs` / `addTSVFile`
 - `BuildFromVCFs` / `prepareVCFInputs` / `buildVCFShardsSingle` /
   `buildVCFShardsParallel` / `buildOneVCFShard`
-- `vcfShardBuilder`：按记录推进、管理当前 writer、组键与值构造；
-  `fixed >= 0` 表示多文件模式只允许一条染色体，`-1` 表示单文件模式的 CHROM 块切换。
-- `vcfHeader` / `infoDef`：头解析、`##INFO` 属性解析、跨输入一致性检查。
-- `valueField`：选中字段的 id、加前缀后的 id、Number、Flag、原始 `##INFO` 行。
+- `vcfShardBuilder`：按记录推进、管理当前 writer、组键与值构造；`all` 模式由
+  `sortInfo` 按 `##INFO` 序重建值，`fields` 模式由 `parseInfo` 处理选中字段并做
+  记录级校验；`fixed >= 0` 表示多文件模式只允许一条染色体，`-1` 表示单文件模式的
+  CHROM 块切换。
+- `vcfHeader` / `infoDef`：头解析、`##INFO` 属性解析、跨输入一致性检查（含声明
+  顺序）、字段声明顺序。
+- `valueField`：选中字段的 id、加前缀后的 id、Number、Flag、原始 `##INFO` 行、
+  声明顺序。
 - `openVCF` / `vcfReader` / `readVCFHeader` / `splitVCFLine` / `skipVCFAlt`。
-- `buildImmkvHeader` / `prefixInfoLine` / `writeFileAtomic`。
+- `buildImmkvHeader` / `prefixInfoLine` / `writeFileAtomic`；`buildImmkvHeader`
+  按 `valueField` 的声明顺序输出。
 - `buildState`：多文件模式的取消标志与首个错误。
 
 ## 6. 测试计划（ingest_test.go）
@@ -120,10 +134,13 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error
 - TSV：基本键值、列间 tab 保留、空值、空行、重复键、多文件拼接、乱序报错、
   `OpenSimpleKV` 回查、失败后不留正式文件。
 - VCF 单文件：多染色体块、同 POS REF/ALT 乱序、Number=A 按 ALT 下标取元素
-  （含符号化 ALT 占位）、Flag、`fields`/`prefix`、整条 INFO 原样、样本列忽略、
+  （含符号化 ALT 占位）、Flag、`fields`/`prefix`、整条 INFO 按 `##INFO` 序重建
+  （源 INFO 反序也一致）、`fields` 顺序只做选择、无字段写 `.`、样本列忽略、
   `REF="."`/符号化 ALT 跳过、未知 contig 跳过、`vcf.raw.header`/
-  `vcf.immkv.header` 内容。
-- VCF 多文件：按文件并行、跨文件重复染色体报错、文件内 CHROM 变化报错。
+  `vcf.immkv.header` 内容（后者按声明序）。
+- 记录级错误：未知字段、重复字段、空段、空字段名、Flag 带值、非 Flag 缺值。
+- 多文件：按文件并行、跨文件重复染色体报错、文件内 CHROM 变化报错、`##INFO`
+  声明顺序不一致报错。
 - 错误路径：POS 倒序、染色体块不连续、未知字段、重复字段、非法 prefix、
   outdir 已有 chrN 文件、空输入。
 - bgzf：用 `bgzf.NewWriter` 写一个 `.vcf.gz` 验证读取路径。
@@ -131,7 +148,10 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error
 ## 7. 验收
 
 - `go build ./...`、`go test ./...` 在默认与 `CGO_ENABLED=0` 下全过。
-- `gofmt -l .` 无输出。
+- `gofmt -l` 对本次改动的文件无输出；`test/verifyvalues/main.go` 的既有格式问题
+  不在本次范围。
+- 值序强制 `##INFO` 序；`fields` 只做选择；未知/重复/空段/Flag/非 Flag 错误；
+  无字段写 `.`。
 - 既有测试不回退；核心读路径、Writer、盘上格式与 magic 不变。
 - README 中英同步补两个入口的 API 与契约。
 
@@ -139,5 +159,6 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error
 
 - 不做外部排序：VCF 与 TSV 都必须预排序。
 - 不修 `docs/handoff/2026-11-08.md` 里记录的两个 bug。
-- 不重构 `test/` 下的工具；它们保持原样作为实验参考实现。
+- 不重构 `test/` 下的工具；`buildfull` 随值序规则同步，其余保持原样作为实验
+  参考实现。
 - 不支持 stdin、字段裁剪之外的 INFO 变换（前缀除外）、BED/GTF 等格式。

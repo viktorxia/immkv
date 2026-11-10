@@ -73,10 +73,13 @@ err := immkv.BuildFromVCFs(outdir, vcfs, fields, "IMMKV", immkv.Options{})
 err := immkv.BuildFromTSVs(basePath, tsvs, immkv.Options{})
 ```
 
-`fields` 为 nil 或空取全部 INFO 字段；非空时只存这些字段，`Number=A` 按 ALT
-下标取元素。`prefix` 非空时键写成 `prefix_字段名`。VCF 支持单个多染色体文件
-或多个每文件一条染色体的输入，同一 CHROM+POS 内 REF/ALT 顺序任意。完整契约
-见 [docs/ingest-design.md](docs/ingest-design.md)。
+`fields` 为 nil 或空取全部 INFO 字段；非空时只存这些字段。值一律按 `##INFO`
+声明顺序重建，`fields` 的顺序只做选择、不再决定值序。`Number=A` 按 ALT 下标取
+元素。`prefix` 非空时键写成 `prefix_字段名`。源 INFO 的未知/重复字段、空段、
+Flag 带值、非 Flag 缺值都报错；没有输出字段的记录值为 `"."`。VCF 支持单个多
+染色体文件或多个每文件一条染色体的输入（`##INFO` 声明顺序须一致），同一
+CHROM+POS 内 REF/ALT 顺序任意。完整契约见
+[docs/ingest-design.md](docs/ingest-design.md)。
 
 `GetBatch` 的契约：输入必须升序（VCF 按染色体自然序 + 位置排序即天然
 满足），返回切片只保证到下一次查询前有效；批次大小就是预取窗口（几千到

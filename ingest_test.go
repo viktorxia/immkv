@@ -121,12 +121,12 @@ func TestBuildFromTSVsUnsorted(t *testing.T) {
 	}
 }
 
-func TestBuildFromVCFsAllFieldsRaw(t *testing.T) {
+func TestBuildFromVCFsAllFieldsSorted(t *testing.T) {
 	dir := t.TempDir()
 	vcf := filepath.Join(dir, "in.vcf")
 	writeIngestFile(t, vcf, ingestTestHeader+
-		ingestRec("1", 100, "C", "A,G", "AF=0.1,0.2;AC=3,4;AN=100;DB")+
-		ingestRec("1", 100, "C", "T", "AF=0.5;AC=10;AN=100")+
+		ingestRec("1", 100, "C", "A,G", "DB;AN=100;AC=3,4;AF=0.1,0.2")+
+		ingestRec("1", 100, "C", "T", "AN=100;AF=0.5;AC=10")+
 		ingestRec("2", 50, "G", "A", "AF=0.3;AC=7;AN=100"))
 	out := filepath.Join(dir, "lib")
 	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err != nil {
@@ -181,9 +181,10 @@ func TestBuildFromVCFsSelectedFields(t *testing.T) {
 		ingestRec("1", 200, "C", "<DEL>,A,*", "AF=0.9,0.4,0.0;AC=1,2,0;AN=100")+
 		ingestRec("1", 300, ".", "A", "AF=0.7;AC=5;AN=100")+
 		ingestRec("chrUn_gl000220", 10, "A", "C", "AF=0.8;AC=6;AN=100")+
+		ingestRec("1", 400, "C", "A", ".")+
 		ingestRec("2", 50, "G", "A", "AF=0.3;AC=7;AN=100"))
 	out := filepath.Join(dir, "lib")
-	fields := []string{"AF", "AC", "AN", "DB"}
+	fields := []string{"DB", "AN", "AC", "AF"}
 	if err := BuildFromVCFs(out, []string{vcf}, fields, "IMMKV", Options{}); err != nil {
 		t.Fatal(err)
 	}
@@ -200,6 +201,7 @@ func TestBuildFromVCFsSelectedFields(t *testing.T) {
 		{VarKey(0, 100, "C", "G"), "IMMKV_AF=0.2;IMMKV_AC=4;IMMKV_AN=100;IMMKV_DB"},
 		{VarKey(0, 100, "C", "T"), "IMMKV_AF=0.5;IMMKV_AC=10;IMMKV_AN=100"},
 		{VarKey(0, 200, "C", "A"), "IMMKV_AF=0.4;IMMKV_AC=2;IMMKV_AN=100"},
+		{VarKey(0, 400, "C", "A"), "."},
 		{VarKey(1, 50, "G", "A"), "IMMKV_AF=0.3;IMMKV_AC=7;IMMKV_AN=100"},
 	} {
 		if got := mustIngestGet(t, db, tc.key); got != tc.want {
@@ -231,7 +233,7 @@ func TestBuildFromVCFsAllFieldsPrefix(t *testing.T) {
 	dir := t.TempDir()
 	vcf := filepath.Join(dir, "in.vcf")
 	writeIngestFile(t, vcf, ingestTestHeader+
-		ingestRec("1", 10, "A", "C", "AF=0.1,0.2;AN=100;DB")+
+		ingestRec("1", 10, "A", "C", "DB;AN=100;AF=0.1,0.2")+
 		ingestRec("1", 20, "A", "G", "."))
 	out := filepath.Join(dir, "lib")
 	if err := BuildFromVCFs(out, []string{vcf}, nil, "IMMKV", Options{}); err != nil {
@@ -304,6 +306,21 @@ func TestBuildFromVCFsMultiFileErrors(t *testing.T) {
 	if err := BuildFromVCFs(filepath.Join(dir, "hdr"), []string{f5, f6}, nil, "", Options{}); err == nil {
 		t.Fatal("expected header mismatch error")
 	}
+
+	hdrOrder := "##fileformat=VCFv4.2\n" +
+		"##INFO=<ID=DB,Number=0,Type=Flag,Description=\"dbSNP membership\">\n" +
+		"##INFO=<ID=AN,Number=1,Type=Integer,Description=\"Allele number\">\n" +
+		"##INFO=<ID=AC,Number=A,Type=Integer,Description=\"Allele count\">\n" +
+		"##INFO=<ID=AF,Number=A,Type=Float,Description=\"Allele frequency\">\n" +
+		ingestTestSiteHeader
+	f7 := filepath.Join(dir, "7.vcf")
+	f8 := filepath.Join(dir, "8.vcf")
+	writeIngestFile(t, f7, hdrOrder+ingestRec("1", 100, "C", "A", "AF=0.1"))
+	writeIngestFile(t, f8, ingestTestHeader+ingestRec("2", 50, "G", "A", "AF=0.2"))
+	if err := BuildFromVCFs(filepath.Join(dir, "order"), []string{f7, f8}, nil, "", Options{}); err == nil ||
+		!strings.Contains(err.Error(), "order") {
+		t.Fatalf("INFO order mismatch error = %v", err)
+	}
 }
 
 func TestBuildFromVCFsErrors(t *testing.T) {
@@ -330,6 +347,13 @@ func TestBuildFromVCFsErrors(t *testing.T) {
 		},
 		{"unknown-field", okRec, []string{"NOPE"}, "", "not declared"},
 		{"dup-field", okRec, []string{"AF", "AF"}, "", "duplicate"},
+		{"record-unknown", ingestRec("1", 100, "C", "A", "AF=0.1;NOPE=1"), nil, "", "unknown INFO field"},
+		{"selected-unknown", ingestRec("1", 100, "C", "A", "AF=0.1;NOPE=1"), []string{"AF"}, "", "unknown INFO field"},
+		{"record-duplicate", ingestRec("1", 100, "C", "A", "AF=0.1;AF=0.2"), nil, "", "duplicate INFO field"},
+		{"record-empty", ingestRec("1", 100, "C", "A", "AF=0.1;;AN=100"), nil, "", "empty INFO segment"},
+		{"record-empty-name", ingestRec("1", 100, "C", "A", "=1"), nil, "", "empty INFO field name"},
+		{"flag-value", ingestRec("1", 100, "C", "A", "DB=1"), nil, "", "Flag INFO field"},
+		{"bare-nonflag", ingestRec("1", 100, "C", "A", "AF"), nil, "", "non-Flag INFO field"},
 		{"bad-prefix", okRec, nil, "A=B", "invalid prefix"},
 		{"no-records", "", nil, "", "no buildable records"},
 	}

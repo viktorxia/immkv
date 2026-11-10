@@ -17,6 +17,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -113,12 +114,15 @@ func addTSVFile(w *Writer, path string) error {
 // 两种形态都允许同一 CHROM+POS 内 REF/ALT 乱序（组键吸收）。未知 contig、
 // REF 为 "." 的记录、符号化/缺失 ALT 按 test/buildfull 口径跳过。
 //
-// fields 为 nil 或空表示全部 INFO 字段；非空时按给定顺序只存这些字段，
-// Number=A 的字段从 ##INFO 头读 Number、按原始 ALT 下标取逗号元素。prefix
-// 非空时每个 INFO 键写成 prefix_键。
+// fields 为 nil 或空表示全部 INFO 字段；非空时只存这些字段，fields 的顺序
+// 只用于选择，值一律按 ##INFO 声明顺序拼；Number=A 的字段从 ##INFO 头读
+// Number、按原始 ALT 下标取逗号元素。prefix 非空时每个 INFO 键写成 prefix_键。
+// 源 INFO 的未知字段、重复字段、空段、Flag 带值、非 Flag 缺值都返回错误，
+// 不静默丢字段；没有输出字段的记录值写成 "."。
 //
 // 构建成功后写 outdir/vcf.raw.header（第一个输入的完整头）与
-// outdir/vcf.immkv.header（加前缀、按 fields 过滤后的 schema 头）。
+// outdir/vcf.immkv.header（加前缀、按 fields 过滤并按 ##INFO 顺序排列的
+// schema 头）。
 func BuildFromVCFs(outdir string, vcfs []string, fields []string, prefix string, opts Options) error {
 	if outdir == "" {
 		return errors.New("immkv: BuildFromVCFs: empty outdir")
@@ -196,6 +200,7 @@ type infoDef struct {
 	line   []byte // 完整声明行（不含换行）
 	number string // Number 属性的原文
 	isFlag bool   // Number=0 或 Type=Flag
+	order  int    // ##INFO 声明顺序（0 起）
 }
 
 // vcfHeader 是一个输入文件的头。
@@ -219,6 +224,15 @@ type valueField struct {
 	number   string
 	isFlag   bool
 	defLine  []byte // 原始 ##INFO 声明行
+	order    int    // ##INFO 声明顺序（0 起）
+}
+
+// infoField 是一条待按 ##INFO 顺序重建的 INFO 字段。
+type infoField struct {
+	order  int
+	id     string
+	val    []byte
+	isFlag bool
 }
 
 // vcfPlan 是一次 BuildFromVCFs 的输入与字段方案。
@@ -277,8 +291,9 @@ func prepareVCFInputs(vcfs []string, fields []string, prefix string, multi bool)
 	return plan, nil
 }
 
-// selectValueFields 把 fields 解析成 valueField 列表；fields 为空时按头顺序
-// 取全部字段。
+// selectValueFields 把 fields 解析成 valueField 列表；fields 为空时取全部
+// 字段；非空时只做选择，结果统一按 ##INFO 声明顺序排列（fields 的顺序不再
+// 决定值序）。
 func selectValueFields(h *vcfHeader, fields []string, prefix string) ([]valueField, error) {
 	if len(fields) == 0 {
 		sel := make([]valueField, 0, len(h.infoOrder))
@@ -287,6 +302,7 @@ func selectValueFields(h *vcfHeader, fields []string, prefix string) ([]valueFie
 			sel = append(sel, valueField{
 				id: id, prefixed: prefixVCFID(prefix, id),
 				number: d.number, isFlag: d.isFlag, defLine: d.line,
+				order: d.order,
 			})
 		}
 		return sel, nil
@@ -308,8 +324,10 @@ func selectValueFields(h *vcfHeader, fields []string, prefix string) ([]valueFie
 		sel = append(sel, valueField{
 			id: name, prefixed: prefixVCFID(prefix, name),
 			number: d.number, isFlag: d.isFlag, defLine: d.line,
+			order: d.order,
 		})
 	}
+	sort.Slice(sel, func(i, j int) bool { return sel[i].order < sel[j].order })
 	return sel, nil
 }
 
@@ -321,7 +339,7 @@ func prefixVCFID(prefix, id string) string {
 	return prefix + "_" + id
 }
 
-// sameVCFInfo 校验两个输入的头在 fileformat 与全部 ##INFO 声明上一致。
+// sameVCFInfo 校验两个输入的头在 fileformat、全部 ##INFO 声明与声明顺序上一致。
 func sameVCFInfo(a, b *vcfHeader) error {
 	if a.fileFormat != b.fileFormat {
 		return fmt.Errorf("##fileformat differs: %q vs %q", a.fileFormat, b.fileFormat)
@@ -333,6 +351,14 @@ func sameVCFInfo(a, b *vcfHeader) error {
 		db, ok := b.info[id]
 		if !ok || da.number != db.number || !bytes.Equal(da.line, db.line) {
 			return fmt.Errorf("##INFO definition %q differs", id)
+		}
+	}
+	if len(a.infoOrder) != len(b.infoOrder) {
+		return errors.New("##INFO order differs")
+	}
+	for i := range a.infoOrder {
+		if a.infoOrder[i] != b.infoOrder[i] {
+			return fmt.Errorf("##INFO order differs: %q vs %q", a.infoOrder[i], b.infoOrder[i])
 		}
 	}
 	return nil
@@ -394,10 +420,12 @@ func readVCFHeader(br *bufio.Reader, needFirst bool) (*vcfHeader, []byte, error)
 				h.raw = append(h.raw, line...)
 				if bytes.HasPrefix(trimmed, []byte("##INFO=<")) {
 					if id, d, ok := parseInfoLine(trimmed); ok {
-						if _, exists := h.info[id]; !exists {
-							h.infoOrder = append(h.infoOrder, id)
+						if _, exists := h.info[id]; exists {
+							return nil, nil, fmt.Errorf("duplicate ##INFO %q", id)
 						}
+						d.order = len(h.infoOrder)
 						h.info[id] = d
+						h.infoOrder = append(h.infoOrder, id)
 					}
 				} else if bytes.HasPrefix(trimmed, []byte("##fileformat=")) {
 					h.fileFormat = string(trimmed)
@@ -587,6 +615,11 @@ type vcfShardBuilder struct {
 	w    *Writer
 	seen [25]bool
 
+	hdr        *vcfHeader
+	seenInfo   []uint32
+	gen        uint32
+	infoFields []infoField
+
 	idx     map[string]int
 	vals    [][]byte
 	has     []bool
@@ -600,6 +633,7 @@ func newVCFShardBuilder(outdir string, plan *vcfPlan, opts Options, fixed int) *
 	b := &vcfShardBuilder{
 		outdir: outdir, opts: opts, sel: plan.sel, all: plan.all,
 		prefix: plan.prefix, fixed: fixed, cur: -1,
+		hdr: plan.header, seenInfo: make([]uint32, len(plan.header.infoOrder)),
 	}
 	if !b.all {
 		b.idx = make(map[string]int, len(b.sel))
@@ -669,13 +703,13 @@ func (b *vcfShardBuilder) addLine(line []byte) error {
 	}
 	var common []byte
 	if b.all {
-		if b.prefix == "" {
-			common = info
-		} else {
-			common = b.prefixInfo(info)
+		v, err := b.sortInfo(info)
+		if err != nil {
+			return fmt.Errorf("line %d: %w", b.lineNo, err)
 		}
-	} else {
-		b.parseInfo(info)
+		common = v
+	} else if err := b.parseInfo(info); err != nil {
+		return fmt.Errorf("line %d: %w", b.lineNo, err)
 	}
 	group := PosKey(cid, uint32(p))
 	for altIdx, a := range bytes.Split(alt, []byte(",")) {
@@ -696,13 +730,18 @@ func (b *vcfShardBuilder) addLine(line []byte) error {
 	return nil
 }
 
-// parseInfo 把当前记录的 INFO 解析进 b.vals/b.has（只关心选中字段）。
-func (b *vcfShardBuilder) parseInfo(info []byte) {
+// parseInfo 把当前记录的 INFO 解析进 b.vals/b.has（只关心选中字段），同时
+// 校验整条 INFO：未知/重复字段、空段、Flag 带值、非 Flag 缺值都返回错误。
+func (b *vcfShardBuilder) parseInfo(info []byte) error {
 	for _, fi := range b.touched {
 		b.vals[fi] = nil
 		b.has[fi] = false
 	}
 	b.touched = b.touched[:0]
+	b.gen++
+	if len(info) == 0 || (len(info) == 1 && info[0] == '.') {
+		return nil
+	}
 	rest := info
 	for len(rest) > 0 {
 		var seg []byte
@@ -712,13 +751,30 @@ func (b *vcfShardBuilder) parseInfo(info []byte) {
 			seg, rest = rest, nil
 		}
 		if len(seg) == 0 {
-			continue
+			return errors.New("empty INFO segment")
 		}
 		eq := bytes.IndexByte(seg, '=')
 		key := seg
 		var v []byte
 		if eq >= 0 {
 			key, v = seg[:eq], seg[eq+1:]
+		}
+		if len(key) == 0 {
+			return errors.New("empty INFO field name")
+		}
+		d, ok := b.hdr.info[string(key)]
+		if !ok {
+			return fmt.Errorf("unknown INFO field %q", key)
+		}
+		if b.seenInfo[d.order] == b.gen {
+			return fmt.Errorf("duplicate INFO field %q", key)
+		}
+		b.seenInfo[d.order] = b.gen
+		if d.isFlag && eq >= 0 {
+			return fmt.Errorf("Flag INFO field %q has a value", key)
+		}
+		if !d.isFlag && eq < 0 {
+			return fmt.Errorf("non-Flag INFO field %q has no value", key)
 		}
 		if fi, ok := b.idx[string(key)]; ok {
 			if !b.has[fi] {
@@ -728,9 +784,11 @@ func (b *vcfShardBuilder) parseInfo(info []byte) {
 			b.vals[fi] = v
 		}
 	}
+	return nil
 }
 
-// buildValue 按 fields 顺序拼一个 ALT 的值；Number=A 取该 ALT 下标的元素。
+// buildValue 按 ##INFO 声明顺序拼一个 ALT 的值；Number=A 取该 ALT 下标的
+// 元素；没有输出字段时返回 "."。
 func (b *vcfShardBuilder) buildValue(altIdx int) []byte {
 	b.valBuf = b.valBuf[:0]
 	for fi := range b.sel {
@@ -755,6 +813,9 @@ func (b *vcfShardBuilder) buildValue(altIdx int) []byte {
 		b.valBuf = append(b.valBuf, '=')
 		b.valBuf = append(b.valBuf, v...)
 	}
+	if len(b.valBuf) == 0 {
+		b.valBuf = append(b.valBuf, '.')
+	}
 	return b.valBuf
 }
 
@@ -773,12 +834,16 @@ func commaElem(v []byte, n int) ([]byte, bool) {
 	return nil, false
 }
 
-// prefixInfo 把整条 INFO 的每个键加上 prefix_。INFO 为 "." 时原样保留。
-func (b *vcfShardBuilder) prefixInfo(info []byte) []byte {
-	if len(info) == 0 || (len(info) == 1 && info[0] == '.') {
-		return info
-	}
+// sortInfo 把整条 INFO 按 ##INFO 声明顺序重排并重建值；prefix 非空时每个
+// 字段名加 prefix_。INFO 为 "." 或空时返回 "."。未知字段、重复字段、空段、
+// Flag 带值、非 Flag 缺值都返回错误，不静默丢字段。
+func (b *vcfShardBuilder) sortInfo(info []byte) ([]byte, error) {
 	b.infoBuf = b.infoBuf[:0]
+	if len(info) == 0 || (len(info) == 1 && info[0] == '.') {
+		return []byte("."), nil
+	}
+	b.infoFields = b.infoFields[:0]
+	b.gen++
 	rest := info
 	for len(rest) > 0 {
 		var seg []byte
@@ -788,16 +853,54 @@ func (b *vcfShardBuilder) prefixInfo(info []byte) []byte {
 			seg, rest = rest, nil
 		}
 		if len(seg) == 0 {
-			continue
+			return nil, errors.New("empty INFO segment")
 		}
+		eq := bytes.IndexByte(seg, '=')
+		key := seg
+		var v []byte
+		if eq >= 0 {
+			key, v = seg[:eq], seg[eq+1:]
+		}
+		if len(key) == 0 {
+			return nil, errors.New("empty INFO field name")
+		}
+		d, ok := b.hdr.info[string(key)]
+		if !ok {
+			return nil, fmt.Errorf("unknown INFO field %q", key)
+		}
+		if b.seenInfo[d.order] == b.gen {
+			return nil, fmt.Errorf("duplicate INFO field %q", key)
+		}
+		b.seenInfo[d.order] = b.gen
+		if d.isFlag && eq >= 0 {
+			return nil, fmt.Errorf("Flag INFO field %q has a value", key)
+		}
+		if !d.isFlag && eq < 0 {
+			return nil, fmt.Errorf("non-Flag INFO field %q has no value", key)
+		}
+		b.infoFields = append(b.infoFields, infoField{
+			order: d.order, id: string(key), val: v, isFlag: d.isFlag,
+		})
+	}
+	sort.Slice(b.infoFields, func(i, j int) bool {
+		return b.infoFields[i].order < b.infoFields[j].order
+	})
+	for _, f := range b.infoFields {
 		if len(b.infoBuf) > 0 {
 			b.infoBuf = append(b.infoBuf, ';')
 		}
-		b.infoBuf = append(b.infoBuf, b.prefix...)
-		b.infoBuf = append(b.infoBuf, '_')
-		b.infoBuf = append(b.infoBuf, seg...)
+		if b.prefix != "" {
+			b.infoBuf = append(b.infoBuf, b.prefix...)
+			b.infoBuf = append(b.infoBuf, '_')
+		}
+		b.infoBuf = append(b.infoBuf, f.id...)
+		if f.isFlag {
+			continue
+		}
+		b.infoBuf = append(b.infoBuf, '=')
+		b.infoBuf = append(b.infoBuf, f.val...)
 	}
-	return b.infoBuf
+	return b.infoBuf, nil
 }
 
 // finishCurrent 落盘当前染色体的 writer。
@@ -909,7 +1012,7 @@ func buildOneVCFShard(outdir string, in vcfInput, plan *vcfPlan, opts Options, s
 // ---- header 落盘 ----
 
 // buildImmkvHeader 生成 vcf.immkv.header：fileformat + 选中字段的 ##INFO
-// （ID 加前缀）+ 无样本的 #CHROM 行。
+// （ID 加前缀，按 ##INFO 声明顺序）+ 无样本的 #CHROM 行。
 func buildImmkvHeader(fileFormat string, sel []valueField) []byte {
 	if fileFormat == "" {
 		fileFormat = "##fileformat=VCFv4.2"

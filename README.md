@@ -87,10 +87,15 @@ err := immkv.BuildFromTSVs(basePath, tsvs, immkv.Options{})
 ```
 
 `fields` nil or empty stores every INFO field; otherwise only the listed
-fields, with `Number=A` fields taking the element at the ALT index. A non-empty
-`prefix` writes keys as `prefix_field`. VCF input may be one multi-chromosome
-file or several one-chromosome files; REF/ALT order within the same CHROM+POS
-is arbitrary. Full contract: [docs/ingest-design.md](docs/ingest-design.md).
+fields. Values are always rebuilt in `##INFO` declaration order; the `fields`
+order only selects and does not set the value order. `Number=A` fields take the
+element at the ALT index. A non-empty `prefix` writes keys as `prefix_field`.
+Unknown/duplicate INFO fields, empty segments, Flag-with-value, and
+non-Flag-without-value are build errors; a record with no stored fields is
+`"."`. VCF input may be one multi-chromosome file or several one-chromosome
+files (the `##INFO` declaration order must match); REF/ALT order within the
+same CHROM+POS is arbitrary. Full contract:
+[docs/ingest-design.md](docs/ingest-design.md).
 
 The `GetBatch` contract: input must be ascending (VCF sorted by chromosome
 natural order + position satisfies this naturally); the returned slice is
