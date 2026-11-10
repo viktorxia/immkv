@@ -383,15 +383,22 @@ type colSegs struct {
 // asmChunk 是单次装配的命中数上限，控制段缓冲与偏移数组的内存。
 const asmChunk = 8192
 
-// readBin 读一个 bin 的选中列并回填 out。读段按偏移合并，顺序 pread；
-// 位图与值流都用 threads 路并行解压。
-func (c *colShard) readBin(g hitBinGroup, sel []int, out [][]byte, threads int) error {
+// binLoad 是一个 bin 选中列的压缩数据：列定位 + 合并读段里的位图/值流视图。
+type binLoad struct {
+	bin       int
+	meta      *colBinRecord
+	parts     []colPart
+	bitFrames [][]byte
+	frames    [][]byte
+}
+
+// loadBin 读一个 bin 的选中列：列目录 → 按偏移排序合并读段 → 顺序 pread。
+func (c *colShard) loadBin(g hitBinGroup, sel []int) (*binLoad, error) {
 	meta := &c.bins[g.bin]
 	dir, err := c.loadDir(g.bin)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	bmLen := int((meta.count + 7) / 8)
 	parts := make([]colPart, 0, len(sel))
 	for _, col := range sel {
 		e := c.entry(dir, col)
@@ -409,11 +416,9 @@ func (c *colShard) readBin(g hitBinGroup, sel []int, out [][]byte, threads int) 
 		}
 		parts = append(parts, p)
 	}
+	ld := &binLoad{bin: g.bin, meta: meta, parts: parts}
 	if len(parts) == 0 {
-		for _, h := range g.hits {
-			out[h.dst] = []byte(".")
-		}
-		return nil
+		return ld, nil
 	}
 	sort.Slice(parts, func(i, j int) bool { return parts[i].bitmapAt < parts[j].bitmapAt })
 	type readRange struct {
@@ -437,27 +442,40 @@ func (c *colShard) readBin(g hitBinGroup, sel []int, out [][]byte, threads int) 
 		}
 		ranges = append(ranges, readRange{start: p.bitmapAt, end: end, parts: []int{i}})
 	}
-	bitFrames := make([][]byte, len(parts))
-	frames := make([][]byte, len(parts))
-	bits := make([][]byte, len(parts))
-	decoded := make([][]byte, len(parts))
+	ld.bitFrames = make([][]byte, len(parts))
+	ld.frames = make([][]byte, len(parts))
 	for ri := range ranges {
 		r := &ranges[ri]
 		buf := make([]byte, r.end-r.start)
 		if _, err := c.f.ReadAt(buf, r.start); err != nil {
-			return fmt.Errorf("immkv: %s: 读 bin %d 列数据: %w", c.base, g.bin, err)
+			return nil, fmt.Errorf("immkv: %s: 读 bin %d 列数据: %w", c.base, g.bin, err)
 		}
 		fadviseDontNeed(c.f, r.start, r.end-r.start)
 		for _, pi := range r.parts {
 			p := &parts[pi]
 			off := p.bitmapAt - r.start
-			bitFrames[pi] = buf[off : off+int64(p.bitmapLen)]
+			ld.bitFrames[pi] = buf[off : off+int64(p.bitmapLen)]
 			if p.frameLen > 0 {
 				fo := p.frameAt - r.start
-				frames[pi] = buf[fo : fo+int64(p.frameLen)]
+				ld.frames[pi] = buf[fo : fo+int64(p.frameLen)]
 			}
 		}
 	}
+	return ld, nil
+}
+
+// processBin 解压一个已读入的 bin 并回填 out。
+func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads int) error {
+	meta, parts := ld.meta, ld.parts
+	if len(parts) == 0 {
+		for _, h := range g.hits {
+			out[h.dst] = []byte(".")
+		}
+		return nil
+	}
+	bmLen := int((meta.count + 7) / 8)
+	bits := make([][]byte, len(parts))
+	decoded := make([][]byte, len(parts))
 	var wg sync.WaitGroup
 	errs := make(chan error, len(parts))
 	sem := make(chan struct{}, threads)
@@ -467,7 +485,7 @@ func (c *colShard) readBin(g hitBinGroup, sel []int, out [][]byte, threads int) 
 		go func(i int) {
 			defer wg.Done()
 			defer func() { <-sem }()
-			b, err := c.dec.decode(bitFrames[i], nil)
+			b, err := c.dec.decode(ld.bitFrames[i], nil)
 			if err != nil {
 				errs <- fmt.Errorf("immkv: %s: 解压 bin %d 列 %d 位图: %w", c.base, g.bin, parts[i].col, err)
 				return
@@ -485,7 +503,7 @@ func (c *colShard) readBin(g hitBinGroup, sel []int, out [][]byte, threads int) 
 			if parts[i].flag {
 				return
 			}
-			v, err := c.dec.decode(frames[i], nil)
+			v, err := c.dec.decode(ld.frames[i], nil)
 			if err != nil {
 				errs <- fmt.Errorf("immkv: %s: 解压 bin %d 列 %d 值流: %w", c.base, g.bin, parts[i].col, err)
 				return
@@ -582,14 +600,39 @@ func (c *colShard) readBin(g hitBinGroup, sel []int, out [][]byte, threads int) 
 	return nil
 }
 
-// readColBatch 走列存路径回填 out；hits 按记录号升序。
+
+// readColBatch 走列存路径回填 out；hits 按记录号升序。bin 级预取：读下一
+// 个 bin 的压缩数据与解压/装配当前 bin 重叠，HDD 上不让磁头等 CPU。
 func (c *colShard) readColBatch(hits []sHit, sel []int, out [][]byte, threads int) error {
 	groups, err := c.groupHits(hits)
 	if err != nil {
 		return err
 	}
-	for _, g := range groups {
-		if err := c.readBin(g, sel, out, threads); err != nil {
+	if len(groups) == 0 {
+		return nil
+	}
+	type loadResult struct {
+		ld  *binLoad
+		err error
+	}
+	load := func(g hitBinGroup) <-chan loadResult {
+		ch := make(chan loadResult, 1)
+		go func() {
+			ld, err := c.loadBin(g, sel)
+			ch <- loadResult{ld: ld, err: err}
+		}()
+		return ch
+	}
+	ch := load(groups[0])
+	for i, g := range groups {
+		res := <-ch
+		if res.err != nil {
+			return res.err
+		}
+		if i+1 < len(groups) {
+			ch = load(groups[i+1])
+		}
+		if err := c.processBin(res.ld, g, out, threads); err != nil {
 			return err
 		}
 	}
