@@ -334,7 +334,9 @@ func (d *StreamDB) preferColumnar(cs *colShard, hits []sHit) (bool, error) {
 	if workers < 1 {
 		workers = 1
 	}
-	const decodePerThread = 1.2e9 // zstd 解压吞吐量级（B/s/线程）
+	// 实测口径：列流按小帧解码 + 装配，约 100MB/s/线程（不是单帧裸解的
+	// 1GB/s 量级）；用这个数才能让 NVMe 全字段正确选回记录序。
+	const decodePerThread = 1.0e8
 	decodeBps := decodePerThread * workers
 	// 记录序只需解命中帧；原文大小按文本列存压缩比 ~8 估。
 	recRaw := float64(recBytes) * 8
