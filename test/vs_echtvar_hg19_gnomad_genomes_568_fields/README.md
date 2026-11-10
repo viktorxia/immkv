@@ -64,3 +64,11 @@ See `notebook.md`. `probe_encode_chr22.sh` reproduces the cardinality
 census in ~30 min. echtvar's v0.2.4 encoder/decoder sources cited by every
 comparison rule are in `sources/` (fetched from the tagged release via
 api.github.com).
+
+## Columnar round (2026-11-11, NVMe)
+
+Rebuilt full library: 568 selected columns = 116.03 GB compressed / 978.2 GB
+raw. `annotate -threads 16`, `/dev/null`: default path selection 37.61 s wall
+(query 26.64 s + format 119.87 s; source `results/col_nvme.txt`). The cost
+model picks record-order, matching the existing record null times (38.82 /
+47.54 s) and full-output times (5:06.55 / 4:54.66 s).

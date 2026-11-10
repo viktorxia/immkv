@@ -1,0 +1,7 @@
+# New rebuilt full library (record-order files byte-identical to the old 366 GiB
+# library on chr22 and equal in total bytes); OpenEager cacheMB=512, warmup=10000.
+{"phase":"sampled","count":100000,"hits":98486,"threads":1,"elapsed_sec":17.270020935,"qps":5790.380936790682,"mean_ns":172603.38001,"p50_ns":178339,"p99_ns":335075,"p999_ns":450951}
+{"phase":"misses","count":100000,"hits":0,"threads":1,"elapsed_sec":0.220231014,"qps":454068.65356393444,"mean_ns":2140.47192,"p50_ns":2134,"p99_ns":5671,"p999_ns":12715}
+{"phase":"sampled","count":100000,"hits":98486,"threads":4,"elapsed_sec":1.5032833239999999,"qps":66521.05987174512,"mean_ns":59866.71559,"p50_ns":26271,"p99_ns":321677,"p999_ns":403796}
+{"phase":"misses","count":100000,"hits":0,"threads":4,"elapsed_sec":0.066523973,"qps":1503217.4942407603,"mean_ns":2531.89835,"p50_ns":2255,"p99_ns":5901,"p999_ns":139722}
+{"phase":"sampled","count":100000,"hits":98486,"threads":4,"elapsed_sec":1.146063746,"qps":87255.1813535859,"mean_ns":45631.42205,"p50_ns":25310,"p99_ns":286418,"p999_ns":382745}

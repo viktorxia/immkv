@@ -66,3 +66,36 @@ Script order (see `notebook.md`):
 6. `verify.sh` -- hit-set plus full per-row per-field comparison.
 7. `run_null.sh` -- round 2 (/dev/null, 2 passes each side).
 8. `collect_results.sh`, `cleanup.sh`.
+
+## Columnar round (2026-11-11)
+
+Library rebuilt with `test/buildvcf` (`BuildFromVCFs`, `IMMKV_PACK_KB=-1`):
+record-order files are byte-identical to the old 366 GiB library (chr22
+`cmp`; total `chrN.vals` 387,815,825,210 B, same as the old copy), plus
+`chrN.col` 116,084,593,959 B and `chrN.manifest`. The 540 selected columns
+measure 88.51 GB compressed / 673.6 GB raw over the 261,942,336 records
+(`tmp/colstats.py`, parsing the column directories of all 23 `chrN.col`).
+
+Run: `annotate -threads 16 -batch 4096` under the same 10G cgroup, columnar
+path forced with `IMMKV_FORCE_COLUMNAR=1`; `-fields fields540.tsv` is mapped
+to manifest column numbers.
+
+| run | wall | query + format | peak RSS | source |
+|---|---:|---:|---:|---|
+| full output (66 GB) | 23:37.27 | 1385.82 + 90.28 s | 3.78 GB | `results/immkv_col.pass1.time` |
+| /dev/null | 14:58.03 | 878.95 + 91.20 s | 4.82 GB | `results/immkv_col.null.time` |
+
+Record-order on the same information (existing round): 45:47.08 / 43:15.83
+full output, 29:56.13 / 29:26.11 null (`results/immkv.pass1.time`,
+`immkv.pass2.time`, `immkv_null.*.time`). echtvar: 8:17.35 / 8:54.23 full,
+7:43.73 / 7:45.71 null.
+
+Correctness: `cmp` of the 66 GB columnar output against the record-order
+`immkv.pass2.vcf` is byte-identical (`results/col_cmp_hdd.log`,
+`540-identical`).
+
+Interpretation (labeled): columnar is 1.94x faster than record-order on HDD
+(23:37 vs 45:47) and 2.00x on the null round, but still 2.85x slower than
+echtvar. The read is 88.5 GB of lossless column text plus 66 GB of text
+output on one arm; echtvar streams a 59 GB quantized archive, so the
+remaining gap is encoding density, not scheduling.

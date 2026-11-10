@@ -48,3 +48,19 @@ Build account: 22 archives, 59 GB, 8-way pipeline, resumable.
 
 See `notebook.md`. Requires >=300 GB free during the build; runs are
 unattended (~40 min round 1 + round 2 once libraries exist).
+
+## Columnar round (2026-11-11, NVMe)
+
+Rebuilt full library includes `chrN.col` (116.08 GB total; 540 selected
+columns = 88.51 GB compressed / 673.6 GB raw). `annotate -threads 16`
+under the 10G cgroup, `/dev/null`:
+
+- default path selection: 38.74 s wall (query 26.99 s + format 110.80 s);
+- forced columnar (`IMMKV_FORCE_COLUMNAR=1`): 6:29.86 (query 375.31 s +
+  format 138.70 s). Source: `results/col_nvme.txt`.
+
+The cost model picks record-order on NVMe for full-field: 88.5 GB of column
+reads plus 673.6 GB of decompressed raw values lose to 66 GB of hit frames.
+Existing record-order full-output times: 5:28.08 / 5:15.94; null 43.16 /
+47.41 s. SSD acceptance is "not slower than record-order", and the default
+choice preserves it.

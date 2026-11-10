@@ -1,0 +1,5 @@
+# NVMe, rebuilt full library (record-order + base.col), 16 threads, 10G cgroup.
+# Default path selection (no IMMKV_FORCE_*), output /dev/null:
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.33s / query 26.99s / format 110.80s (16 threads); wall 38.739s
+# Forced columnar, output /dev/null:
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.29s / query 375.31s / format 138.70s (16 threads); wall 6m29.864s

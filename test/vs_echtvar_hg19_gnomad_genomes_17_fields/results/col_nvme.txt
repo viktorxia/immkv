@@ -1,0 +1,7 @@
+# NVMe, rebuilt full library, 16 threads, 10G cgroup.
+# Default and forced columnar, /dev/null:
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.32s / query 21.29s / format 3.35s (16 threads); wall 23.347s   (default)
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.32s / query 21.42s / format 3.35s (16 threads); wall 23.500s   (forced columnar)
+# Forced columnar with full output:
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.33s / query 18.56s / format 3.39s (16 threads); wall 20.662s
+# Full output byte-identical to results/immkv.round1.pass1.vcf (cmp).

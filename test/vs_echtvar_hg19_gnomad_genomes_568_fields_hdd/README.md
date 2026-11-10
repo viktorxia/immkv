@@ -63,3 +63,31 @@ Script order (see `notebook.md`):
    (needs ~70 GB free on the NVMe filesystem).
 6. `run_null.sh` -- round 2 (/dev/null, 2 passes; immkv only).
 7. `collect_results.sh`, `cleanup.sh`.
+
+## Columnar round (2026-11-11)
+
+Library rebuilt with `test/buildvcf` (`BuildFromVCFs`, `IMMKV_PACK_KB=-1`):
+record-order byte layout matches the old library (chr22 `cmp`; total
+`chrN.vals` 387,815,825,210 B), plus `chrN.col` 116,084,593,959 B. The 568
+selected columns measure 116.03 GB compressed / 978.2 GB raw over
+261,942,336 records (`tmp/colstats.py`, all 23 column directories).
+
+Run: `annotate -threads 16 -batch 4096`, 10G cgroup, columnar forced with
+`IMMKV_FORCE_COLUMNAR=1`.
+
+| run | wall | query + format | peak RSS | source |
+|---|---:|---:|---:|---|
+| full output (72 GB) | 25:11.04 | 1497.97 + 93.90 s | 5.30 GB | `results/immkv_col.pass1.time` |
+| /dev/null | 17:10.44 | 1015.73 + 94.87 s | 5.18 GB | `results/immkv_col.null.time` |
+
+Record-order (existing round): 44:38.83 / 44:19.51 full, 29:49.27 /
+29:26.10 null. echtvar cannot complete 568 fields under the 10G cap.
+
+Correctness: `cmp` of the 72 GB columnar output against the record-order
+`immkv.pass2.vcf` is byte-identical (`results/col_cmp_hdd.log`,
+`568-identical`).
+
+Interpretation (labeled): columnar is 1.77x faster than record-order full
+output (25:11 vs 44:39) and 1.74x on the null round. The absolute floor is
+116 GB of lossless column data plus 72 GB of text output on one arm; the
+String/Flag fields add ~27.5 GB over the 540 subset.

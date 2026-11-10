@@ -1,0 +1,3 @@
+# NVMe, rebuilt full library, 16 threads, 10G cgroup. Default path selection
+# (no IMMKV_FORCE_*), output /dev/null:
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.35s / query 26.64s / format 119.87s (16 threads); wall 37.614s

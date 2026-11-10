@@ -46,3 +46,18 @@ rebuilt (see `../buildfull`).
 
 See `notebook.md` for the script order. Everything runs unattended in ~6
 minutes once the libraries exist (`build_echtvar.sh`, `build_immkv.sh`).
+
+## Columnar round (2026-11-11, NVMe)
+
+Rebuilt full library, 17 selected columns = 3.87 GB compressed / 26.7 GB raw.
+`annotate -threads 16`, 10G cgroup (`results/col_nvme.txt`):
+
+- default 23.35 s and forced columnar 23.50 s on `/dev/null` (query ~21.3 s
+  + format 3.35 s) - the model selects columnar here;
+- forced columnar with full output: 20.66 s (query 18.56 s + format
+  3.39 s), byte-identical to `results/immkv.round1.pass1.vcf`.
+
+Existing record-order: full library 2:22.64 / 1:35.36 full, 49.14 / 86.28 s
+null; narrow library 29.74 / 35.17 s full, 40.48 / 39.43 s null; echtvar
+17.76 / 18.04 s. Columnar cuts the full-library 17-field query to ~21 s,
+near echtvar but not below it.
