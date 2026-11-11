@@ -1,0 +1,27 @@
+[2026-11-11T19:12:11+08:00] cmp nvme 17
+[2026-11-11T19:12:21+08:00] cmp nvme 540
+[2026-11-11T19:19:32+08:00] cmp nvme 568
+[2026-11-11T19:27:36+08:00] cmp hdd 17
+[2026-11-11T19:27:56+08:00] cmp hdd 540
+[2026-11-11T19:36:04+08:00] cmp hdd 568
+[2026-11-11T19:45:14+08:00] build text hdd 17
+rows 3933714, field comparisons 66873138, misses agreed 1007196, value mismatches 0, hit disagreements 0
+echtvar i32-overflow value losses (documented limitation): 0
+float comparisons 30989070, max |echtvar-immkv| observed: 1.000e-06 (tolerance 1.1e-06; expected just under 5e-7 from truncating quantization)
+VERIFY_VALUES OK: every field of every row agrees
+[2026-11-11T19:45:48+08:00] build text hdd 540
+MISMATCH row 1055 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1.88200e+03"
+MISMATCH row 1057 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1.52600e+03"
+MISMATCH row 1074 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1.20700e+03"
+MISMATCH row 1075 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1.42600e+03"
+MISMATCH row 21265 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-3.56900e+04"
+MISMATCH row 29170 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1.18800e+03"
+MISMATCH row 29171 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-3.40900e+03"
+MISMATCH row 29436 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1.18600e+03"
+MISMATCH row 29438 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1.28300e+03"
+MISMATCH row 29446 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1.14200e+03"
+rows 3933714, field comparisons 2124205560, misses agreed 32050262, value mismatches 0, hit disagreements 0
+echtvar i32-overflow value losses (documented limitation): 808
+float comparisons 666144645, max |echtvar-immkv| observed: 1.000e-06 (tolerance 1.1e-06; expected just under 5e-7 from truncating quantization)
+VERIFY_VALUES OK: every field of every row agrees
+[2026-11-11T20:01:49+08:00] all verification done
