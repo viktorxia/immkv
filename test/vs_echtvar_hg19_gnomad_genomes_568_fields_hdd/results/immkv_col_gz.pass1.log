@@ -1,0 +1,2 @@
+Running as unit: run-rc0fed19ac4db494c9c6fea85741a2850.scope; invocation ID: 163c2b4409c64efe80766e22567640d6
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.29s / query 1113.30s / format 94.68s (16 threads); wall 18m46.923s

@@ -4,8 +4,11 @@
 //
 // Usage:
 //
-//	annotate -in query.vcf[.gz] -lib <immkvLibDir> -out out.vcf \
+//	annotate -in query.vcf[.gz] -lib <immkvLibDir> -out out.vcf[.gz] \
 //	         -fields <fields.tsv> [-prefix gnomad_] [-batch 4096] [-threads 4]
+//
+// A .gz -out writes bgzf; the timed window then matches echtvar's gzip-only
+// output, and plain-text expansion is a separate step.
 //
 // -fields is the whitelist AND the output order: a TSV of
 // "name<Tab>Type<Tab>Number" lines (see genfields). Only listed fields are
@@ -262,7 +265,16 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 	if err != nil {
 		return err
 	}
-	bw := bufio.NewWriterSize(w, 4<<20)
+	// Output form follows the -out suffix. A .gz output writes bgzf inside the
+	// timed window, mirroring echtvar's protocol (it only writes gzip); the
+	// plain-text expansion is then a separate, untimed step.
+	var gz *bgzf.Writer
+	var dst io.Writer = w
+	if strings.HasSuffix(out, ".gz") {
+		gz = bgzf.NewWriter(w, 4)
+		dst = gz
+	}
+	bw := bufio.NewWriterSize(dst, 4<<20)
 	collectorDone := make(chan error, 1)
 	go func() {
 		var werr error
@@ -290,6 +302,9 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 		}
 		if werr == nil {
 			werr = bw.Flush()
+		}
+		if gz != nil && werr == nil {
+			werr = gz.Close()
 		}
 		if cerr := w.Close(); werr == nil {
 			werr = cerr

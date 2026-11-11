@@ -100,3 +100,15 @@ column data / 6.0 GB of values plus the 4.5 GB key stream and write 3.5 GB
 of text. Neither reaches echtvar's 19-25 s: its 2.9 GB archive is both
 smaller than immkv's 3.9 GB columnar values and does not carry a separate
 4.5 GB key stream.
+
+### gz-output timing (same protocol as echtvar)
+
+| library | gz timed | plain-text timed | source |
+|---|---:|---:|---|
+| full | 3:40.51 | 3:30.24 | `results/immkv_col.full.gz.time` |
+| narrow | 1:12.35 | 1:31.78 | `results/immkv_col.narrow.gz.time` |
+
+Both gz outputs are byte-identical after zcat to the record-order outputs
+(`results/col_gz_cmp.log`). For 17 fields gzip is not a free win: the full
+library is slightly slower (3:40 vs 3:30), the narrow library saves ~20 s.
+There is only 3.5 GB of text, so compression CPU outweighs the write saving.

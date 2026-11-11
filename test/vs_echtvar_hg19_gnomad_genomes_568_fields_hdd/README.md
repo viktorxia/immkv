@@ -91,3 +91,17 @@ Interpretation (labeled): columnar is 1.77x faster than record-order full
 output (25:11 vs 44:39) and 1.74x on the null round. The absolute floor is
 116 GB of lossless column data plus 72 GB of text output on one arm; the
 String/Flag fields add ~27.5 GB over the 540 subset.
+
+### gz-output timing (same protocol as echtvar)
+
+`annotate -out immkv_col.pass1.vcf.gz` (bgzf, 4 compression workers) inside
+the timed window; plain-text expansion outside.
+
+| step | wall | source |
+|---|---:|---|
+| annotate -> gz (14 GB) | 18:47.25 | `results/immkv_col_gz.pass1.time` |
+| zcat | cmp against the 72 GB record text (streamed) | 447 s | `results/immkv_col_gz.convert.log` (`rc=0`) |
+
+The streamed comparison confirms byte identity. Same plain-text deliverable:
+~18:47 + ~6.5 min ≈ 25:17, i.e. the same as direct plain text (25:11); gzip
+moves text generation outside the timer but does not reduce total work.

@@ -99,3 +99,20 @@ Interpretation (labeled): columnar is 1.94x faster than record-order on HDD
 echtvar. The read is 88.5 GB of lossless column text plus 66 GB of text
 output on one arm; echtvar streams a 59 GB quantized archive, so the
 remaining gap is encoding density, not scheduling.
+
+### gz-output timing (same protocol as echtvar)
+
+`annotate -out immkv_col.pass1.vcf.gz` writes bgzf inside the timed window;
+the plain-text expansion is then a separate step, exactly like echtvar.
+
+| step | wall | source |
+|---|---:|---|
+| annotate -> gz (12.4 GB) | 16:36.03 | `results/immkv_col_gz.pass1.time` |
+| zcat -> 66 GB text (untimed) | 416 s | `results/immkv_col_gz.convert.log` |
+| same plain-text deliverable | **23:32** | sum of the two |
+
+`cmp` of the expanded text against `immkv.pass2.vcf`: identical
+(`results/immkv_col_gz.convert.log`, `540-gz-identical`). Writing gzip moves
+about 7 minutes of text generation outside the timer; it does not change the
+total work (23:32 vs 23:37 for direct plain text). echtvar's same-deliverable
+total is 8:17 + 6:12 = 14:29.
