@@ -1,0 +1,14 @@
+# v003 full library (568 fields, per-value framing), OpenEager cacheMB as noted,
+# warmup=10000, n=100000 keys sampled from the decomposed HG001 query,
+# 4 reader goroutines. Run order: cache512 run1 (cold page cache), cache512 run2,
+# cache0, cache2048. Same tool and key sample as
+# ../../vs_echtvar_hg19_gnomad_genomes_17_fields/results/pointlookup_nvme.jsonl
+# (that file's header records the v0.0.2 full library).
+{"phase":"sampled","count":100000,"hits":98486,"threads":4,"elapsed_sec":6.553739855,"qps":15258.463444152072,"mean_ns":261548.33084,"p50_ns":298289,"p99_ns":406859,"p999_ns":556204}
+{"phase":"misses","count":100000,"hits":0,"threads":4,"elapsed_sec":0.058312668,"qps":1714893.2372636423,"mean_ns":2160.80058,"p50_ns":1202,"p99_ns":8435,"p999_ns":154364}
+{"phase":"sampled","count":100000,"hits":98486,"threads":4,"elapsed_sec":0.307499327,"qps":325203.9637797321,"mean_ns":12155.27357,"p50_ns":11922,"p99_ns":30937,"p999_ns":129388}
+{"phase":"misses","count":100000,"hits":0,"threads":4,"elapsed_sec":0.044282611,"qps":2258222.7592677404,"mean_ns":1633.82424,"p50_ns":1142,"p99_ns":7625,"p999_ns":15178}
+{"phase":"sampled","count":100000,"hits":98486,"threads":4,"elapsed_sec":0.264046054,"qps":378721.81191543204,"mean_ns":10357.21106,"p50_ns":9718,"p99_ns":20518,"p999_ns":78995}
+{"phase":"misses","count":100000,"hits":0,"threads":4,"elapsed_sec":0.067552508,"qps":1480329.9383051775,"mean_ns":2585.02475,"p50_ns":2374,"p99_ns":5571,"p999_ns":13655}
+{"phase":"sampled","count":100000,"hits":98486,"threads":4,"elapsed_sec":0.332126064,"qps":301090.49195247743,"mean_ns":12988.95945,"p50_ns":12302,"p99_ns":35766,"p999_ns":155537}
+{"phase":"misses","count":100000,"hits":0,"threads":4,"elapsed_sec":0.029677053,"qps":3369606.8137223735,"mean_ns":1070.61228,"p50_ns":992,"p99_ns":3486,"p999_ns":6973}

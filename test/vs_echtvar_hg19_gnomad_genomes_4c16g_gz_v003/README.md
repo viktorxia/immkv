@@ -104,6 +104,36 @@ The 808 i32-overflow losses are echtvar's documented limitation
 (`|VQSLOD|*2e6 > i32max` becomes `-1`); they are counted separately, not as
 value mismatches.
 
+## Point lookup (NVMe, full 568-field library)
+
+Same tool and key sample as the v0.0.2 baseline
+(`../vs_echtvar_hg19_gnomad_genomes_17_fields/results/pointlookup_nvme.jsonl`;
+its header records that it measured the full 366 GiB library). 100,000 keys
+sampled from the decomposed HG001 query (98,486 hits), 4 reader goroutines,
+warmup 10,000, seed 1. Sources: `results/pointlookup_nvme.jsonl` (v003) and
+the baseline file above.
+
+| library | cache | run | QPS | mean | p50 | p99 | p999 |
+|---|---:|---|---:|---:|---:|---:|---:|
+| v0.0.2 full | 512 | 4t | 66,521 | 59.9 µs | 26.3 µs | 321.7 µs | 403.8 µs |
+| v0.0.2 full | 512 | 4t repeat | 87,255 | 45.6 µs | 25.3 µs | 286.4 µs | 382.7 µs |
+| v003 full | 512 | 4t cold | 15,258 | 261.5 µs | 298.3 µs | 406.9 µs | 556.2 µs |
+| v003 full | 512 | 4t warm | 325,204 | 12.2 µs | 11.9 µs | 30.9 µs | 129.4 µs |
+| v003 full | 0 | 4t warm | 378,722 | 10.4 µs | 9.7 µs | 20.5 µs | 79.0 µs |
+| v003 full | 2048 | 4t warm | 301,090 | 13.0 µs | 12.3 µs | 35.8 µs | 155.5 µs |
+
+- Only v003's first cache-512 run starts with a cold page cache; every later
+  run, and both v0.0.2 4-thread runs, have the sampled keys' frames in the OS
+  page cache. Compare the v003 cache-512 warm run with the v0.0.2 4-thread
+  runs.
+- Under the same warm condition, v003 lowers p50 by 2.1–2.2×, raises QPS by
+  3.7–4.9×, and lowers p99 by 9–10×. Typed per-value frames are smaller than
+  raw INFO text frames, so decompression and cache residency both improve.
+- Misses: v003 p50 1.0–2.4 µs and 1.5–3.4 M QPS; v0.0.2 p50 2.3 µs and
+  1.5 M QPS.
+- The cold v003 run is not comparable to the baseline's warm runs: it reads
+  the sampled frames from NVMe at random, p50 298 µs.
+
 ## Interpretation
 
 - 540/568 share per-value framing on both sides, so those rows compare
