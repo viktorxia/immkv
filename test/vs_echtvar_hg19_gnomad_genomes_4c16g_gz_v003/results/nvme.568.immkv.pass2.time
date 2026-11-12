@@ -1,0 +1,23 @@
+	Command being timed: "systemd-run --user --scope --collect -p MemoryMax=16G -p MemorySwapMax=0 taskset -c 0-3 env GOMAXPROCS=4 IMMKV_DEBUG_PATH=1 /home/tian/immkv_test_nvme/test/4c16g_gz_v003/bin/annotate -in /home/tian/immkv_test_nvme/test/568_fields/query/hg001.decomp.vcf.gz -lib /home/tian/immkv_test_nvme/gnomad/immkv -out /home/tian/immkv_test_nvme/test/4c16g_gz_v003/568_fields/immkv.pass2.vcf.gz -fields /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_4c16g_gz_v003/../vs_echtvar_hg19_gnomad_genomes_568_fields/fields568.tsv -threads 4 -batch 4096"
+	User time (seconds): 664.54
+	System time (seconds): 21.56
+	Percent of CPU this job got: 384%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:58.38
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 3208560
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 785316
+	Voluntary context switches: 434294
+	Involuntary context switches: 58689
+	Swaps: 0
+	File system inputs: 52329328
+	File system outputs: 27782784
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

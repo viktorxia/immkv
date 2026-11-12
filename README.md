@@ -39,14 +39,20 @@ a separate single-library handle for plain KV. All handles are read-only and
 can be open at once:
 
 ```go
-// Build: stream records in via AddSorted (groups ascending); Finish persists atomically
-w, _ := immkv.Create(cacheDir+"/chr1", immkv.Options{})
-w.AddSorted(immkv.PosKey(0, 1000), key, info)
+// Build: one typed record per key; schema order sets the bitmap bit order
+schema := immkv.Schema{
+    {Name: "AF", Type: immkv.TypeFloat, Number: "A"},
+    {Name: "AN", Type: immkv.TypeInteger, Number: "1"},
+}
+w, _ := immkv.Create(cacheDir+"/chr1", immkv.Options{Schema: schema})
+enc := immkv.NewRecordEncoder(schema)
+record, _ := enc.Reset().Float("AF", af).Int("AN", an).Encode()
+w.AddSorted(immkv.PosKey(0, 1000), key, record)
 w.Finish()
 
 // Point-lookup handle: one key answered whenever it arrives (random keys, online serving)
 db, _ := immkv.OpenEager(cacheDir, 512)          // cacheMB: decompressed-cache budget
-v, ok := db.Get(key)                              // miss → ok=false
+v, ok := db.Get(key)                              // miss → ok=false; v is a v003 record
 db.GetPrefix(prefix, func(k, v []byte) bool { … })
 db.Scan(lo, hi, func(k, v []byte) bool { … })     // lo/hi may be nil
 db.Close()
@@ -59,6 +65,13 @@ sdb.Close()
 // Optional: read only the columns this query needs (numbers from base.manifest)
 sdb, _ = immkv.OpenStreaming(cacheDir, immkv.Options{Threads: 9, Columns: []int{2, 7, 11}})
 ```
+
+Genomic libraries store v003 records: `vals` values are a presence bitmap plus
+typed payload, not INFO text. Read the schema with
+`immkv.ReadManifest(dir+"/chr1.manifest")` then `Manifest.Schema()`, view a value
+with `immkv.NewRecord(schema, v)` (typed getters or `Values()`), or render
+normalized INFO text with `immkv.RenderRecord(schema, v)`. `OpenSimpleKV` is the
+exception: it unwraps the single `value` String field back to the original bytes.
 
 Plain KV (no chromosome/position) has its own single-library handle:
 
@@ -90,25 +103,25 @@ err := immkv.BuildFromTSVs(basePath, tsvs, immkv.Options{})
 ```
 
 `fields` nil or empty stores every INFO field; otherwise only the listed
-fields. Values are always rebuilt in `##INFO` declaration order; the `fields`
-order only selects and does not set the value order. `Number=A` fields take the
-element at the ALT index. A non-empty `prefix` writes keys as `prefix_field`.
-Unknown/duplicate INFO fields, empty segments, Flag-with-value, and
-non-Flag-without-value are build errors; a record with no stored fields is
-`"."`. VCF input may be one multi-chromosome file or several one-chromosome
-files (the `##INFO` declaration order must match); REF/ALT order within the
-same CHROM+POS is arbitrary. Full contract:
-[docs/ingest-design.md](docs/ingest-design.md).
+fields. Values are always encoded as typed records in `##INFO` declaration
+order; the `fields` order only selects and does not set the bitmap order.
+`Number=A` fields take the element at the ALT index. A non-empty `prefix`
+writes keys as `prefix_field`. Unknown/duplicate INFO fields, empty segments,
+Flag-with-value, and non-Flag-without-value are build errors; a record with no
+stored fields has an all-zero bitmap and renders as `"."`. VCF input may be one
+multi-chromosome file or several one-chromosome files (the `##INFO` declaration
+order must match); REF/ALT order within the same CHROM+POS is arbitrary. Full
+contract: [docs/ingest-design.md](docs/ingest-design.md).
 
 `BuildFromVCFs` also writes a per-chromosome `chrN.col` + `chrN.manifest`
-columnar scan copy (format contract:
-[docs/base-col-format.md](docs/base-col-format.md)). `OpenStreaming` uses it
-when its estimated I/O cost beats the record-order path (media-aware:
-rotational disk vs SSD); `Options.Columns` only selects fields (column
-numbers from the manifest, nil/empty = all), never the path. `OpenEager`
-and every point/prefix/range query stay on the record order. Libraries
-without `base.col` keep working in record order; passing a non-empty
-`Columns` to such a library is an error.
+columnar scan copy (format contract: [docs/v003-format.md](docs/v003-format.md)
+§5–§6). `OpenStreaming` uses it when its estimated I/O cost beats the
+record-order path (media-aware: rotational disk vs SSD); `Options.Columns`
+only selects fields (column numbers from the manifest, nil/empty = all),
+never the path. `OpenEager` and every point/prefix/range query stay on the
+record order. Libraries built through `Create` alone have no columnar copy
+and stay on record order; passing a non-empty `Columns` to such a library is
+an error.
 
 The `GetBatch` contract: input must be ascending (VCF sorted by chromosome
 natural order + position satisfies this naturally); the returned slice is

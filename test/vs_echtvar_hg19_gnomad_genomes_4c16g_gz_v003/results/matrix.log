@@ -1,0 +1,191 @@
+[2026-11-12T16:52:51+08:00] nvme free space: 534G
+[2026-11-12T16:52:51+08:00] hdd free space: 1120G
+[2026-11-12T16:52:51+08:00] start immkv nvme 17 pass1 threads=4 batch=4096
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.30s / query 5.24s / format 6.97s (4 threads); wall 8.679s
+	User time (seconds): 28.59
+	System time (seconds): 2.57
+	Percent of CPU this job got: 357%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:08.72
+	Maximum resident set size (kbytes): 385580
+	File system inputs: 11693064
+	File system outputs: 868448
+[2026-11-12T16:53:00+08:00] start immkv nvme 17 pass2 threads=4 batch=4096
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.30s / query 5.19s / format 7.10s (4 threads); wall 8.678s
+	User time (seconds): 28.73
+	System time (seconds): 2.56
+	Percent of CPU this job got: 358%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:08.72
+	Maximum resident set size (kbytes): 396064
+	File system inputs: 11693048
+	File system outputs: 865552
+[2026-11-12T16:53:08+08:00] start echtvar nvme 17 pass1 procs=4
+Scope command line contains environment variable, which is not expanded by default for now, but will be expanded by default in the future. Use --expand-environment=yes/no to explicitly control it as needed.
+Running as unit: run-r1d964059c8d24b93ad9362659b8ac9af.scope; invocation ID: 02f9756584b1419da8359705e0b7d9ee
+	User time (seconds): 86.57
+	System time (seconds): 10.98
+	Percent of CPU this job got: 354%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:27.54
+	Maximum resident set size (kbytes): 31800
+	File system inputs: 5873936
+	File system outputs: 1051512
+[2026-11-12T16:53:36+08:00] start echtvar nvme 17 pass2 procs=4
+Scope command line contains environment variable, which is not expanded by default for now, but will be expanded by default in the future. Use --expand-environment=yes/no to explicitly control it as needed.
+Running as unit: run-rc10df646c89a4ab2ac17cf7a0dde776b.scope; invocation ID: 4112a89a955a43528faec2909d57de31
+	User time (seconds): 85.22
+	System time (seconds): 10.43
+	Percent of CPU this job got: 392%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:24.34
+	Maximum resident set size (kbytes): 31824
+	File system inputs: 11288
+	File system outputs: 1051464
+[2026-11-12T16:54:00+08:00] start immkv nvme 540 pass1 threads=4 batch=4096
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.28s / query 55.11s / format 226.83s (4 threads); wall 2m44.017s
+	User time (seconds): 609.83
+	System time (seconds): 19.94
+	Percent of CPU this job got: 383%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:44.20
+	Maximum resident set size (kbytes): 2759024
+	File system inputs: 53346904
+	File system outputs: 24138952
+[2026-11-12T16:56:45+08:00] start immkv nvme 540 pass2 threads=4 batch=4096
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.28s / query 59.38s / format 227.88s (4 threads); wall 2m45.868s
+	User time (seconds): 611.68
+	System time (seconds): 19.59
+	Percent of CPU this job got: 380%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:46.05
+	Maximum resident set size (kbytes): 2550864
+	File system inputs: 49637168
+	File system outputs: 24138936
+[2026-11-12T16:59:31+08:00] start echtvar nvme 540 pass1 procs=4
+Scope command line contains environment variable, which is not expanded by default for now, but will be expanded by default in the future. Use --expand-environment=yes/no to explicitly control it as needed.
+Running as unit: run-r5f02630cebd442bebc62272c1b7ca805.scope; invocation ID: 87c5b1033c2c404689f749eaeac7a2f2
+	User time (seconds): 2086.95
+	System time (seconds): 336.79
+	Percent of CPU this job got: 373%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 10:49.48
+	Maximum resident set size (kbytes): 539404
+	File system inputs: 122897176
+	File system outputs: 23063736
+[2026-11-12T17:10:20+08:00] start echtvar nvme 540 pass2 procs=4
+Scope command line contains environment variable, which is not expanded by default for now, but will be expanded by default in the future. Use --expand-environment=yes/no to explicitly control it as needed.
+Running as unit: run-ra9591ced41134a698a71b00815dbd034.scope; invocation ID: 1e97eeaee3ad4f5caa24c348827e3124
+	User time (seconds): 2074.27
+	System time (seconds): 335.39
+	Percent of CPU this job got: 379%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 10:34.90
+	Maximum resident set size (kbytes): 539332
+	File system inputs: 114895832
+	File system outputs: 23063720
+[2026-11-12T17:20:56+08:00] start immkv nvme 568 pass1 threads=4 batch=4096
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.36s / query 55.74s / format 234.32s (4 threads); wall 2m59.247s
+	User time (seconds): 666.13
+	System time (seconds): 21.60
+	Percent of CPU this job got: 383%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:59.49
+	Maximum resident set size (kbytes): 3522956
+	File system inputs: 53082176
+	File system outputs: 27782848
+[2026-11-12T17:23:55+08:00] start immkv nvme 568 pass2 threads=4 batch=4096
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.28s / query 53.23s / format 233.75s (4 threads); wall 2m58.154s
+	User time (seconds): 664.54
+	System time (seconds): 21.56
+	Percent of CPU this job got: 384%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:58.38
+	Maximum resident set size (kbytes): 3208560
+	File system inputs: 52329328
+	File system outputs: 27782784
+[2026-11-12T17:26:54+08:00] start immkv hdd 17 pass1 threads=4 batch=4096
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.28s / query 64.29s / format 7.60s (4 threads); wall 1m6.743s
+	User time (seconds): 198.93
+	System time (seconds): 3.74
+	Percent of CPU this job got: 303%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:06.78
+	Maximum resident set size (kbytes): 310968
+	File system inputs: 2595072
+	File system outputs: 864568
+[2026-11-12T17:28:01+08:00] start immkv hdd 17 pass2 threads=4 batch=4096
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.28s / query 73.45s / format 7.56s (4 threads); wall 1m15.646s
+	User time (seconds): 193.20
+	System time (seconds): 5.07
+	Percent of CPU this job got: 261%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:15.68
+	Maximum resident set size (kbytes): 314396
+	File system inputs: 7987944
+	File system outputs: 864568
+[2026-11-12T17:29:17+08:00] start echtvar hdd 17 pass1 procs=4
+Scope command line contains environment variable, which is not expanded by default for now, but will be expanded by default in the future. Use --expand-environment=yes/no to explicitly control it as needed.
+Running as unit: run-r57b40bed759f4d8dab181fbf4ad7756a.scope; invocation ID: b3061c9b90e64967b3a5f389a2b20bcb
+	User time (seconds): 85.79
+	System time (seconds): 10.96
+	Percent of CPU this job got: 337%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:28.70
+	Maximum resident set size (kbytes): 31700
+	File system inputs: 6007056
+	File system outputs: 1051464
+[2026-11-12T17:29:45+08:00] start echtvar hdd 17 pass2 procs=4
+Scope command line contains environment variable, which is not expanded by default for now, but will be expanded by default in the future. Use --expand-environment=yes/no to explicitly control it as needed.
+Running as unit: run-r118e0f315d424a909cdd0801f6f78fef.scope; invocation ID: 656d3b628d8f41be928e64f50120e7f2
+	User time (seconds): 85.85
+	System time (seconds): 10.14
+	Percent of CPU this job got: 382%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:25.11
+	Maximum resident set size (kbytes): 31720
+	File system inputs: 129496
+	File system outputs: 1051464
+[2026-11-12T17:30:11+08:00] start immkv hdd 540 pass1 threads=4 batch=4096
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.37s / query 1629.04s / format 216.26s (4 threads); wall 27m20.527s
+	User time (seconds): 629.70
+	System time (seconds): 54.80
+	Percent of CPU this job got: 41%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 27:20.64
+	Maximum resident set size (kbytes): 954116
+	File system inputs: 53699560
+	File system outputs: 24139496
+[2026-11-12T17:57:31+08:00] start immkv hdd 540 pass2 threads=4 batch=4096
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.36s / query 1581.54s / format 216.31s (4 threads); wall 26m29.165s
+	User time (seconds): 627.99
+	System time (seconds): 53.30
+	Percent of CPU this job got: 42%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 26:29.26
+	Maximum resident set size (kbytes): 915688
+	File system inputs: 45952184
+	File system outputs: 24139448
+[2026-11-12T18:24:01+08:00] start echtvar hdd 540 pass1 procs=4
+Scope command line contains environment variable, which is not expanded by default for now, but will be expanded by default in the future. Use --expand-environment=yes/no to explicitly control it as needed.
+Running as unit: run-r10c946581d6e4a48b6f8b518c784f35b.scope; invocation ID: 1ad4a6e22e3e4da590db5fb243e97c48
+	User time (seconds): 2074.32
+	System time (seconds): 333.51
+	Percent of CPU this job got: 368%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 10:53.62
+	Maximum resident set size (kbytes): 539312
+	File system inputs: 123736088
+	File system outputs: 23063688
+[2026-11-12T18:34:54+08:00] start echtvar hdd 540 pass2 procs=4
+Scope command line contains environment variable, which is not expanded by default for now, but will be expanded by default in the future. Use --expand-environment=yes/no to explicitly control it as needed.
+Running as unit: run-re26249d6e3954481ad45c026ab0d7c73.scope; invocation ID: 6826b7cb1ca5434f94ae3e92d2c80139
+	User time (seconds): 2077.75
+	System time (seconds): 331.31
+	Percent of CPU this job got: 370%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 10:50.97
+	Maximum resident set size (kbytes): 539352
+	File system inputs: 114564264
+	File system outputs: 23063664
+[2026-11-12T18:45:46+08:00] start immkv hdd 568 pass1 threads=4 batch=4096
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.36s / query 1652.13s / format 212.37s (4 threads); wall 27m39.978s
+	User time (seconds): 670.19
+	System time (seconds): 56.00
+	Percent of CPU this job got: 43%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 27:40.06
+	Maximum resident set size (kbytes): 934480
+	File system inputs: 53587112
+	File system outputs: 27783328
+[2026-11-12T19:13:26+08:00] start immkv hdd 568 pass2 threads=4 batch=4096
+rows 3933714, hits 3875208 (98.51%), read 0.0GiB; key 0.36s / query 1588.38s / format 212.09s (4 threads); wall 26m38.736s
+	User time (seconds): 668.44
+	System time (seconds): 53.96
+	Percent of CPU this job got: 45%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 26:38.83
+	Maximum resident set size (kbytes): 920152
+	File system inputs: 46556712
+	File system outputs: 27783568
+[2026-11-12T19:40:06+08:00] all cells done

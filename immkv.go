@@ -50,7 +50,7 @@ import (
 
 const (
 	keysMagic = "IMKVK002" // v2：微块键流（64 条/块 + 常驻块索引）
-	valsMagic = "IMKVV001"
+	valsMagic = "IMKVV003"
 
 	headerSize   = 64
 	recsPerBlock = 64      // 每微块记录数（末块可短）
@@ -97,6 +97,10 @@ type Options struct {
 	// 决定读哪些列，不决定走记录序还是列存——路径由读侧按估算 I/O 成本选。
 	// 没有 base.col/manifest 的库用非空 Columns 会报错。
 	Columns []int
+	// Schema 是 Create 的字段表。nil/空表示单 String 字段 value：Add 与
+	// AddSorted 收原始值字节，writer 包成 record。非空表示调用方传入的
+	// value 已经是 record 字节，writer 只落盘、不校验内容。
+	Schema []Field
 }
 
 // ---- Writer ----
@@ -114,21 +118,23 @@ type kvRec struct {
 
 // Writer 收集键值并在 Finish 时一次性落盘；或用 AddSorted 流式逐段落盘。
 type Writer struct {
-	base        string
-	keysPath    string
-	valsPath    string
-	keysTmp     string
-	valsTmp     string
-	kf, vf      *os.File
-	kw, vw      *bufio.Writer
-	opts        Options
-	rawBelow    int
-	packTarget  int // <0：每值独立成帧模式（配合训练字典）
-	enc         *zstd.Encoder
-	dictComp    dictCompressor // 每值模式的字典压缩后端（libzstd CGO 或 klauspost）
-	dictTrained bool
-	dictLen     uint32
-	dictOff     uint64
+	base          string
+	keysPath      string
+	valsPath      string
+	keysTmp       string
+	valsTmp       string
+	kf, vf        *os.File
+	kw, vw        *bufio.Writer
+	opts          Options
+	rawBelow      int
+	packTarget    int // <0：每值独立成帧模式（配合训练字典）
+	wrapRawValues bool
+	wrapBuf       []byte
+	enc           *zstd.Encoder
+	dictComp      dictCompressor // 每值模式的字典压缩后端（libzstd CGO 或 klauspost）
+	dictTrained   bool
+	dictLen       uint32
+	dictOff       uint64
 
 	mode     int8 // 0 未定，1 任意序（Add），2 组升序（AddSorted）；两种模式不可混用
 	finished bool
@@ -159,8 +165,15 @@ type Writer struct {
 }
 
 // Create 创建最终文件为 basePath.keys 与 basePath.vals 的构建器。
-// Finish 前磁盘上只有两个 .tmp 文件。
+// Finish 前磁盘上只有两个 .tmp 文件。Options.Schema 决定 Add/AddSorted
+// 收到的是原始值还是已编码 record：空 schema 由 writer 包 record，非空
+// schema 要求调用方自己编码。
 func Create(basePath string, opts Options) (*Writer, error) {
+	if len(opts.Schema) > 0 {
+		if err := Schema(opts.Schema).Validate(); err != nil {
+			return nil, err
+		}
+	}
 	kp, vp := basePath+".keys", basePath+".vals"
 	kt, vt := kp+".tmp", vp+".tmp"
 	kf, err := os.Create(kt)
@@ -187,6 +200,7 @@ func Create(basePath string, opts Options) (*Writer, error) {
 		kw:   bufio.NewWriterSize(kf, 1<<20),
 		vw:   bufio.NewWriterSize(vf, 1<<20),
 		opts: opts, enc: enc,
+		wrapRawValues: len(opts.Schema) == 0,
 	}
 	if w.opts.RawValueBelow <= 0 {
 		w.rawBelow = defaultRawValueBelow
@@ -216,8 +230,9 @@ func Create(basePath string, opts Options) (*Writer, error) {
 
 // Add 投入一条记录，键值内容会被拷贝，调用方可复用自己的缓冲。键可重复，
 // Get 返回排序后的第一条，GetPrefix/Scan 能看到全部。与 AddSorted 不可混用。
-// 键值全量驻内存（ClinVar 规模约 GB 级）；TB 级用 AddSorted。键或值超出格式
-// 上限（u16 / u31）直接 panic——调用方的数据问题，本格式装不下。
+// Options.Schema 为空时 val 是原始值，writer 包成单 String 字段 record；
+// 非空时 val 必须已经是 record。键值全量驻内存（ClinVar 规模约 GB 级）；
+// TB 级用 AddSorted。键或值超出格式上限（u16 / u31）直接 panic。
 func (w *Writer) Add(key, val []byte) error {
 	if w.finished {
 		return errors.New("immkv: Writer already finished")
@@ -225,6 +240,7 @@ func (w *Writer) Add(key, val []byte) error {
 	if w.mode == 2 {
 		return errors.New("immkv: Add after AddSorted")
 	}
+	val = w.prepareValue(val)
 	checkRecCaps(key, val)
 	w.recs = append(w.recs, kvRec{bytes.Clone(key), bytes.Clone(val)})
 	w.mode = 1
@@ -236,7 +252,8 @@ func (w *Writer) Add(key, val []byte) error {
 // （4MB）即时落盘。组结束（group 变化或 Finish）时组内按完整键排序后进入落盘路径。
 // group 倒序、或键低于已进入攒集缓冲的最大键（组间倒挂在该条投入时即已注定）返回
 // error 且该条不进库。内存有界：攒集缓冲 + 当前组（组大小由数据决定）。与 Add
-// 不可混用。
+// 不可混用。Options.Schema 为空时 val 是原始值，writer 包成单 String 字段
+// record；非空时 val 必须已经是 record。
 //
 // 基因组数据的标准用法：group 传键的位置前缀（如 [chrom][pos]），同一位置
 // (ref, alt) 的乱序由库吸收，升序条件收窄为「本染色体内按位置有序」；输入已
@@ -267,6 +284,7 @@ func (w *Writer) AddSorted(group, key, val []byte) error {
 	if w.lastKey != nil && bytes.Compare(key, w.lastKey) < 0 {
 		return fmt.Errorf("immkv: AddSorted key %q below last emitted %q", key, w.lastKey)
 	}
+	val = w.prepareValue(val)
 	checkRecCaps(key, val)
 	w.grp = append(w.grp, kvRec{bytes.Clone(key), bytes.Clone(val)})
 	w.mode = 2
@@ -496,6 +514,22 @@ func (w *Writer) flushPacked() error {
 }
 
 // checkRecCaps 检查键值长度是否在格式上限内，超出直接 panic。
+// prepareValue 在空 schema 的库里把原始值包成单 String 字段的 record：
+// 8B bitmap（bit0=1）+ uvarint(len) + 原字节。非空 schema 的库认为调用方
+// 已经编码好 record，原样落盘。
+func (w *Writer) prepareValue(val []byte) []byte {
+	if !w.wrapRawValues {
+		return val
+	}
+	w.wrapBuf = w.wrapBuf[:0]
+	var bitmap [8]byte
+	binary.LittleEndian.PutUint64(bitmap[:], 1)
+	w.wrapBuf = append(w.wrapBuf, bitmap[:]...)
+	w.wrapBuf = binary.AppendUvarint(w.wrapBuf, uint64(len(val)))
+	w.wrapBuf = append(w.wrapBuf, val...)
+	return w.wrapBuf
+}
+
 func checkRecCaps(key, val []byte) {
 	if len(key) > maxKeyLen {
 		panic(fmt.Sprintf("immkv: key 长度 %d 超过 u16 上限 %d", len(key), maxKeyLen))
@@ -667,7 +701,7 @@ func (w *Writer) writeKeysHeader(indexOff uint64) error {
 func (w *Writer) writeValsHeader() error {
 	h := make([]byte, headerSize)
 	copy(h[0:8], valsMagic)
-	binary.LittleEndian.PutUint32(h[8:12], 1) // version
+	binary.LittleEndian.PutUint32(h[8:12], 3) // version
 	binary.LittleEndian.PutUint64(h[12:20], w.total)
 	binary.LittleEndian.PutUint32(h[20:24], w.dictLen)
 	binary.LittleEndian.PutUint64(h[24:32], w.dictOff)

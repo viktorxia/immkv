@@ -179,8 +179,8 @@ func openShard(base string, cache *lruCache) (*shard, error) {
 	if string(vh[0:8]) != valsMagic {
 		return fail(errors.New("immkv: bad vals magic: " + base))
 	}
-	if v := binary.LittleEndian.Uint32(vh[8:12]); v != 1 {
-		return fail(fmt.Errorf("immkv: vals version %d ≠ 1", v))
+	if v := binary.LittleEndian.Uint32(vh[8:12]); v != 3 {
+		return fail(fmt.Errorf("immkv: vals version %d ≠ 3", v))
 	}
 	if v := binary.LittleEndian.Uint64(vh[12:20]); v != s.count {
 		return fail(fmt.Errorf("immkv: vals count %d ≠ keys count %d", v, s.count))

@@ -43,8 +43,9 @@ type StreamDB struct {
 // 它不起作用（单磁头，引擎靠相邻合并转顺序读）。
 //
 // 库里有 base.col/manifest 时，顺序查按估算的 I/O 成本在记录序与列存之间
-// 选路；Options.Columns 只选字段（nil/空 = 全部列），不决定路径。没有
-// base.col 的旧库仍按记录序服务；此时给非空 Columns 会报错。
+// 选路；Options.Columns 只选字段（nil/空 = 全部列），不决定路径。直接由
+// Create 建、没有 base.col/manifest 的库仍按记录序服务；此时给非空 Columns
+// 会报错。
 func OpenStreaming(dir string, opts Options) (*StreamDB, error) {
 	if opts.Threads <= 0 {
 		opts.Threads = 1
@@ -75,7 +76,7 @@ func OpenStreaming(dir string, opts Options) (*StreamDB, error) {
 			return nil, errors.New("immkv: 各染色体的 base.col build id 不一致")
 		}
 		if len(d.chroms) > 0 && d.cols[d.chroms[0]] != nil &&
-			!sameColSchema(d.cols[d.chroms[0]].fields, cs.fields) {
+			!sameColSchema(d.cols[d.chroms[0]].schema, cs.schema) {
 			d.Close()
 			return nil, errors.New("immkv: 各染色体的 base.col schema 不一致")
 		}
@@ -92,7 +93,7 @@ func OpenStreaming(dir string, opts Options) (*StreamDB, error) {
 		seen := make(map[int]bool, len(opts.Columns))
 		sel := make([]int, 0, len(opts.Columns))
 		for _, c := range opts.Columns {
-			if c < 0 || c >= len(d.cols[d.chroms[0]].fields) {
+			if c < 0 || c >= len(d.cols[d.chroms[0]].schema) {
 				d.Close()
 				return nil, fmt.Errorf("immkv: Columns 列号 %d 越界", c)
 			}
@@ -245,13 +246,13 @@ func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 				break
 			}
 			if cs := d.cols[id]; cs != nil {
-				useCol, cerr := d.preferColumnar(cs, hits)
+				useCol, cerr := d.preferColumnar(cs, d.shards[id], hits)
 				if cerr != nil {
 					fail(cerr)
 					break
 				}
 				if useCol {
-					if cerr := cs.readColBatch(hits, selectedColumns(cs.fields, d.colSel), out, d.threads); cerr != nil {
+					if cerr := cs.readColBatch(hits, selectedColumns(cs.schema, d.colSel), out, d.threads); cerr != nil {
 						fail(cerr)
 						break
 					}
@@ -294,7 +295,7 @@ func (p ioProfile) costs() (randSec, seqBps float64) {
 
 // preferColumnar 估算记录序（命中帧随机读）与列存（命中 bin 的选中列顺序
 // 读）谁更省，返回是否走列存。hits 按记录号升序。
-func (d *StreamDB) preferColumnar(cs *colShard, hits []sHit) (bool, error) {
+func (d *StreamDB) preferColumnar(cs *colShard, s *shard, hits []sHit) (bool, error) {
 	if len(hits) == 0 {
 		return false, nil
 	}
@@ -308,11 +309,15 @@ func (d *StreamDB) preferColumnar(cs *colShard, hits []sHit) (bool, error) {
 	if d.forceCol {
 		return true, nil
 	}
-	sel := selectedColumns(cs.fields, d.colSel)
+	sel := selectedColumns(cs.schema, d.colSel)
 	colBytes, colRaw, err := cs.estimate(hits, sel)
 	if err != nil {
 		return false, err
 	}
+	// 记录序的实际读形状由 readExtents 的合并规则决定：稠密命中会并成大段
+	// 顺序读，只有稀疏命中才按帧计随机读。
+	extents := buildExtents(s, hits)
+	var seqBytes uint64
 	var frames int
 	var recBytes uint64
 	var lastOff uint64
@@ -329,22 +334,29 @@ func (d *StreamDB) preferColumnar(cs *colShard, hits []sHit) (bool, error) {
 		frames++
 		recBytes += uint64(h.frameLen)
 	}
+	for i := range extents {
+		last := extents[i].hits[len(extents[i].hits)-1]
+		seqBytes += last.valOff + uint64(last.frameLen) - extents[i].off
+	}
 	randSec, seqBps := d.profile.costs()
 	workers := float64(d.threads)
 	if workers < 1 {
 		workers = 1
 	}
-	// 实测口径：列流按小帧解码 + 装配，约 100MB/s/线程（不是单帧裸解的
-	// 1GB/s 量级）；用这个数才能让 NVMe 全字段正确选回记录序。
-	const decodePerThread = 1.0e8
-	decodeBps := decodePerThread * workers
-	// 记录序只需解命中帧；原文大小按文本列存压缩比 ~8 估。
-	recRaw := float64(recBytes) * 8
-	recSec := float64(frames)*randSec + float64(recBytes)/seqBps + recRaw/decodeBps
+	// 2026-11-12 chr22 实测标定（NVMe，4 线程，568 列）：
+	//   - 记录序整条染色体 11.1s，解压后 record 12.1GB，约 270MB/s/线程；
+	//   - 列存整条染色体 67.3s，payload 11.9GB，约 44MB/s/线程。
+	// 记录序按命中帧解压（帧内还可打包多条记录）；列存还含位图与装配。
+	const recordDecodePerThread = 2.5e8
+	const colDecodePerThread = 4.5e7
+	const typedRecCompressionRatio = 4.3
+	decodeBps := colDecodePerThread * workers
+	recRaw := float64(recBytes) * typedRecCompressionRatio
+	recSec := float64(len(extents))*randSec + float64(seqBytes)/seqBps + recRaw/(recordDecodePerThread*workers)
 	colSec := float64(colBytes)/seqBps + float64(colRaw)/decodeBps
 	if os.Getenv("IMMKV_DEBUG_PATH") != "" {
-		fmt.Fprintf(os.Stderr, "path: colBytes=%d colRaw=%d colSec=%.3f recFrames=%d recBytes=%d recSec=%.3f rot=%v\n",
-			colBytes, colRaw, colSec, frames, recBytes, recSec, d.profile.rotational)
+		fmt.Fprintf(os.Stderr, "path: pick=%v colBytes=%d colRaw=%d colSec=%.3f recExtents=%d recFrames=%d recBytes=%d recSec=%.3f rot=%v\n",
+			colSec < recSec, colBytes, colRaw, colSec, len(extents), frames, recBytes, recSec, d.profile.rotational)
 	}
 	return colSec < recSec, nil
 }

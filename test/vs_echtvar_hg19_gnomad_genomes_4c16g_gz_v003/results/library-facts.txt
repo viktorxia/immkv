@@ -1,0 +1,14 @@
+/home/tian/immkv_test_nvme/gnomad/immkv
+  manifests 22
+  records 251789307
+  keys_bytes 4312533441 vals_bytes 248261546086 col_bytes 108194223184 total_bytes 360768302711
+  fields [568] non_finite_floats 25
+  build_ids ['a6fa6f081196a359aec12e89ccdf8bcc']
+  schema_hashes ['1e91a99722c59d5e']
+/home/tian/immkv_test_nvme/test/17_fields/lib17
+  manifests 22
+  records 251789307
+  keys_bytes 4312533441 vals_bytes 8951472228 col_bytes 3733263400 total_bytes 16997269069
+  fields [17] non_finite_floats 0
+  build_ids ['7e9d2daf469b5ec1581da28cfc6b2894']
+  schema_hashes ['99944e3316871f58']

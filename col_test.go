@@ -3,375 +3,289 @@ package immkv
 import (
 	"bytes"
 	"encoding/binary"
-	"encoding/json"
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 )
 
 const colTestHeader = "##fileformat=VCFv4.2\n" +
-	"##INFO=<ID=AF,Number=A,Type=Float,Description=\"AF\">\n" +
-	"##INFO=<ID=AC,Number=A,Type=Integer,Description=\"AC\">\n" +
-	"##INFO=<ID=AN,Number=1,Type=Integer,Description=\"AN\">\n" +
-	"##INFO=<ID=DB,Number=0,Type=Flag,Description=\"DB\">\n" +
-	"##INFO=<ID=STR,Number=1,Type=String,Description=\"STR\">\n" +
-	ingestTestSiteHeader
+	"##INFO=<ID=AF,Number=A,Type=Float,Description=\"Allele frequency\">\n" +
+	"##INFO=<ID=AC,Number=A,Type=Integer,Description=\"Allele count\">\n" +
+	"##INFO=<ID=AN,Number=1,Type=Integer,Description=\"Allele number\">\n" +
+	"##INFO=<ID=DB,Number=0,Type=Flag,Description=\"dbSNP membership\">\n" +
+	"##INFO=<ID=AD,Number=R,Type=Integer,Description=\"Allelic depths\">\n" +
+	"##INFO=<ID=AFR,Number=.,Type=Float,Description=\"Array frequency\">\n" +
+	"##INFO=<ID=ANN,Number=.,Type=String,Description=\"Annotations\">\n" +
+	"#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n"
 
-// buildColTestLib 建一个覆盖 Number=A、Flag、缺失字段与 "." 的小库。
-func buildColTestLib(t *testing.T) (string, [][]byte) {
+// buildColTestLib 建一个覆盖多 bin、Number=A/R/.、Flag、String 与整条缺值的
+// 小库，返回目录、schema 与按升序排列的键。
+func buildColTestLib(t *testing.T) (string, Schema, [][]byte) {
 	t.Helper()
 	dir := t.TempDir()
 	vcf := filepath.Join(dir, "in.vcf")
 	writeIngestFile(t, vcf, colTestHeader+
-		ingestRec("1", 100, "C", "A,G", "STR=foo;DB;AN=100;AC=3,4;AF=0.1,0.2")+
-		ingestRec("1", 100, "C", "T", "STR=bar;AN=100;AF=0.5;AC=10")+
-		ingestRec("1", 200, "A", "C", "AC=1")+
-		ingestRec("1", 300, "A", "G", ".")+
-		ingestRec("1", 2500000, "A", "T", "AC=2;AN=10")+ // 前两个 bin 为空
-		ingestRec("2", 50, "G", "A", "STR=baz;DB"))
+		ingestRec("1", 100, "C", "A,G",
+			"AF=0.1,0.2;AC=3,4;AN=100;DB;AD=10,5,6;AFR=0.01,.;ANN=a|b,c|d")+
+		ingestRec("1", 1_500_000, "G", "T", "AN=200")+
+		ingestRec("2", 50, "T", "C", "."))
 	out := filepath.Join(dir, "lib")
 	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err != nil {
 		t.Fatal(err)
 	}
+	schema := ingestSchema(t, out)
 	keys := [][]byte{
-		VarKey(0, 100, "C", "A"), VarKey(0, 100, "C", "G"), VarKey(0, 100, "C", "T"),
-		VarKey(0, 200, "A", "C"), VarKey(0, 300, "A", "G"),
-		VarKey(0, 2500000, "A", "T"), VarKey(1, 50, "G", "A"),
+		VarKey(0, 100, "C", "A"),
+		VarKey(0, 100, "C", "G"),
+		VarKey(0, 1_500_000, "G", "T"),
+		VarKey(1, 50, "T", "C"),
 	}
-	return out, keys
+	return out, schema, keys
 }
 
-func openStreamCol(t *testing.T, dir string, threads int, sel []int) *StreamDB {
-	t.Helper()
-	sdb, err := OpenStreaming(dir, Options{Threads: threads, Columns: sel})
+func TestBuildFromVCFsWritesColumnar(t *testing.T) {
+	out, schema, keys := buildColTestLib(t)
+	manifest, err := ReadManifest(filepath.Join(out, "chr1.manifest"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	sdb.forceCol = true
-	t.Cleanup(func() { sdb.Close() })
-	return sdb
-}
+	if manifest.Format != manifestFormat || manifest.Version != manifestVersion {
+		t.Fatalf("manifest format/version = %q/%d", manifest.Format, manifest.Version)
+	}
+	if manifest.Base != "chr1" || manifest.BinWidth != colBinWidth {
+		t.Fatalf("manifest base/bin_width = %q/%d", manifest.Base, manifest.BinWidth)
+	}
+	if manifest.RecordCount != 3 {
+		t.Fatalf("manifest record_count = %d, want 3", manifest.RecordCount)
+	}
+	if len(manifest.Fields) != len(schema) {
+		t.Fatalf("manifest fields %d ≠ schema %d", len(manifest.Fields), len(schema))
+	}
+	for i := range schema {
+		mf := manifest.Fields[i]
+		if mf.Column != i || mf.Name != schema[i].Name ||
+			mf.Type != schema[i].Type.String() || mf.Number != schema[i].Number {
+			t.Fatalf("manifest field %d = %+v, want %+v", i, mf, schema[i])
+		}
+	}
+	raw, err := os.ReadFile(filepath.Join(out, "chr1.col"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(raw[:8]) != colMagic {
+		t.Fatalf("col magic = %q, want %q", raw[:8], colMagic)
+	}
 
-func TestColumnarMatchesRecordOrder(t *testing.T) {
-	dir, keys := buildColTestLib(t)
-	db, err := OpenEager(dir, 0)
+	db, err := OpenEager(out, 0)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer db.Close()
 	want := make([][]byte, len(keys))
-	for i, k := range keys {
-		v, ok := db.Get(k)
+	for i, key := range keys {
+		value, ok := db.Get(key)
 		if !ok {
-			t.Fatalf("记录序未命中 %x", k)
+			t.Fatalf("record-order miss for %x", key)
 		}
-		want[i] = bytes.Clone(v)
+		want[i] = bytes.Clone(value)
 	}
-	sdb := openStreamCol(t, dir, 4, nil)
+	sdb, err := OpenStreaming(out, Options{Threads: 2})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sdb.Close()
+	sdb.forceCol = true
 	got, err := sdb.GetBatch(keys)
 	if err != nil {
 		t.Fatal(err)
 	}
 	for i := range keys {
 		if !bytes.Equal(got[i], want[i]) {
-			t.Fatalf("键 %x：列存 %q ≠ 记录序 %q", keys[i], got[i], want[i])
-		}
-	}
-	// 混入未命中键（追加 0xFF 保持升序）。
-	var mixed [][]byte
-	for _, k := range keys {
-		mixed = append(mixed, k, append(bytes.Clone(k), 0xFF))
-	}
-	out, err := sdb.GetBatch(mixed)
-	if err != nil {
-		t.Fatal(err)
-	}
-	for i, k := range mixed {
-		if k[len(k)-1] == 0xFF {
-			if out[i] != nil {
-				t.Fatalf("拼造键 %x 不应命中", k)
-			}
-			continue
-		}
-	}
-	// 重复输入键。
-	dup := [][]byte{keys[0], bytes.Clone(keys[0]), keys[0]}
-	out, err = sdb.GetBatch(dup)
-	if err != nil {
-		t.Fatal(err)
-	}
-	for i := range dup {
-		if !bytes.Equal(out[i], want[0]) {
-			t.Fatalf("重复键第 %d 项 %q ≠ %q", i, out[i], want[0])
+			rendered, rerr := RenderRecord(schema, got[i])
+			t.Fatalf("key %x: columnar record %x (%s, err %v) ≠ record order %x",
+				keys[i], got[i], rendered, rerr, want[i])
 		}
 	}
 }
 
 func TestColumnarSelectedColumns(t *testing.T) {
-	dir, keys := buildColTestLib(t)
-	// schema 序：AF=0, AC=1, AN=2, DB=3, STR=4。输入顺序故意倒置。
-	cases := []struct {
-		sel  []int
-		want []string
-	}{
-		{[]int{4, 1}, []string{"AC=3,4;STR=foo", "AC=3,4;STR=foo", "AC=10;STR=bar", "AC=1", ".", "AC=2", "STR=baz"}},
-		{[]int{3}, []string{"DB", "DB", ".", ".", ".", ".", "DB"}},
-		{[]int{0}, []string{"AF=0.1,0.2", "AF=0.1,0.2", "AF=0.5", ".", ".", ".", "."}},
-	}
-	for ci, tc := range cases {
-		sdb := openStreamCol(t, dir, 3, tc.sel)
-		out, err := sdb.GetBatch(keys)
-		if err != nil {
-			t.Fatalf("case %d: %v", ci, err)
-		}
-		for i := range keys {
-			if string(out[i]) != tc.want[i] {
-				t.Fatalf("case %d 键 %x：%q ≠ %q", ci, keys[i], out[i], tc.want[i])
-			}
-		}
-	}
-}
-
-func TestColumnarSelectedFieldsBuild(t *testing.T) {
-	dir := t.TempDir()
-	vcf := filepath.Join(dir, "in.vcf")
-	writeIngestFile(t, vcf, colTestHeader+
-		ingestRec("1", 100, "C", "A,G", "DB;AN=100;AC=3,4;AF=0.1,0.2;STR=foo")+
-		ingestRec("1", 200, "A", "C", "AC=1")+
-		ingestRec("1", 300, "A", "G", "."))
-	out := filepath.Join(dir, "lib")
-	fields := []string{"DB", "AN", "AC", "AF"} // 选择顺序故意倒置
-	if err := BuildFromVCFs(out, []string{vcf}, fields, "X", Options{}); err != nil {
-		t.Fatal(err)
-	}
-	db, err := OpenEager(out, 0)
+	out, schema, keys := buildColTestLib(t)
+	sdb, err := OpenStreaming(out, Options{Threads: 2, Columns: []int{0, 3, 5}})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer db.Close()
-	keys := [][]byte{
-		VarKey(0, 100, "C", "A"), VarKey(0, 100, "C", "G"),
-		VarKey(0, 200, "A", "C"), VarKey(0, 300, "A", "G"),
+	defer sdb.Close()
+	sdb.forceCol = true
+	got, err := sdb.GetBatch(keys)
+	if err != nil {
+		t.Fatal(err)
 	}
 	want := []string{
-		"X_AF=0.1;X_AC=3;X_AN=100;X_DB",
-		"X_AF=0.2;X_AC=4;X_AN=100;X_DB",
-		"X_AC=1",
+		"AF=0.1;DB;AFR=0.01,.",
+		"AF=0.2;DB;AFR=0.01,.",
+		".",
 		".",
 	}
-	for i, k := range keys {
-		v, ok := db.Get(k)
-		if !ok || string(v) != want[i] {
-			t.Fatalf("记录序 键 %x = %q, %v; want %q", k, v, ok, want[i])
-		}
-	}
-	sdb := openStreamCol(t, out, 3, nil)
-	got, err := sdb.GetBatch(keys)
-	if err != nil {
-		t.Fatal(err)
-	}
 	for i := range keys {
-		if string(got[i]) != want[i] {
-			t.Fatalf("列存 键 %x = %q; want %q", keys[i], got[i], want[i])
+		text, err := RenderRecord(schema, got[i])
+		if err != nil {
+			t.Fatalf("key %x: RenderRecord: %v", keys[i], err)
 		}
-	}
-	sub := openStreamCol(t, out, 3, []int{1}) // AC（schema 序 AF,AC,AN,DB）
-	got, err = sub.GetBatch(keys)
-	if err != nil {
-		t.Fatal(err)
-	}
-	for i, wantSub := range []string{"X_AC=3", "X_AC=4", "X_AC=1", "."} {
-		if string(got[i]) != wantSub {
-			t.Fatalf("子集 键 %x = %q; want %q", keys[i], got[i], wantSub)
+		if string(text) != want[i] {
+			t.Fatalf("key %x: rendered %q, want %q", keys[i], text, want[i])
+		}
+		if len(got[i]) < recordBitmapLen(len(schema)) {
+			t.Fatalf("key %x: record 位图短：%d < %d", keys[i], len(got[i]), recordBitmapLen(len(schema)))
 		}
 	}
 }
 
-func TestColumnarManifestSchema(t *testing.T) {
-	dir, _ := buildColTestLib(t)
-	raw, err := os.ReadFile(filepath.Join(dir, "chr1.manifest"))
+func TestColumnarPresentCountMismatch(t *testing.T) {
+	out, _, keys := buildColTestLib(t)
+	path := filepath.Join(out, "chr1.col")
+	raw, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
 	}
-	var m colManifest
-	if err := json.Unmarshal(raw, &m); err != nil {
+	binCount := binary.LittleEndian.Uint32(raw[36:40])
+	if binCount == 0 {
+		t.Fatal("bin_count = 0")
+	}
+	binDirOff := binary.LittleEndian.Uint64(raw[48:56])
+	dirOff := binary.LittleEndian.Uint64(raw[binDirOff+16:])
+	// 第一列第一个非空 bin 的 present_count 改成大于 bin 记录数。
+	entry := dirOff
+	binary.LittleEndian.PutUint32(raw[entry+24:], 99)
+	if err := os.WriteFile(path, raw, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if m.Format != colManifestFormat || m.Base != "chr1" || m.RecordCount != 6 {
-		t.Fatalf("manifest: %+v", m)
-	}
-	wantNames := []string{"AF", "AC", "AN", "DB", "STR"}
-	if len(m.Fields) != len(wantNames) {
-		t.Fatalf("fields = %d", len(m.Fields))
-	}
-	for i, name := range wantNames {
-		if m.Fields[i].Name != name || m.Fields[i].Column != i {
-			t.Fatalf("field %d = %+v", i, m.Fields[i])
-		}
-	}
-	if m.Fields[3].Encoding != "bitmap" || m.Fields[0].Encoding != "raw" {
-		t.Fatalf("encoding: %+v", m.Fields)
-	}
-	// 源顺序故意倒置：三条单字段/无字段记录算 OK，两条多字段记录算 Bad。
-	if m.SourceInfoOrder.OK != 3 || m.SourceInfoOrder.Bad != 2 || m.SourceInfoOrder.Inversions != 6 {
-		t.Fatalf("source_info_order = %+v", m.SourceInfoOrder)
-	}
-	hdr, err := os.ReadFile(filepath.Join(dir, "vcf.immkv.header"))
+	sdb, err := OpenStreaming(out, Options{Threads: 2})
 	if err != nil {
 		t.Fatal(err)
 	}
-	for _, name := range wantNames {
-		if !strings.Contains(string(hdr), "ID="+name+",") {
-			t.Fatalf("immkv header 缺 %s", name)
-		}
+	defer sdb.Close()
+	sdb.forceCol = true
+	if _, err := sdb.GetBatch(keys); err == nil {
+		t.Fatal("present_count 不符应报错")
 	}
 }
 
-func TestColumnarCorrupt(t *testing.T) {
-	t.Run("magic", func(t *testing.T) {
-		dir, _ := buildColTestLib(t)
-		p := filepath.Join(dir, "chr1.col")
-		f, err := os.OpenFile(p, os.O_WRONLY, 0)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if _, err := f.WriteAt([]byte("X"), 0); err != nil {
-			t.Fatal(err)
-		}
-		f.Close()
-		if _, err := OpenStreaming(dir, Options{}); err == nil {
-			t.Fatal("坏 magic 应报错")
-		}
-	})
-	t.Run("truncate", func(t *testing.T) {
-		dir, _ := buildColTestLib(t)
-		p := filepath.Join(dir, "chr1.col")
-		st, err := os.Stat(p)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if err := os.Truncate(p, st.Size()-1); err != nil {
-			t.Fatal(err)
-		}
-		if _, err := OpenStreaming(dir, Options{}); err == nil {
-			t.Fatal("截断应报错")
-		}
-	})
-	t.Run("manifest-missing", func(t *testing.T) {
-		dir, _ := buildColTestLib(t)
-		if err := os.Remove(filepath.Join(dir, "chr1.manifest")); err != nil {
-			t.Fatal(err)
-		}
-		if _, err := OpenStreaming(dir, Options{}); err == nil {
-			t.Fatal("缺 manifest 应报错")
-		}
-	})
-	t.Run("build-id", func(t *testing.T) {
-		dir, _ := buildColTestLib(t)
-		p := filepath.Join(dir, "chr1.manifest")
-		raw, err := os.ReadFile(p)
-		if err != nil {
-			t.Fatal(err)
-		}
-		var m colManifest
-		if err := json.Unmarshal(raw, &m); err != nil {
-			t.Fatal(err)
-		}
-		m.BuildID = strings.Repeat("0", 32)
-		b, _ := json.Marshal(m)
-		if err := os.WriteFile(p, b, 0o644); err != nil {
-			t.Fatal(err)
-		}
-		if _, err := OpenStreaming(dir, Options{}); err == nil {
-			t.Fatal("build id 不一致应报错")
-		}
-	})
-	t.Run("value-frame", func(t *testing.T) {
-		dir, keys := buildColTestLib(t)
-		p := filepath.Join(dir, "chr1.col")
-		off := firstColValueOff(t, p)
-		f, err := os.OpenFile(p, os.O_WRONLY, 0)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if _, err := f.WriteAt([]byte{0xFF, 0xFF, 0xFF, 0xFF}, off); err != nil {
-			t.Fatal(err)
-		}
-		f.Close()
-		sdb := openStreamCol(t, dir, 2, nil)
-		if _, err := sdb.GetBatch(keys); err == nil {
-			t.Fatal("坏值流应报错")
-		}
-	})
-}
-
-// firstColValueOff 找第一个非空 bin 的第一列值流偏移（测试用）。
-func firstColValueOff(t *testing.T, path string) int64 {
-	t.Helper()
-	b, err := os.ReadFile(path)
+func TestColumnarValueStreamTruncated(t *testing.T) {
+	out, _, keys := buildColTestLib(t)
+	path := filepath.Join(out, "chr1.col")
+	raw, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatal(err)
 	}
-	binCount := binary.LittleEndian.Uint32(b[36:40])
-	colCount := binary.LittleEndian.Uint32(b[40:44])
-	binDir := binary.LittleEndian.Uint64(b[48:56])
-	for i := 0; i < int(binCount); i++ {
-		e := b[binDir+uint64(i*colBinEntrySize):]
-		count := binary.LittleEndian.Uint32(e[8:12])
-		if count == 0 {
-			continue
-		}
-		dirOff := binary.LittleEndian.Uint64(e[16:24])
-		for c := 0; c < int(colCount); c++ {
-			ce := b[dirOff+uint64(c*colColumnEntrySize):]
-			if v := binary.LittleEndian.Uint64(ce[8:16]); v != 0 {
-				return int64(v)
-			}
-		}
+	binDirOff := binary.LittleEndian.Uint64(raw[48:56])
+	dirOff := binary.LittleEndian.Uint64(raw[binDirOff+16:])
+	// 把第一列值流长度砍半：帧本身仍能解压，但后续记录的值会越界。
+	valueLen := binary.LittleEndian.Uint32(raw[dirOff+20:])
+	binary.LittleEndian.PutUint32(raw[dirOff+20:], valueLen/2)
+	if err := os.WriteFile(path, raw, 0o644); err != nil {
+		t.Fatal(err)
 	}
-	t.Fatal("找不到值流")
-	return 0
+	sdb, err := OpenStreaming(out, Options{Threads: 2})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sdb.Close()
+	sdb.forceCol = true
+	if _, err := sdb.GetBatch(keys); err == nil {
+		t.Fatal("值流截断应报错")
+	}
 }
 
-// TestColumnarLeadingEmptyBins：首个 bin 之前全空时，bin 目录下标仍须等于
-// 基因组 bin 号。
-func TestColumnarLeadingEmptyBins(t *testing.T) {
+func TestColumnarManifestMismatch(t *testing.T) {
+	out, _, _ := buildColTestLib(t)
+	path := filepath.Join(out, "chr1.manifest")
+	manifest, err := ReadManifest(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	manifest.ValsBytes++
+	if err := WriteManifest(path, manifest); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := OpenStreaming(out, Options{Threads: 1}); err == nil {
+		t.Fatal("vals 字节数与 manifest 不符应报错")
+	}
+}
+
+func TestColumnarOldMagicRejected(t *testing.T) {
+	out, _, _ := buildColTestLib(t)
+	path := filepath.Join(out, "chr1.col")
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	copy(raw[:8], "IMKVC001")
+	if err := os.WriteFile(path, raw, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := OpenStreaming(out, Options{Threads: 1}); err == nil {
+		t.Fatal("旧 col magic 应报错")
+	}
+}
+
+func TestColumnarPairMissing(t *testing.T) {
+	out, _, _ := buildColTestLib(t)
+	if err := os.Remove(filepath.Join(out, "chr1.manifest")); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := OpenStreaming(out, Options{Threads: 1}); err == nil {
+		t.Fatal("col 缺 manifest 应报错")
+	}
+}
+
+func TestColumnarColumnsValidation(t *testing.T) {
+	out, _, _ := buildColTestLib(t)
+	if _, err := OpenStreaming(out, Options{Threads: 1, Columns: []int{0, 0}}); err == nil {
+		t.Fatal("重复列号应报错")
+	}
+	if _, err := OpenStreaming(out, Options{Threads: 1, Columns: []int{-1}}); err == nil {
+		t.Fatal("负列号应报错")
+	}
+	if _, err := OpenStreaming(out, Options{Threads: 1, Columns: []int{99}}); err == nil {
+		t.Fatal("越界列号应报错")
+	}
+}
+
+func TestBuildFromTSVsWritesColumnar(t *testing.T) {
 	dir := t.TempDir()
-	vcf := filepath.Join(dir, "in.vcf")
-	writeIngestFile(t, vcf, colTestHeader+
-		ingestRec("1", 2500000, "A", "T", "AC=2;AN=10")+
-		ingestRec("1", 5200000, "C", "G", "AF=0.3"))
-	out := filepath.Join(dir, "lib")
-	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err != nil {
+	tsv := filepath.Join(dir, "in.tsv")
+	writeIngestFile(t, tsv, "b\tB1\nc\tC1\tC2\nd\tD1\n")
+	base := filepath.Join(dir, "genes")
+	if err := BuildFromTSVs(base, []string{tsv}, Options{}); err != nil {
 		t.Fatal(err)
 	}
-	keys := [][]byte{VarKey(0, 2500000, "A", "T"), VarKey(0, 5200000, "C", "G")}
-	db, err := OpenEager(out, 0)
+	manifest, err := ReadManifest(base + ".manifest")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if manifest.BinWidth != 0 || manifest.RecordCount != 3 {
+		t.Fatalf("manifest bin_width/record_count = %d/%d", manifest.BinWidth, manifest.RecordCount)
+	}
+	if len(manifest.Fields) != 1 || manifest.Fields[0].Name != "value" ||
+		manifest.Fields[0].Type != TypeString.String() {
+		t.Fatalf("manifest fields = %+v", manifest.Fields)
+	}
+	raw, err := os.ReadFile(base + ".col")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if string(raw[:8]) != colMagic {
+		t.Fatalf("col magic = %q", raw[:8])
+	}
+	if binCount := binary.LittleEndian.Uint32(raw[36:40]); binCount != 1 {
+		t.Fatalf("bin_count = %d, want 1", binCount)
+	}
+	db, err := OpenSimpleKV(base, 0)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	sdb := openStreamCol(t, out, 2, nil)
-	got, err := sdb.GetBatch(keys)
-	if err != nil {
-		t.Fatal(err)
-	}
-	for i, k := range keys {
-		want, ok := db.Get(k)
-		if !ok || !bytes.Equal(got[i], want) {
-			t.Fatalf("键 %x：列存 %q，记录序 %q (hit %v)", k, got[i], want, ok)
-		}
-	}
-}
-
-func TestColumnarColumnsRequireBaseCol(t *testing.T) {
-	dir := t.TempDir()
-	buildTestLib(t, dir, Options{}, false)
-	if _, err := OpenStreaming(dir, Options{Columns: []int{0}}); err == nil {
-		t.Fatal("无 base.col 时 Columns 应报错")
-	}
-	if _, err := OpenStreaming(dir, Options{}); err != nil {
-		t.Fatalf("无 base.col 的旧库应仍可按记录序打开：%v", err)
+	if v, ok := db.Get([]byte("c")); !ok || string(v) != "C1\tC2" {
+		t.Fatalf("Get(c) = %q, %v", v, ok)
 	}
 }

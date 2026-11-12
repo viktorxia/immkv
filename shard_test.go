@@ -95,6 +95,9 @@ func genLib(n int, seed int64, c uint8) []kvRec {
 // 流式，false 用 Add 乱序。返回键→全部值（含重复）与全部键的升序列表（含重复）。
 func buildTestLib(t *testing.T, dir string, opts Options, sortedMode bool) (map[string][][]byte, [][]byte) {
 	t.Helper()
+	if opts.Schema == nil {
+		opts.Schema = testRecordSchema
+	}
 	libA := genLib(9000, 11, 0)
 	libB := genLib(1500, 22, 22)
 	put := func(c uint8, lib []kvRec) {
@@ -425,7 +428,7 @@ func TestReopenAfterReplace(t *testing.T) {
 	dir := t.TempDir()
 	build := func(tag string) {
 		t.Helper()
-		w, err := Create(filepath.Join(dir, "chr1"), Options{})
+		w, err := Create(filepath.Join(dir, "chr1"), Options{Schema: testRecordSchema})
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -533,14 +536,14 @@ func TestConcurrentMixedReads(t *testing.T) {
 // TestEmptyChromLib：单染色体空库（count=0）与其他染色体共存。
 func TestEmptyChromLib(t *testing.T) {
 	dir := t.TempDir()
-	w, err := Create(filepath.Join(dir, "chr1"), Options{})
+	w, err := Create(filepath.Join(dir, "chr1"), Options{Schema: testRecordSchema})
 	if err != nil {
 		t.Fatal(err)
 	}
 	if err := w.Finish(); err != nil {
 		t.Fatal(err)
 	}
-	w2, err := Create(filepath.Join(dir, "chrX"), Options{})
+	w2, err := Create(filepath.Join(dir, "chrX"), Options{Schema: testRecordSchema})
 	if err != nil {
 		t.Fatal(err)
 	}

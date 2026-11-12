@@ -1,7 +1,9 @@
 package immkv
 
 import (
+	"bufio"
 	"bytes"
+	"encoding/binary"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -45,13 +47,42 @@ func writeIngestBGZF(t *testing.T, path, content string) {
 	writeIngestFile(t, path, buf.String())
 }
 
-func mustIngestGet(t *testing.T, db *DB, key []byte) string {
+func mustIngestGet(t *testing.T, db *DB, key []byte, schema Schema) string {
 	t.Helper()
-	v, ok := db.Get(key)
+	value, ok := db.Get(key)
 	if !ok {
 		t.Fatalf("key %x: not found", key)
 	}
-	return string(v)
+	text, err := RenderRecord(schema, value)
+	if err != nil {
+		t.Fatalf("key %x: RenderRecord: %v", key, err)
+	}
+	return string(text)
+}
+
+// ingestSchema 从 vcf.immkv.header 还原 v003 schema，模拟调用方按 manifest
+// 取 schema 的路径。
+func ingestSchema(t *testing.T, dir string) Schema {
+	t.Helper()
+	file, err := os.Open(filepath.Join(dir, vcfImmkvHeaderName))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer file.Close()
+	header, _, err := readVCFHeader(bufio.NewReader(file), false)
+	if err != nil {
+		t.Fatal(err)
+	}
+	schema := make(Schema, 0, len(header.infoOrder))
+	for _, id := range header.infoOrder {
+		def := header.info[id]
+		fieldType, ok := parseFieldType(def.typ)
+		if !ok {
+			t.Fatalf("INFO field %q has unsupported type %q", id, def.typ)
+		}
+		schema = append(schema, Field{Name: id, Type: fieldType, Number: def.number})
+	}
+	return schema
 }
 
 func mustIngestMiss(t *testing.T, db *DB, key []byte) {
@@ -137,16 +168,17 @@ func TestBuildFromVCFsAllFieldsSorted(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
+	schema := ingestSchema(t, out)
 	for _, tc := range []struct {
 		key  []byte
 		want string
 	}{
-		{VarKey(0, 100, "C", "A"), "AF=0.1,0.2;AC=3,4;AN=100;DB"},
-		{VarKey(0, 100, "C", "G"), "AF=0.1,0.2;AC=3,4;AN=100;DB"},
+		{VarKey(0, 100, "C", "A"), "AF=0.1;AC=3;AN=100;DB"},
+		{VarKey(0, 100, "C", "G"), "AF=0.2;AC=4;AN=100;DB"},
 		{VarKey(0, 100, "C", "T"), "AF=0.5;AC=10;AN=100"},
 		{VarKey(1, 50, "G", "A"), "AF=0.3;AC=7;AN=100"},
 	} {
-		if got := mustIngestGet(t, db, tc.key); got != tc.want {
+		if got := mustIngestGet(t, db, tc.key, schema); got != tc.want {
 			t.Fatalf("Get(%x) = %q; want %q", tc.key, got, tc.want)
 		}
 	}
@@ -193,6 +225,7 @@ func TestBuildFromVCFsSelectedFields(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
+	schema := ingestSchema(t, out)
 	for _, tc := range []struct {
 		key  []byte
 		want string
@@ -204,7 +237,7 @@ func TestBuildFromVCFsSelectedFields(t *testing.T) {
 		{VarKey(0, 400, "C", "A"), "."},
 		{VarKey(1, 50, "G", "A"), "IMMKV_AF=0.3;IMMKV_AC=7;IMMKV_AN=100"},
 	} {
-		if got := mustIngestGet(t, db, tc.key); got != tc.want {
+		if got := mustIngestGet(t, db, tc.key, schema); got != tc.want {
 			t.Fatalf("Get(%x) = %q; want %q", tc.key, got, tc.want)
 		}
 	}
@@ -244,10 +277,11 @@ func TestBuildFromVCFsAllFieldsPrefix(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	if got := mustIngestGet(t, db, VarKey(0, 10, "A", "C")); got != "IMMKV_AF=0.1,0.2;IMMKV_AN=100;IMMKV_DB" {
+	schema := ingestSchema(t, out)
+	if got := mustIngestGet(t, db, VarKey(0, 10, "A", "C"), schema); got != "IMMKV_AF=0.1;IMMKV_AN=100;IMMKV_DB" {
 		t.Fatalf("Get(A>C) = %q", got)
 	}
-	if got := mustIngestGet(t, db, VarKey(0, 20, "A", "G")); got != "." {
+	if got := mustIngestGet(t, db, VarKey(0, 20, "A", "G"), schema); got != "." {
 		t.Fatalf("Get(A>G) = %q; want %q", got, ".")
 	}
 }
@@ -267,10 +301,11 @@ func TestBuildFromVCFsMultiFile(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	if got := mustIngestGet(t, db, VarKey(0, 100, "C", "A")); got != "IMMKV_AF=0.1" {
+	schema := ingestSchema(t, out)
+	if got := mustIngestGet(t, db, VarKey(0, 100, "C", "A"), schema); got != "IMMKV_AF=0.1" {
 		t.Fatalf("chr1 value = %q", got)
 	}
-	if got := mustIngestGet(t, db, VarKey(1, 50, "G", "A")); got != "IMMKV_AF=0.2" {
+	if got := mustIngestGet(t, db, VarKey(1, 50, "G", "A"), schema); got != "IMMKV_AF=0.2" {
 		t.Fatalf("chr2 value = %q", got)
 	}
 }
@@ -323,6 +358,115 @@ func TestBuildFromVCFsMultiFileErrors(t *testing.T) {
 	}
 }
 
+func TestBuildFromVCFsTypedArrays(t *testing.T) {
+	dir := t.TempDir()
+	header := "##fileformat=VCFv4.2\n" +
+		"##INFO=<ID=AD,Number=R,Type=Integer,Description=\"AD\">\n" +
+		"##INFO=<ID=GL,Number=G,Type=Float,Description=\"GL\">\n" +
+		"##INFO=<ID=XX,Number=.,Type=Integer,Description=\"XX\">\n" +
+		"##INFO=<ID=STR,Number=.,Type=String,Description=\"STR\">\n" +
+		ingestTestSiteHeader
+	vcf := filepath.Join(dir, "in.vcf")
+	writeIngestFile(t, vcf, header+
+		ingestRec("1", 100, "C", "A", "AD=1,.,3;GL=0.5,.;XX=1,2;STR=a,b"))
+	out := filepath.Join(dir, "lib")
+	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err != nil {
+		t.Fatal(err)
+	}
+	db, err := OpenEager(out, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	raw, ok := db.Get(VarKey(0, 100, "C", "A"))
+	if !ok {
+		t.Fatal("typed array record missing")
+	}
+	schema := ingestSchema(t, out)
+	record, err := NewRecord(schema, raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	values := map[string]Value{}
+	for field, value := range record.Values() {
+		values[field.Name] = value
+	}
+	ad := values["AD"]
+	if ad.Type != TypeInteger || len(ad.Elems) != 3 || ad.Elems[0].Int != 1 || ad.Elems[1].Type != 0 || ad.Elems[2].Int != 3 {
+		t.Fatalf("AD = %+v", ad)
+	}
+	gl := values["GL"]
+	if gl.Type != TypeFloat || len(gl.Elems) != 2 || gl.Elems[0].Float != 0.5 || gl.Elems[1].Type != 0 {
+		t.Fatalf("GL = %+v", gl)
+	}
+	xx := values["XX"]
+	if xx.Type != TypeInteger || len(xx.Elems) != 2 || xx.Elems[0].Int != 1 || xx.Elems[1].Int != 2 {
+		t.Fatalf("XX = %+v", xx)
+	}
+	if got := string(record.Bytes("STR")); got != "a,b" {
+		t.Fatalf("STR = %q", got)
+	}
+	text, err := RenderRecord(schema, raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := string(text); got != "AD=1,.,3;GL=0.5,.;XX=1,2;STR=a,b" {
+		t.Fatalf("RenderRecord = %q", got)
+	}
+}
+
+func TestBuildFromVCFsTypedMissingPerALT(t *testing.T) {
+	dir := t.TempDir()
+	header := "##fileformat=VCFv4.2\n" +
+		"##INFO=<ID=AF,Number=A,Type=Float,Description=\"AF\">\n" +
+		"##INFO=<ID=AC,Number=A,Type=Integer,Description=\"AC\">\n" +
+		ingestTestSiteHeader
+	vcf := filepath.Join(dir, "in.vcf")
+	writeIngestFile(t, vcf, header+
+		ingestRec("1", 100, "C", "A,G", "AF=.,0.2;AC=1,2"))
+	out := filepath.Join(dir, "lib")
+	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err != nil {
+		t.Fatal(err)
+	}
+	db, err := OpenEager(out, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	schema := ingestSchema(t, out)
+	for _, testCase := range []struct {
+		key      []byte
+		wantAF   bool
+		wantAC   int64
+		wantText string
+	}{
+		{VarKey(0, 100, "C", "A"), false, 1, "AC=1"},
+		{VarKey(0, 100, "C", "G"), true, 2, "AF=0.2;AC=2"},
+	} {
+		raw, ok := db.Get(testCase.key)
+		if !ok {
+			t.Fatalf("key %x missing", testCase.key)
+		}
+		record, err := NewRecord(schema, raw)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := record.HasValue("AF"); got != testCase.wantAF {
+			t.Fatalf("key %x AF presence = %v", testCase.key, got)
+		}
+		if got := record.Int("AC"); got != testCase.wantAC {
+			t.Fatalf("key %x AC = %d", testCase.key, got)
+		}
+		text, err := RenderRecord(schema, raw)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got := string(text); got != testCase.wantText {
+			t.Fatalf("key %x render = %q", testCase.key, got)
+		}
+	}
+}
+
 func TestBuildFromVCFsErrors(t *testing.T) {
 	dir := t.TempDir()
 	okRec := ingestRec("1", 100, "C", "A", "AF=0.1")
@@ -354,6 +498,9 @@ func TestBuildFromVCFsErrors(t *testing.T) {
 		{"record-empty-name", ingestRec("1", 100, "C", "A", "=1"), nil, "", "empty INFO field name"},
 		{"flag-value", ingestRec("1", 100, "C", "A", "DB=1"), nil, "", "Flag INFO field"},
 		{"bare-nonflag", ingestRec("1", 100, "C", "A", "AF"), nil, "", "non-Flag INFO field"},
+		{"bad-float", ingestRec("1", 100, "C", "A", "AF=abc"), nil, "", `field "AF"`},
+		{"bad-int", ingestRec("1", 100, "C", "A", "AN=abc"), nil, "", `field "AN"`},
+		{"int-overflow", ingestRec("1", 100, "C", "A", "AN=99999999999999999999"), nil, "", `field "AN"`},
 		{"bad-prefix", okRec, nil, "A=B", "invalid prefix"},
 		{"no-records", "", nil, "", "no buildable records"},
 	}
@@ -384,6 +531,49 @@ func TestBuildFromVCFsErrors(t *testing.T) {
 	}
 }
 
+func TestBuildFromVCFsNonFiniteFloatsAreMissing(t *testing.T) {
+	dir := t.TempDir()
+	header := "##fileformat=VCFv4.2\n" +
+		"##INFO=<ID=AF,Number=A,Type=Float,Description=\"AF\">\n" +
+		"##INFO=<ID=AN,Number=1,Type=Integer,Description=\"AN\">\n" +
+		"##INFO=<ID=AFR,Number=.,Type=Float,Description=\"array\">\n" +
+		ingestTestSiteHeader
+	body := ingestRec("1", 100, "C", "A", "AF=nan;AN=100") +
+		ingestRec("1", 200, "C", "G", "AF=1.5;AN=100;AFR=0.1,nan,-inf,0.2") +
+		ingestRec("1", 300, "C", "T", "AF=Inf;AN=100;AFR=1")
+	vcf := filepath.Join(dir, "in.vcf")
+	writeIngestFile(t, vcf, header+body)
+	out := filepath.Join(dir, "lib")
+	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err != nil {
+		t.Fatal(err)
+	}
+	db, err := OpenEager(out, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	schema := ingestSchema(t, out)
+	for _, tc := range []struct {
+		key  []byte
+		want string
+	}{
+		{VarKey(0, 100, "C", "A"), "AN=100"},
+		{VarKey(0, 200, "C", "G"), "AF=1.5;AN=100;AFR=0.1,.,.,0.2"},
+		{VarKey(0, 300, "C", "T"), "AN=100;AFR=1"},
+	} {
+		if got := mustIngestGet(t, db, tc.key, schema); got != tc.want {
+			t.Fatalf("key %x: rendered %q, want %q", tc.key, got, tc.want)
+		}
+	}
+	manifest, err := ReadManifest(filepath.Join(out, "chr1.manifest"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if manifest.NonFiniteFloats != 4 {
+		t.Fatalf("non_finite_floats = %d, want 4", manifest.NonFiniteFloats)
+	}
+}
+
 func TestBuildFromVCFsBGZF(t *testing.T) {
 	dir := t.TempDir()
 	vcf := filepath.Join(dir, "in.vcf.gz")
@@ -397,7 +587,8 @@ func TestBuildFromVCFsBGZF(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	if got := mustIngestGet(t, db, VarKey(0, 10, "A", "C")); got != "IMMKV_AF=0.1" {
+	schema := ingestSchema(t, out)
+	if got := mustIngestGet(t, db, VarKey(0, 10, "A", "C"), schema); got != "IMMKV_AF=0.1" {
 		t.Fatalf("Get = %q", got)
 	}
 	raw, err := os.ReadFile(filepath.Join(out, "vcf.raw.header"))
@@ -406,6 +597,74 @@ func TestBuildFromVCFsBGZF(t *testing.T) {
 	}
 	if string(raw) != ingestTestHeader {
 		t.Fatalf("raw header mismatch:\n%s", raw)
+	}
+}
+
+func TestBuildFromVCFsTypedRecord(t *testing.T) {
+	dir := t.TempDir()
+	header := "##fileformat=VCFv4.2\n" +
+		"##INFO=<ID=AF,Number=A,Type=Float,Description=\"AF\">\n" +
+		"##INFO=<ID=AC,Number=A,Type=Integer,Description=\"AC\">\n" +
+		"##INFO=<ID=AN,Number=1,Type=Integer,Description=\"AN\">\n" +
+		"##INFO=<ID=DB,Number=0,Type=Flag,Description=\"DB\">\n" +
+		"##INFO=<ID=STR,Number=1,Type=String,Description=\"STR\">\n" +
+		ingestTestSiteHeader
+	vcf := filepath.Join(dir, "in.vcf")
+	writeIngestFile(t, vcf, header+
+		ingestRec("1", 100, "C", "A", "AF=0.25;AC=3;AN=100;DB;STR=foo"))
+	out := filepath.Join(dir, "lib")
+	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err != nil {
+		t.Fatal(err)
+	}
+	db, err := OpenEager(out, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+
+	raw, ok := db.Get(VarKey(0, 100, "C", "A"))
+	if !ok {
+		t.Fatal("typed record missing")
+	}
+	schema := ingestSchema(t, out)
+	record, err := NewRecord(schema, raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !record.HasValue("AF") || record.Float("AF") != 0.25 {
+		t.Fatalf("AF = %v", record.Float("AF"))
+	}
+	if record.Int("AC") != 3 || record.Int("AN") != 100 {
+		t.Fatalf("AC/AN = %d/%d", record.Int("AC"), record.Int("AN"))
+	}
+	if !record.HasValue("DB") {
+		t.Fatal("DB should be present")
+	}
+	if got := string(record.Bytes("STR")); got != "foo" {
+		t.Fatalf("STR = %q", got)
+	}
+	text, err := RenderRecord(schema, raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := string(text); got != "AF=0.25;AC=3;AN=100;DB;STR=foo" {
+		t.Fatalf("RenderRecord = %q", got)
+	}
+
+	valsFile, err := os.Open(filepath.Join(out, "chr1.vals"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer valsFile.Close()
+	var headerBytes [12]byte
+	if _, err := valsFile.ReadAt(headerBytes[:], 0); err != nil {
+		t.Fatal(err)
+	}
+	if got := string(headerBytes[:8]); got != valsMagic {
+		t.Fatalf("vals magic = %q, want %q", got, valsMagic)
+	}
+	if version := binary.LittleEndian.Uint32(headerBytes[8:12]); version != 3 {
+		t.Fatalf("vals version = %d, want 3", version)
 	}
 }
 
@@ -427,7 +686,8 @@ func TestBuildFromVCFsSampleColumns(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	if got := mustIngestGet(t, db, VarKey(0, 10, "A", "C")); got != "AF=0.1;AN=100" {
+	schema := ingestSchema(t, out)
+	if got := mustIngestGet(t, db, VarKey(0, 10, "A", "C"), schema); got != "AF=0.1;AN=100" {
 		t.Fatalf("Get = %q; sample columns must not enter the value", got)
 	}
 }

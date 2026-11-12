@@ -27,14 +27,20 @@
 KV 句柄。所有句柄只读，可同时打开：
 
 ```go
-// 构建：AddSorted 流式投入（组升序），Finish 原子落盘
-w, _ := immkv.Create(cacheDir+"/chr1", immkv.Options{})
-w.AddSorted(immkv.PosKey(0, 1000), key, info)
+// 构建：每个键一条 typed record；schema 顺序决定位图位号
+schema := immkv.Schema{
+    {Name: "AF", Type: immkv.TypeFloat, Number: "A"},
+    {Name: "AN", Type: immkv.TypeInteger, Number: "1"},
+}
+w, _ := immkv.Create(cacheDir+"/chr1", immkv.Options{Schema: schema})
+enc := immkv.NewRecordEncoder(schema)
+record, _ := enc.Reset().Float("AF", af).Int("AN", an).Encode()
+w.AddSorted(immkv.PosKey(0, 1000), key, record)
 w.Finish()
 
 // 点查句柄：随时来一条答一条（随机键、在线服务）
 db, _ := immkv.OpenEager(cacheDir, 512)          // cacheMB：解压缓存上限
-v, ok := db.Get(key)                              // 未命中 ok=false
+v, ok := db.Get(key)                              // 未命中 ok=false；v 是 v003 record
 db.GetPrefix(prefix, func(k, v []byte) bool { … })
 db.Scan(lo, hi, func(k, v []byte) bool { … })     // lo/hi 可为 nil
 db.Close()
@@ -47,6 +53,12 @@ sdb.Close()
 // 可选：只读本次查询需要的列（列号来自 base.manifest）
 sdb, _ = immkv.OpenStreaming(cacheDir, immkv.Options{Threads: 9, Columns: []int{2, 7, 11}})
 ```
+
+基因组库存的是 v003 record：`vals` 每条是存在位图 + typed payload，不是 INFO
+文本。schema 用 `immkv.ReadManifest(dir+"/chr1.manifest")` 再
+`Manifest.Schema()` 读取；值用 `immkv.NewRecord(schema, v)` 取字段，或用
+`immkv.RenderRecord(schema, v)` 输出规范化 INFO 文本。`OpenSimpleKV` 是例外：
+它把单 String 字段 `value` 解包回原始字节。
 
 普通 KV（无染色体/坐标）走独立的单库句柄：
 
@@ -77,19 +89,19 @@ err := immkv.BuildFromTSVs(basePath, tsvs, immkv.Options{})
 ```
 
 `fields` 为 nil 或空取全部 INFO 字段；非空时只存这些字段。值一律按 `##INFO`
-声明顺序重建，`fields` 的顺序只做选择、不再决定值序。`Number=A` 按 ALT 下标取
-元素。`prefix` 非空时键写成 `prefix_字段名`。源 INFO 的未知/重复字段、空段、
-Flag 带值、非 Flag 缺值都报错；没有输出字段的记录值为 `"."`。VCF 支持单个多
-染色体文件或多个每文件一条染色体的输入（`##INFO` 声明顺序须一致），同一
-CHROM+POS 内 REF/ALT 顺序任意。完整契约见
+声明顺序编码成 typed record，`fields` 的顺序只做选择、不再决定位图顺序。
+`Number=A` 按 ALT 下标取元素。`prefix` 非空时键写成 `prefix_字段名`。源 INFO 的
+未知/重复字段、空段、Flag 带值、非 Flag 缺值都报错；没有输出字段的 record
+位图全 0，渲染为 `"."`。VCF 支持单个多染色体文件或多个每文件一条染色体的输入
+（`##INFO` 声明顺序须一致），同一 CHROM+POS 内 REF/ALT 顺序任意。完整契约见
 [docs/ingest-design.md](docs/ingest-design.md)。
 
 `BuildFromVCFs` 同时为每条染色体写 `chrN.col` + `chrN.manifest` 列存扫描件
-（格式契约见 [docs/base-col-format.md](docs/base-col-format.md)）。`OpenStreaming`
+（格式契约见 [docs/v003-format.md](docs/v003-format.md) §5–§6）。`OpenStreaming`
 按估算的 I/O 成本决定走记录序还是列存（按目录所在盘是机械盘/SSD 分档）；
 `Options.Columns` 只选字段（列号来自 manifest，nil/空 = 全部列），不决定路径。
-`OpenEager` 与所有点查/前缀/区间查询仍走记录序。没有 `base.col` 的旧库照常按
-记录序服务；给这种库传非空 `Columns` 会报错。
+`OpenEager` 与所有点查/前缀/区间查询仍走记录序。直接用 `Create` 建、没有
+`base.col`/`manifest` 的库照常按记录序服务；给这种库传非空 `Columns` 会报错。
 
 `GetBatch` 的契约：输入必须升序（VCF 按染色体自然序 + 位置排序即天然
 满足），返回切片只保证到下一次查询前有效；批次大小就是预取窗口（几千到

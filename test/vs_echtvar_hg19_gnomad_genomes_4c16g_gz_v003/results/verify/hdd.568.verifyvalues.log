@@ -1,0 +1,14 @@
+MISMATCH row 1055 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1882"
+MISMATCH row 1057 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1526"
+MISMATCH row 1074 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1207"
+MISMATCH row 1075 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1426"
+MISMATCH row 21265 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-35690"
+MISMATCH row 29170 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1188"
+MISMATCH row 29171 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-3409"
+MISMATCH row 29436 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1186"
+MISMATCH row 29438 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1283"
+MISMATCH row 29446 VQSLOD: echtvar i32-overflow loss (|v|*2e6 > i32max)  echtvar="-1"  immkv="-1142"
+rows 3933714, field comparisons 2234349552, misses agreed 72156854, value mismatches 0, hit disagreements 0
+echtvar i32-overflow value losses (documented limitation): 808
+float comparisons 666144645, max |echtvar-immkv| observed: 1.000e-06 (tolerance 1.1e-06; expected just under 5e-7 from truncating quantization)
+VERIFY_VALUES OK: every field of every row agrees

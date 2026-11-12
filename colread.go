@@ -1,13 +1,12 @@
 // colread.go 是 base.col 的读取侧：给 OpenStreaming 的顺序批量查提供列存
-// 路径。读侧按命中 bin 只读选中的列，解压后按 schema 顺序拼值；点查、
-// 前缀、区间扫描不使用本文件。
+// 路径。读侧按命中 bin 只读选中的列，解压后按 schema 顺序拼回 v003 record；
+// 未选中的字段位为 0。点查、前缀、区间扫描不使用本文件。
 
 package immkv
 
 import (
 	"encoding/binary"
 	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"math/bits"
 	"os"
@@ -25,7 +24,7 @@ type colShard struct {
 	size     int64
 	binWidth uint32
 	buildID  string
-	fields   []colField
+	schema   Schema
 	bins     []colBinRecord
 	dec      frameDecoder
 
@@ -46,39 +45,30 @@ func openColShard(base string, ks *shard) (*colShard, error) {
 	if colOK != manOK {
 		return nil, fmt.Errorf("immkv: %s 的 base.col 与 base.manifest 不配对", base)
 	}
-	raw, err := os.ReadFile(manPath)
+	m, err := ReadManifest(manPath)
 	if err != nil {
 		return nil, err
-	}
-	var m colManifest
-	if err := json.Unmarshal(raw, &m); err != nil {
-		return nil, fmt.Errorf("immkv: %s: 解析 manifest: %w", base, err)
-	}
-	if m.Format != colManifestFormat || m.Version != colManifestVersion {
-		return nil, fmt.Errorf("immkv: %s: manifest format/version 不合法", base)
 	}
 	if m.Base != filepath.Base(base) {
 		return nil, fmt.Errorf("immkv: %s: manifest base %q 不匹配", base, m.Base)
 	}
-	if len(m.Fields) == 0 {
-		return nil, fmt.Errorf("immkv: %s: manifest 没有字段", base)
+	schema, err := m.Schema()
+	if err != nil {
+		return nil, fmt.Errorf("immkv: %s: %w", base, err)
 	}
-	seen := make(map[string]bool, len(m.Fields))
-	for i := range m.Fields {
-		f := &m.Fields[i]
-		if f.Column != i || f.Name == "" || f.Type == "" {
-			return nil, fmt.Errorf("immkv: %s: manifest 字段 %d 不合法", base, i)
-		}
-		if f.Encoding != "raw" && f.Encoding != "bitmap" {
-			return nil, fmt.Errorf("immkv: %s: 字段 %q 编码 %q 未知", base, f.Name, f.Encoding)
-		}
-		if seen[f.Name] {
-			return nil, fmt.Errorf("immkv: %s: manifest 字段 %q 重复", base, f.Name)
-		}
-		seen[f.Name] = true
+	stK, err := os.Stat(base + ".keys")
+	if err != nil {
+		return nil, err
 	}
-	if colSchemaString(m.Fields) != m.SchemaHash {
-		return nil, fmt.Errorf("immkv: %s: manifest schema hash 不匹配", base)
+	stV, err := os.Stat(base + ".vals")
+	if err != nil {
+		return nil, err
+	}
+	if stK.Size() != m.KeysBytes || stV.Size() != m.ValsBytes {
+		return nil, fmt.Errorf("immkv: %s: keys/vals 字节数与 manifest 不符", base)
+	}
+	if ks.count != m.RecordCount {
+		return nil, fmt.Errorf("immkv: %s: 记录数 %d ≠ manifest %d", base, ks.count, m.RecordCount)
 	}
 
 	f, err := os.Open(colPath)
@@ -115,23 +105,26 @@ func openColShard(base string, ks *shard) (*colShard, error) {
 	entrySize := binary.LittleEndian.Uint32(h[44:48])
 	binDirOff := binary.LittleEndian.Uint64(h[48:56])
 	schemaHash := binary.LittleEndian.Uint64(h[56:64])
-	if binWidth != m.BinWidth || binWidth == 0 {
+	if binWidth != m.BinWidth {
 		return fail(fmt.Errorf("immkv: %s: bin_width %d 与 manifest 不符", base, binWidth))
 	}
-	if int(colCount) != len(m.Fields) {
-		return fail(fmt.Errorf("immkv: %s: column_count %d ≠ manifest %d", base, colCount, len(m.Fields)))
+	if binWidth == 0 {
+		if binCount != 1 && !(binCount == 0 && m.RecordCount == 0) {
+			return fail(fmt.Errorf("immkv: %s: bin_width 0 时 bin_count 应为 1，得到 %d", base, binCount))
+		}
+	}
+	if int(colCount) != len(schema) {
+		return fail(fmt.Errorf("immkv: %s: column_count %d ≠ manifest %d", base, colCount, len(schema)))
 	}
 	if entrySize != colColumnEntrySize {
 		return fail(fmt.Errorf("immkv: %s: column_entry_size %d", base, entrySize))
 	}
-	if schemaHash != colSchemaHash(m.Fields) {
+	hash := schema.Hash()
+	if schemaHash != binary.LittleEndian.Uint64(hash[:]) {
 		return fail(fmt.Errorf("immkv: %s: schema hash 与 manifest 不符", base))
 	}
-	if st.Size() != m.ColBytes || m.KeysBytes <= 0 || m.ValsBytes <= 0 {
-		return fail(fmt.Errorf("immkv: %s: 文件字节数与 manifest 不符", base))
-	}
-	if ks.count != m.RecordCount {
-		return fail(fmt.Errorf("immkv: %s: 记录数 %d ≠ manifest %d", base, ks.count, m.RecordCount))
+	if st.Size() != m.ColBytes {
+		return fail(fmt.Errorf("immkv: %s: col 字节数与 manifest 不符", base))
 	}
 	if uint64(binDirOff)+uint64(binCount)*colBinEntrySize > uint64(st.Size()) {
 		return fail(fmt.Errorf("immkv: %s: bin 目录越界", base))
@@ -191,7 +184,7 @@ func openColShard(base string, ks *shard) (*colShard, error) {
 	}
 	return &colShard{
 		base: base, f: f, size: st.Size(), binWidth: binWidth,
-		buildID: m.BuildID, fields: m.Fields, bins: bins, dec: dec,
+		buildID: m.BuildID, schema: schema, bins: bins, dec: dec,
 		dirs: make(map[int][]byte),
 	}, nil
 }
@@ -219,7 +212,7 @@ func (c *colShard) loadDir(bi int) ([]byte, error) {
 		return d, nil
 	}
 	c.mu.Unlock()
-	n := len(c.fields) * colColumnEntrySize
+	n := len(c.schema) * colColumnEntrySize
 	if b.dirOff+uint64(n) > uint64(c.size) {
 		return nil, fmt.Errorf("immkv: %s: bin %d 列目录越界", c.base, bi)
 	}
@@ -229,7 +222,7 @@ func (c *colShard) loadDir(bi int) ([]byte, error) {
 	}
 	// 列目录必须落在本 bin 的数据区内，避免损坏的偏移把别的 bin 数据当成
 	// 本 bin 的值而静默产出错误结果。
-	for col := 0; col < len(c.fields); col++ {
+	for col := 0; col < len(c.schema); col++ {
 		e := c.entry(d, col)
 		if e.bitmapOff == 0 {
 			if e.bitmapLen != 0 || e.valueOff != 0 || e.valueLen != 0 || e.present != 0 || e.rawLen != 0 {
@@ -244,7 +237,7 @@ func (c *colShard) loadDir(bi int) ([]byte, error) {
 		if e.present == 0 || e.present > b.count {
 			return nil, fmt.Errorf("immkv: %s: bin %d 列 %d present_count %d 非法", c.base, bi, col, e.present)
 		}
-		if c.fields[col].Encoding == "bitmap" {
+		if c.schema[col].Type == TypeFlag {
 			if e.valueOff != 0 || e.valueLen != 0 || e.rawLen != 0 {
 				return nil, fmt.Errorf("immkv: %s: bin %d 列 %d Flag 不应有值流", c.base, bi, col)
 			}
@@ -278,9 +271,9 @@ func (c *colShard) entry(dir []byte, col int) colEntry {
 }
 
 // selectedColumns 把 Options.Columns 展开为 schema 序的列号；nil/空 = 全部。
-func selectedColumns(fields []colField, sel []int) []int {
+func selectedColumns(schema Schema, sel []int) []int {
 	if len(sel) == 0 {
-		out := make([]int, len(fields))
+		out := make([]int, len(schema))
 		for i := range out {
 			out[i] = i
 		}
@@ -329,8 +322,8 @@ func (c *colShard) groupHits(hits []sHit) ([]hitBinGroup, error) {
 	return out, nil
 }
 
-// estimate 估算一次列存查询要读的压缩字节与要解压的原文字节：每个命中 bin
-// 的选中列位图、值流与 rawLen 合计（列目录常驻，不计）。
+// estimate 估算一次列存查询要读的压缩字节与要解压的 typed payload 字节：每个
+// 命中 bin 的选中列位图、值流与 rawLen 合计（列目录常驻，不计）。
 func (c *colShard) estimate(hits []sHit, sel []int) (compressed, raw uint64, err error) {
 	groups, err := c.groupHits(hits)
 	if err != nil {
@@ -369,15 +362,16 @@ type colPart struct {
 type colCursor struct {
 	lastBit     int
 	lastRidx    int
-	lastVal     []byte
+	lastPayload []byte
 	lastPresent bool
 	pos         int
 }
 
-// colSegs 是一列在一个装配分块里对每条命中的输出段（空 = 字段缺失）。
+// colSegs 是一列在一个装配分块里对每条命中的输出段（present=false = 缺失）。
 type colSegs struct {
-	buf []byte
-	off []int32
+	buf     []byte
+	off     []int32
+	present []bool
 }
 
 // asmChunk 是单次装配的命中数上限，控制段缓冲与偏移数组的内存。
@@ -387,7 +381,7 @@ const asmChunk = 8192
 type binLoad struct {
 	bin       int
 	meta      *colBinRecord
-	parts     []colPart
+	parts     []colPart // 列号升序，装配按此顺序拼 payload
 	bitFrames [][]byte
 	frames    [][]byte
 }
@@ -406,7 +400,7 @@ func (c *colShard) loadBin(g hitBinGroup, sel []int) (*binLoad, error) {
 			continue
 		}
 		p := colPart{
-			col: col, flag: c.fields[col].Encoding == "bitmap",
+			col: col, flag: c.schema[col].Type == TypeFlag,
 			present: int(e.present), bitmapAt: int64(e.bitmapOff),
 			bitmapLen: int(e.bitmapLen),
 		}
@@ -420,14 +414,20 @@ func (c *colShard) loadBin(g hitBinGroup, sel []int) (*binLoad, error) {
 	if len(parts) == 0 {
 		return ld, nil
 	}
-	sort.Slice(parts, func(i, j int) bool { return parts[i].bitmapAt < parts[j].bitmapAt })
+	order := make([]int, len(parts))
+	for i := range order {
+		order[i] = i
+	}
+	sort.Slice(order, func(i, j int) bool {
+		return parts[order[i]].bitmapAt < parts[order[j]].bitmapAt
+	})
 	type readRange struct {
 		start, end int64
 		parts      []int
 	}
 	var ranges []readRange
-	for i := range parts {
-		p := &parts[i]
+	for _, pi := range order {
+		p := &parts[pi]
 		end := p.bitmapAt + int64(p.bitmapLen)
 		if p.frameLen > 0 {
 			end = p.frameAt + int64(p.frameLen)
@@ -437,10 +437,10 @@ func (c *colShard) loadBin(g hitBinGroup, sel []int) (*binLoad, error) {
 			if end > r.end {
 				r.end = end
 			}
-			r.parts = append(r.parts, i)
+			r.parts = append(r.parts, pi)
 			continue
 		}
-		ranges = append(ranges, readRange{start: p.bitmapAt, end: end, parts: []int{i}})
+		ranges = append(ranges, readRange{start: p.bitmapAt, end: end, parts: []int{pi}})
 	}
 	ld.bitFrames = make([][]byte, len(parts))
 	ld.frames = make([][]byte, len(parts))
@@ -464,12 +464,13 @@ func (c *colShard) loadBin(g hitBinGroup, sel []int) (*binLoad, error) {
 	return ld, nil
 }
 
-// processBin 解压一个已读入的 bin 并回填 out。
+// processBin 解压一个已读入的 bin 并按 schema 顺序拼出 record 回填 out。
 func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads int) error {
 	meta, parts := ld.meta, ld.parts
+	bitmapLen := recordBitmapLen(len(c.schema))
 	if len(parts) == 0 {
 		for _, h := range g.hits {
-			out[h.dst] = []byte(".")
+			out[h.dst] = make([]byte, bitmapLen)
 		}
 		return nil
 	}
@@ -537,7 +538,7 @@ func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads 
 		}
 	}
 	// 按列并行扫描：每列在自己的位图/值流上顺扫，产出「本分块每条命中的
-	// 输出段」；最后按 schema 顺序合并。列内值顺序 = bin 内存在记录顺序。
+	// payload 段」；最后按 schema 顺序合并成 record。
 	cursors := make([]colCursor, len(parts))
 	for i := range cursors {
 		cursors[i].lastBit = -1
@@ -552,10 +553,13 @@ func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads 
 		segs := make([]colSegs, len(parts))
 		err := parallelForN(len(parts), threads, func(pi int) error {
 			p := &parts[pi]
-			field := &c.fields[p.col]
+			field := &c.schema[p.col]
 			cur := &cursors[pi]
 			stream := decoded[pi]
-			seg := colSegs{off: make([]int32, len(hs)+1)}
+			seg := colSegs{
+				off:     make([]int32, len(hs)+1),
+				present: make([]bool, len(hs)),
+			}
 			for hi, h := range hs {
 				ridx := int(h.rec - int64(meta.first))
 				if ridx < 0 || ridx >= int(meta.count) {
@@ -565,30 +569,26 @@ func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads 
 					for cur.lastBit < ridx {
 						cur.lastBit++
 						present := bitSet(bits[pi], cur.lastBit)
-						var v []byte
+						var payload []byte
 						if present && !p.flag {
-							l, n := binary.Uvarint(stream[cur.pos:])
-							if n <= 0 {
-								return fmt.Errorf("immkv: %s: bin %d 列 %d 值流长度非法", c.base, g.bin, p.col)
+							rest, err := skipValue(*field, stream[cur.pos:])
+							if err != nil {
+								return fmt.Errorf("immkv: %s: bin %d 列 %d 记录 %d: %w",
+									c.base, g.bin, p.col, meta.first+uint64(cur.lastBit), err)
 							}
-							cur.pos += n
-							if l > uint64(len(stream)-cur.pos) {
-								return fmt.Errorf("immkv: %s: bin %d 列 %d 值超出值流", c.base, g.bin, p.col)
-							}
-							v = stream[cur.pos : cur.pos+int(l)]
-							cur.pos += int(l)
+							payload = stream[cur.pos : len(stream)-len(rest)]
+							cur.pos += len(payload)
 						}
 						if cur.lastBit == ridx {
-							cur.lastVal, cur.lastPresent = v, present
+							cur.lastPayload, cur.lastPresent = payload, present
 						}
 					}
 					cur.lastRidx = ridx
 				}
 				if cur.lastPresent {
-					seg.buf = append(seg.buf, field.Name...)
+					seg.present[hi] = true
 					if !p.flag {
-						seg.buf = append(seg.buf, '=')
-						seg.buf = append(seg.buf, cur.lastVal...)
+						seg.buf = append(seg.buf, cur.lastPayload...)
 					}
 				}
 				seg.off[hi+1] = int32(len(seg.buf))
@@ -600,21 +600,22 @@ func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads 
 			return err
 		}
 		for hi, h := range hs {
-			var o []byte
+			total := bitmapLen
 			for pi := range segs {
-				s := segs[pi].buf[segs[pi].off[hi]:segs[pi].off[hi+1]]
-				if len(s) == 0 {
+				if segs[pi].present[hi] {
+					total += int(segs[pi].off[hi+1] - segs[pi].off[hi])
+				}
+			}
+			rec := make([]byte, bitmapLen, total)
+			for pi := range segs {
+				if !segs[pi].present[hi] {
 					continue
 				}
-				if len(o) > 0 {
-					o = append(o, ';')
-				}
-				o = append(o, s...)
+				col := parts[pi].col
+				rec[col>>3] |= 1 << (col & 7)
+				rec = append(rec, segs[pi].buf[int(segs[pi].off[hi]):int(segs[pi].off[hi+1])]...)
 			}
-			if o == nil {
-				o = []byte(".")
-			}
-			out[h.dst] = o
+			out[h.dst] = rec
 		}
 	}
 	return nil
@@ -663,14 +664,12 @@ func bitSet(b []byte, i int) bool {
 }
 
 // sameColSchema 校验两个染色体的列 schema 完全一致（同一构建应如此）。
-func sameColSchema(a, b []colField) bool {
+func sameColSchema(a, b Schema) bool {
 	if len(a) != len(b) {
 		return false
 	}
 	for i := range a {
-		if a[i].Name != b[i].Name || a[i].Type != b[i].Type ||
-			a[i].Number != b[i].Number || a[i].Encoding != b[i].Encoding ||
-			a[i].Column != b[i].Column {
+		if a[i] != b[i] {
 			return false
 		}
 	}

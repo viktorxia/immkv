@@ -1,8 +1,7 @@
 // buildvcf builds an immkv library from bgzipped gnomAD-style per-chromosome
-// VCFs through immkv.BuildFromVCFs. Unlike buildfull (which writes only the
-// record-order shards via Create), this program produces the record-order
-// library and its base.col/base.manifest companion in one pass, so it is the
-// reproducible entry point for the columnar experiments.
+// VCFs through immkv.BuildFromVCFs. It writes record-order keys plus typed
+// vals, and BuildFromVCFs also writes the typed base.col/base.manifest
+// companion.
 //
 // Usage:
 //

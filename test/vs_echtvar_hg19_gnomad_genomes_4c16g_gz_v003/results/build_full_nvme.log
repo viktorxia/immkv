@@ -1,0 +1,25 @@
+building 22 input(s) -> /home/tian/immkv_test_nvme/gnomad/immkv (fields=0, prefix="")
+done
+	Command being timed: "tmp/v003_stage5/buildvcf -gnomad /home/tian/ssd_annotation_database/gnomad/GRCh37/v2.1.1 -out /home/tian/immkv_test_nvme/gnomad/immkv"
+	User time (seconds): 49970.92
+	System time (seconds): 664.04
+	Percent of CPU this job got: 759%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:51:06
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 9732676
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 4
+	Minor (reclaiming a frame) page faults: 22803445
+	Voluntary context switches: 146620618
+	Involuntary context switches: 7456635
+	Swaps: 0
+	File system inputs: 1355666784
+	File system outputs: 704649672
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

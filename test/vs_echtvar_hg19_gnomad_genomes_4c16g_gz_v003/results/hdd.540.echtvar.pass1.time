@@ -1,0 +1,33 @@
+	Command being timed: "systemd-run --user --scope --collect -p MemoryMax=16G -p MemorySwapMax=0 taskset -c 0-3 bash -c 
+            export GOMAXPROCS=4
+            one() {
+                local c=$1
+                "$BCFTOOLS" view -r "$c" -Oz -o "$WK/sl$c.vcf.gz" "$QUERY"
+                "$ECHTVAR_BIN" anno -e "$ARCHIVES/chr$c.echtvar.zip" \
+                    "$WK/sl$c.vcf.gz" "$WK/an$c.vcf.gz" >"$WK/an$c.log" 2>&1
+            }
+            export -f one
+            seq 1 22 | xargs -P 4 -I{} bash -c "one {}"
+        "
+	User time (seconds): 2074.32
+	System time (seconds): 333.51
+	Percent of CPU this job got: 368%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 10:53.62
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 539312
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 36
+	Minor (reclaiming a frame) page faults: 172544121
+	Voluntary context switches: 3200034
+	Involuntary context switches: 1629717
+	Swaps: 0
+	File system inputs: 123736088
+	File system outputs: 23063688
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

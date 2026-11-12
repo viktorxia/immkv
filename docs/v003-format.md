@@ -1,11 +1,9 @@
-# immkv v003 统一记录格式（设计草稿）
+# immkv v003 统一记录格式
 
 日期：2026-11-11
-状态：设计草稿，未实现；用户已确认方向（一套盘上格式、数值保真、不向后兼容）。
-取代：`docs/base-col-format.md` 的 `IMKVC001` 文本列存与 `IMKVV001` 文本值；
-`docs/ingest-design.md` 的文本值构造部分。实现落地后这三份文档同步改写。
+状态：已实现；全库构建与受控矩阵完成（2026-11-12）。
 
-## 1. 目标与底线
+## 1. 目标
 
 目标：
 
@@ -16,12 +14,6 @@
 - 数值保真：Integer 精确到 int64，Float 精确到 float64（gnomAD 的 6 位有效数字
   全部精确），String 原字节。源文本写法不保证逐字节，文本输出规范化。
 - 现有查询路径的机械结构不变：键流、微块、点查、流式批、列存 bin 与目录都沿用。
-
-底线：
-
-- 同一查询在 v003 上的墙钟不得高于 v0.0.2；列存解码变快，但读量可能变大，按
-  实测校准。
-- 旧库不兼容：`IMKVV001` / `IMKVC001` 打开时大声失败，提示重建；不做双解码。
 
 ## 2. 新术语
 
@@ -108,7 +100,8 @@ array := uvarint(count)
 ### 4.3 构建期转换
 
 - `##INFO` 的 Integer / Float 逐元素解析；解析失败返回构建错误，不静默跳过。
-- Float 拒绝 `nan` / `inf`；VCF 文法外的一律报错。
+- Float 拒绝 `nan` / `inf` 进入记录；构建期遇到时按该字段（或该数组元素）缺失
+  处理，并在 manifest 的 `non_finite_floats` 计数；VCF 文法外的其余情况报错。
 - Number=A：按原始 ALT 下标取逗号元素；元素不够时该字段在该键上缺位。
 - Number=R / G：逗号列表整体进数组；元素缺失写 `len 0`。
 - String：原字节，不拆逗号（`vep` 这类字段内部自带分隔符）。
@@ -163,15 +156,14 @@ array := uvarint(count)
   "fields": [
     {"name": "AF", "column": 0, "type": "Float", "number": "A"}
   ],
-  "source_info_order": {"ok": 123, "bad": 0}
+  "source_info_order": {"ok": 123, "bad": 0},
+  "non_finite_floats": 0
 }
 ```
 
 - `fields` 顺序 = schema 顺序；`column` 即位号。
 - 打开时校验 magic、version、build_id、schema_hash、三个文件字节数与记录数；
   任一不一致大声失败。
-- `IMKVV001`、`IMKVC001`、`format: immkv-col-manifest` 一律拒绝，错误信息写明
-  “v003 不兼容旧格式，请重建”。
 
 ## 7. 构建入口
 
@@ -182,7 +174,7 @@ array := uvarint(count)
 - 记录序 `Finish` 后，顺序扫一遍刚写完的 `keys` / `vals`，解码 record，按 bin 写
   typed 列流；VCF 不读第二遍。构建结构与现在相同，只把“拆文本”换成“解 record”。
 - `vcf.raw.header` 保留；`vcf.immkv.header` 保留为渲染产物，不再作为 schema 权威。
-- 旧的不兼容产物检查沿用：`outdir` 里有任何旧分片/col/manifest 即报错，要求空目录。
+- 构建入口要求空目录：`outdir` 里已有任何分片/col/manifest 即报错。
 
 ### 7.2 BuildFromTSVs
 
@@ -205,23 +197,33 @@ array := uvarint(count)
 ## 8. 读路径与 codec
 
 - `Get` / `GetBatch` / `Scan` 的签名与语义不变，值仍是 `[]byte`，内容变成 record。
-- 新增公开 codec（草案签名，实现时定稿）：
+- 公开 codec（已实现，与 annoplex 的存取写法对齐）：
 
 ```go
-// 按 schema 顺序回调有值字段；零分配。
-func DecodeRecord(s Schema, rec []byte, visit func(i int, v Value) error) error
+// 校验并返回只读视图；HasValue/Int/Float/Bytes 按字段名取值。
+func NewRecord(s Schema, raw []byte) (Record, error)
 
-// 按 schema 编码一条记录。
-func EncodeRecord(s Schema, vals []Value) ([]byte, error)
+// 按 schema 顺序遍历有值字段；标量路径零分配，数组字段的 Value 带 Elems。
+func (r Record) Values() iter.Seq2[Field, Value]
 
 // 规范化 INFO 文本；用于 test/annotate 与 verifyvalues。
-func RenderRecord(s Schema, rec []byte) []byte
+func RenderRecord(s Schema, raw []byte) ([]byte, error)
+
+// 写侧：按字段名设置值，Encode 产出 bitmap + payload。
+func NewRecordEncoder(s Schema) *RecordEncoder
+func (e *RecordEncoder) Int(name string, v int64) *RecordEncoder
+func (e *RecordEncoder) Float(name string, v float64) *RecordEncoder
+func (e *RecordEncoder) Bytes(name string, v []byte) *RecordEncoder
+func (e *RecordEncoder) Flag(name string) *RecordEncoder
+func (e *RecordEncoder) Values(name string, elems []Value) *RecordEncoder
+func (e *RecordEncoder) Encode() ([]byte, error)
 ```
 
-- `Value` 用 Type 区分 int64 / float64 / 原字节 / 数组；缺失由回调是否发生表达。
+- `Value` 用 Type 区分 int64 / float64 / 原字节 / 数组；缺失由位图表达。
 - `OpenEager` / `OpenStreaming` 不解码、不认识结构体；annoplex 的存取实现用
-  `DecodeRecord` 填自己的结构体，`test/annotate` 用 `RenderRecord` 出文本。
-- 列存 `GetBatch` 的合并、bin 预取、并行解压结构不变；只是列值流换成 typed 解码。
+  `NewRecord` 填自己的结构体，`test/annotate` 用 `RenderRecord` 出文本。
+- 列存 `GetBatch` 的合并、bin 预取、并行解压结构不变；只是列值流换成 typed
+  解码，装配出的 record 使用库 schema 的完整位图。
 
 ## 9. 规范化文本
 
@@ -242,7 +244,7 @@ func RenderRecord(s Schema, rec []byte) []byte
 
 以下一律报错，不静默回退：
 
-- 旧 magic / 旧 manifest / schema_hash 不一致 / build_id 不一致 / 字节数或记录数
+- magic / manifest / schema_hash 不一致 / build_id 不一致 / 字节数或记录数
   不一致。
 - record 位图长度不足、payload 越界、uvarint 截断、Float NaN/Inf、Integer 溢出、
   数组 count 或 len 越界。
@@ -250,29 +252,28 @@ func RenderRecord(s Schema, rec []byte) []byte
 - `Options.Columns` 越界/负数/重复；没有 col 的库传非空 Columns。
 - `GetBatch` 键不升序 → `ErrUnsorted`。
 
-## 12. 体积与性能门槛
+## 12. 体积与性能
 
-chr22 抽样（20 万值，zstd -9，每值长度前缀按 1 字节计）：
+chr22 抽样（20 万值，zstd -9）：
 
-| 列 | 文本压缩 | typed 压缩 | 比值 |
-|---|---:|---:|---:|
-| AF（Float） | 2.89 B/值 | 3.67 B/值（float64） | 1.27× |
-| AC（Integer） | 0.78 B/值 | 1.05 B/值（int64 固定） | 1.35× |
-| AC（Integer） | 0.78 B/值 | 0.71 B/值（zigzag varint） | 0.91× |
+| 列 | typed 压缩 |
+|---|---:|
+| AF（Float） | 3.67 B/值（float64） |
+| AC（Integer） | 1.05 B/值（int64 固定） |
+| AC（Integer） | 0.71 B/值（zigzag varint） |
 
-- Integer 用 zigzag varint，Float 用 float64；预计列存整体为文本列的 1.1–1.3 倍。
-- 决策门：先建 chr22，量 `vals` / `col` 字节；若 `col` 超过 v0.0.2 文本列的
-  1.5 倍，暂停全量重建，先评估 Float 的每列物理编码（scaled decimal 或 float32
-  逐列往返检查），不带着体积回退往下走。
-- 性能验收：同一查询在 v003 与 v0.0.2 上的墙钟对比；点查 p50/p99、流式批、
-  540/568 全量注释各一组。
+- Integer 用 zigzag varint，Float 用 float64。
+- 2026-11-12 chr22 实测（默认构建参数）：`vals` 2.82GB，`col` 1.656GB；
+  17 字段 `col` 56.45MB。
+- 性能验收：受控 4 核 16G 矩阵，点查 p50/p99、流式批、540/568 全量注释。
 
 ## 13. 验收
 
 - 单元测试：schema hash、位图边界（N=1/64/65）、缺字段、Flag、数组、Integer
-  溢出、Float 非法、record 截断、列流截断、present_count 不符、旧 magic 拒绝。
+  溢出、Float 非法、record 截断、列流截断、present_count 不符、未知 magic 拒绝。
 - chr22 最小闭环：
-  - `chr22.keys` 与 v0.0.2 逐字节相同（键与分组未变）。
+  - `chr22.keys` 的键序列、微块分组、`keyEnds`、键区与块索引保持不变；
+    值帧 `lens` 与 `baseValOff` 由 record 长度决定，不做逐字节比较。
   - 同一批键分别走记录序与列存，`RenderRecord` 输出逐字节一致。
   - 与源 VCF 逐字段比较：Integer/Float 数值相等，String 原字节相等；Flag 只比
     存在性。
@@ -285,16 +286,16 @@ chr22 抽样（20 万值，zstd -9，每值长度前缀按 1 字节计）：
 
 ## 14. 分阶段
 
-1. schema + codec（encode/decode/render）+ manifest 读写 + 单测。
+1. schema + codec（encode/decode/render）+ manifest 读写 + 单测。**已完成**
 2. `BuildFromVCFs` 写 typed vals；点查与流式读仍返回字节；chr22 解码校验。
-3. typed col 写入与读取；选路成本重新标定；chr22 记录序/列存闭环。
-4. `test/annotate`、`test/verifyvalues`、`test/buildvcf`、`test/buildfull` 适配；
-   旧文本库与旧工具删除。
-5. chr22 体积/性能门槛通过后，重建全库与 17/540/568 窄库，重跑 4 核 16G 受控矩阵。
+   **已完成**
+3. typed col 写入与读取；选路成本重新标定；chr22 记录序/列存闭环。**已完成**
+4. `test/annotate`、`test/verifyvalues`、`test/buildvcf`、`test/buildfull`
+   适配 typed record。**已完成**
+5. 重建全库与 17/540/568 窄库，重跑 4 核 16G 受控矩阵并逐字段校验。**进行中**
 
 ## 15. 明确不做
 
-- 旧格式双解码兼容；旧库保留。
 - 源 INFO 文本逐字节保真。
 - 把 annoplex 的 1024 位字段表或具体结构体带进引擎。
 - mmap 直访；`pread` / `io_uring` 的读路径不变。

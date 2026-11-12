@@ -295,9 +295,26 @@ func genValue(rnd *rand.Rand) []byte {
 
 // ---- 用例 ----
 
+// testRecordSchema 让 key stream / value frame 测试把值当作已编码 record
+// 原样落盘；这些测试只检查键流与帧布局，不解码 record 内容。
+var testRecordSchema = []Field{{Name: "value", Type: TypeString, Number: "1"}}
+
+func testWriteOptions() Options {
+	return Options{Schema: testRecordSchema}
+}
+
+func TestCreateRejectsInvalidSchema(t *testing.T) {
+	_, err := Create(filepath.Join(t.TempDir(), "lib"), Options{
+		Schema: []Field{{Name: "F", Type: TypeFlag, Number: "1"}},
+	})
+	if err == nil {
+		t.Fatal("Create() with invalid schema = nil error, want error")
+	}
+}
+
 func TestWriterAddRoundTrip(t *testing.T) {
 	base := filepath.Join(t.TempDir(), "chr1")
-	w, err := Create(base, Options{})
+	w, err := Create(base, testWriteOptions())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -336,7 +353,7 @@ func TestWriterAddRoundTrip(t *testing.T) {
 
 func TestWriterAddSortedRoundTrip(t *testing.T) {
 	base := filepath.Join(t.TempDir(), "chr2")
-	w, err := Create(base, Options{})
+	w, err := Create(base, testWriteOptions())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -373,7 +390,7 @@ func TestWriterOrderingErrors(t *testing.T) {
 	v := []byte("v")
 
 	// group 倒序
-	w, err := Create(filepath.Join(dir, "a"), Options{})
+	w, err := Create(filepath.Join(dir, "a"), testWriteOptions())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -389,7 +406,7 @@ func TestWriterOrderingErrors(t *testing.T) {
 	}
 
 	// 组间键倒挂：组键升序但键低于已进入缓冲的最大键
-	w, err = Create(filepath.Join(dir, "b"), Options{})
+	w, err = Create(filepath.Join(dir, "b"), testWriteOptions())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -402,7 +419,7 @@ func TestWriterOrderingErrors(t *testing.T) {
 	}
 
 	// 两种模式混用
-	w, err = Create(filepath.Join(dir, "c"), Options{})
+	w, err = Create(filepath.Join(dir, "c"), testWriteOptions())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -412,7 +429,7 @@ func TestWriterOrderingErrors(t *testing.T) {
 	if err := w.AddSorted(PosKey(0, 2), VarKey(0, 2, "A", "T"), v); err == nil || !strings.Contains(err.Error(), "AddSorted after Add") {
 		t.Fatalf("Add 后 AddSorted 应报错，得到 %v", err)
 	}
-	w, err = Create(filepath.Join(dir, "d"), Options{})
+	w, err = Create(filepath.Join(dir, "d"), testWriteOptions())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -424,7 +441,7 @@ func TestWriterOrderingErrors(t *testing.T) {
 	}
 
 	// Finish 两次
-	w, err = Create(filepath.Join(dir, "e"), Options{})
+	w, err = Create(filepath.Join(dir, "e"), testWriteOptions())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -441,7 +458,7 @@ func TestWriterOrderingErrors(t *testing.T) {
 
 func TestWriterRawThreshold(t *testing.T) {
 	base := filepath.Join(t.TempDir(), "chr3")
-	w, err := Create(base, Options{RawValueBelow: 128})
+	w, err := Create(base, Options{Schema: testRecordSchema, RawValueBelow: 128})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -481,7 +498,7 @@ func TestWriterRawThreshold(t *testing.T) {
 // TestWriterDefaultThreshold 验证 RawValueBelow=0 取默认 64：63 裸存、64 压缩。
 func TestWriterDefaultThreshold(t *testing.T) {
 	base := filepath.Join(t.TempDir(), "chr4")
-	w, err := Create(base, Options{})
+	w, err := Create(base, testWriteOptions())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -502,7 +519,7 @@ func TestWriterDefaultThreshold(t *testing.T) {
 
 func TestWriterEmpty(t *testing.T) {
 	base := filepath.Join(t.TempDir(), "chr5")
-	w, err := Create(base, Options{})
+	w, err := Create(base, testWriteOptions())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -536,7 +553,7 @@ func TestWriterEmpty(t *testing.T) {
 // OpenStreaming 都能逐条读回。
 func TestWriterPacked(t *testing.T) {
 	base := filepath.Join(t.TempDir(), "chr1")
-	w, err := Create(base, Options{})
+	w, err := Create(base, testWriteOptions())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -613,7 +630,7 @@ func TestWriterKeyTooLong(t *testing.T) {
 		}
 	}()
 	base := filepath.Join(t.TempDir(), "chr6")
-	w, err := Create(base, Options{})
+	w, err := Create(base, testWriteOptions())
 	if err != nil {
 		t.Fatal(err)
 	}

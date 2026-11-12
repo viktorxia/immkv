@@ -615,3 +615,46 @@ func TestSimpleKVCorruptValueFrame(t *testing.T) {
 		t.Fatalf("corrupt frame Get = %d bytes, want miss", len(v))
 	}
 }
+
+func TestSimpleKVRecordWrapping(t *testing.T) {
+	base := filepath.Join(t.TempDir(), "lib")
+	value := []byte("hello")
+	w, err := Create(base, Options{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := w.Add([]byte("k"), value); err != nil {
+		t.Fatal(err)
+	}
+	if err := w.Finish(); err != nil {
+		t.Fatal(err)
+	}
+
+	shard, err := openShard(base, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer shard.Close()
+	raw, ok := shard.get([]byte("k"))
+	if !ok {
+		t.Fatal("raw record missing")
+	}
+	schema := Schema{{Name: "value", Type: TypeString, Number: "1"}}
+	record, err := NewRecord(schema, raw)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if got := string(record.Bytes("value")); got != string(value) {
+		t.Fatalf("record value = %q, want %q", got, value)
+	}
+
+	kv, err := OpenSimpleKV(base, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer kv.Close()
+	got, ok := kv.Get([]byte("k"))
+	if !ok || !bytes.Equal(got, value) {
+		t.Fatalf("Get = %q, %v; want %q", got, ok, value)
+	}
+}

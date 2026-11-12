@@ -1,21 +1,17 @@
 // col.go 是 base.col 的写入侧：把一个已完成的记录序分片（base.keys/base.vals）
-// 顺序扫一遍，按基因组区间切 bin，把每个字段的值拆成列，压缩后写成
-// base.col + base.manifest。格式契约见 docs/base-col-format.md。
+// 顺序扫一遍，按基因组区间切 bin，把每条 record 的字段按 schema 列拆开，
+// 压缩后写成 base.col + base.manifest。格式契约见 docs/v003-format.md §5。
 //
 // 列存只服务 OpenStreaming 的顺序批量查；点查、前缀、区间扫描仍走记录序。
-// 写入发生在记录序 Finish 之后，不改变现有 Writer 与盘上格式。
+// 写入发生在记录序 Finish 之后，不改变键流与值帧格式。
 
 package immkv
 
 import (
 	"bufio"
-	"bytes"
 	"crypto/rand"
-	"crypto/sha256"
 	"encoding/binary"
 	"encoding/hex"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -27,92 +23,18 @@ import (
 )
 
 const (
-	colMagic           = "IMKVC001"
-	colVersion         = 1
+	colMagic           = "IMKVC003"
+	colVersion         = 3
 	colHeaderSize      = 64
 	colBinEntrySize    = 32
 	colColumnEntrySize = 32
-	colBinWidth        = 1_000_000 // v1 固定 1Mb bin
-	colManifestFormat  = "immkv-col-manifest"
-	colManifestVersion = 1
-	colZstdLevel       = 9 // 与抽样一致；值流按列独立压缩
+	colBinWidth        = 1_000_000 // VCF 库固定 1Mb bin
+	colZstdLevel       = 9         // 与抽样一致；值流按列独立压缩
 )
 
-// colField 是 schema 里的一列，也是 manifest 的字段条目。Column == 下标。
-type colField struct {
-	Name     string `json:"name"`
-	Column   int    `json:"column"`
-	Type     string `json:"type"`
-	Number   string `json:"number"`
-	Encoding string `json:"encoding"` // raw | bitmap（dec 留第 3 阶段）
-}
-
-// colInfoStats 是构建期源 INFO 顺序的统计，只作诊断；入库已强制 header 序。
-type colInfoStats struct {
-	OK            int64 `json:"ok"`
-	Bad           int64 `json:"bad"`
-	Inversions    int64 `json:"inversions"`
-	Unknown       int64 `json:"unknown"`
-	Duplicate     int64 `json:"duplicate"`
-	EmptySegments int64 `json:"empty_segments"`
-}
-
-// colManifest 是 base.manifest 的 JSON 形态。
-type colManifest struct {
-	Format          string       `json:"format"`
-	Version         int          `json:"version"`
-	Base            string       `json:"base"`
-	BuildID         string       `json:"build_id"`
-	BinWidth        uint32       `json:"bin_width"`
-	RecordCount     uint64       `json:"record_count"`
-	KeysBytes       int64        `json:"keys_bytes"`
-	ValsBytes       int64        `json:"vals_bytes"`
-	ColBytes        int64        `json:"col_bytes"`
-	SchemaHash      string       `json:"schema_hash"`
-	SourceInfoOrder colInfoStats `json:"source_info_order"`
-	Fields          []colField   `json:"fields"`
-}
-
-// colSchemaHash 按 schema 顺序对 "name\ttype\tnumber\tencoding\n" 取 SHA-256
-// 前 8 字节；col 头存 u64，manifest 存同样的 8 字节十六进制。
-func colSchemaHash(fields []colField) uint64 {
-	h := sha256.New()
-	for i := range fields {
-		fmt.Fprintf(h, "%s\t%s\t%s\t%s\n",
-			fields[i].Name, fields[i].Type, fields[i].Number, fields[i].Encoding)
-	}
-	sum := h.Sum(nil)
-	return binary.LittleEndian.Uint64(sum[:8])
-}
-
-// colSchemaString 返回 manifest 里 schema_hash 的十六进制形态。
-func colSchemaString(fields []colField) string {
-	h := sha256.New()
-	for i := range fields {
-		fmt.Fprintf(h, "%s\t%s\t%s\t%s\n",
-			fields[i].Name, fields[i].Type, fields[i].Number, fields[i].Encoding)
-	}
-	return hex.EncodeToString(h.Sum(nil)[:8])
-}
-
-// colFieldsFromSel 把 ingest 的字段方案转成列 schema；v1 全部 raw/bitmap。
-func colFieldsFromSel(sel []valueField) []colField {
-	fields := make([]colField, len(sel))
-	for i := range sel {
-		typ := sel[i].typ
-		if typ == "" {
-			typ = "String"
-		}
-		enc := "raw"
-		if sel[i].isFlag {
-			enc = "bitmap"
-		}
-		fields[i] = colField{
-			Name: sel[i].prefixed, Column: i, Type: typ,
-			Number: sel[i].number, Encoding: enc,
-		}
-	}
-	return fields
+// simpleKVSchema 是 BuildFromTSVs 的库 schema：单 String 字段 value。
+func simpleKVSchema() Schema {
+	return Schema{{Name: "value", Type: TypeString, Number: "1"}}
 }
 
 // colEntry 是列目录里的一项（32B）。
@@ -122,7 +44,7 @@ type colEntry struct {
 	bitmapLen uint32 // 位图 zstd 帧长度
 	valueLen  uint32
 	present   uint32
-	rawLen    uint32 // 存在值原文字节合计（饱和到 u32，仅用于选路估算）
+	rawLen    uint32 // 存在值的 typed payload 字节合计（饱和到 u32，仅用于选路估算）
 }
 
 // colBinRecord 是 bin 目录里的一项（32B）。
@@ -134,12 +56,10 @@ type colBinRecord struct {
 	start   uint64 // 读侧推导的数据区起点（不落盘）
 }
 
-// colWriter 按 bin 攒列数据。bin 内每列：存在位图 + 一条压缩值流；值流解压后
-// 是「uvarint(len) value」按记录序重复。长度与值同帧压缩，避免单独的、压不动
-// 的长度表（chr22 抽样里它占列存总量 52%）。
+// colWriter 按 bin 攒列数据。bin 内每列：存在位图 + 一条压缩值流；值流是
+// record 里该字段的编码 payload 按记录序直接拼接（自定界，不再套长度前缀）。
 type colWriter struct {
-	fields   []colField
-	idx      map[string]int
+	schema   Schema
 	binWidth uint32
 	buildID  [16]byte
 
@@ -156,23 +76,20 @@ type colWriter struct {
 	bits    [][]byte // 每列 ceil(n/8) 字节位图
 	vals    [][]byte // 每列未压值流
 	present []int
-	rawSum  []uint64 // 每列存在值的原文字节合计
+	rawSum  []uint64 // 每列存在值的 payload 字节合计
 }
 
-// newColWriter 建写入器并预留 64B 头。
-func newColWriter(f *os.File, fields []colField, binWidth uint32, buildID [16]byte) (*colWriter, error) {
-	if binWidth == 0 {
-		binWidth = colBinWidth
+// newColWriter 建写入器并预留 64B 头。binWidth 为 0 时全部记录进单个 bin
+// （无位置语义的 KV 库）。
+func newColWriter(f *os.File, schema Schema, binWidth uint32, buildID [16]byte) (*colWriter, error) {
+	if err := schema.Validate(); err != nil {
+		return nil, err
 	}
 	cw := &colWriter{
-		fields: fields, idx: make(map[string]int, len(fields)),
-		binWidth: binWidth, buildID: buildID, f: f,
+		schema: schema, binWidth: binWidth, buildID: buildID, f: f,
 		w:    bufio.NewWriterSize(f, 1<<20),
-		bits: make([][]byte, len(fields)), vals: make([][]byte, len(fields)),
-		present: make([]int, len(fields)), rawSum: make([]uint64, len(fields)),
-	}
-	for i := range fields {
-		cw.idx[fields[i].Name] = i
+		bits: make([][]byte, len(schema)), vals: make([][]byte, len(schema)),
+		present: make([]int, len(schema)), rawSum: make([]uint64, len(schema)),
 	}
 	if _, err := cw.w.Write(make([]byte, colHeaderSize)); err != nil {
 		return nil, err
@@ -181,9 +98,13 @@ func newColWriter(f *os.File, fields []colField, binWidth uint32, buildID [16]by
 	return cw, nil
 }
 
-// add 投入一条记录：pos 是记录位置，val 是记录序值（字段已按 ##INFO 序拼好）。
-func (c *colWriter) add(rec uint64, pos uint32, val []byte) error {
-	bin := pos / c.binWidth
+// add 投入一条记录：rec 是全局记录号，pos 是记录位置（binWidth 为 0 时忽略），
+// record 是记录序里的 v003 record。字段 payload 原样进入对应列。
+func (c *colWriter) add(rec uint64, pos uint32, record []byte) error {
+	var bin uint32
+	if c.binWidth != 0 {
+		bin = pos / c.binWidth
+	}
 	switch {
 	case !c.started:
 		// 首条记录前的空 bin 也要占位，bin 目录下标必须等于基因组 bin 号。
@@ -212,44 +133,22 @@ func (c *colWriter) add(rec uint64, pos uint32, val []byte) error {
 			c.bits[i] = append(c.bits[i], 0)
 		}
 	}
-	if len(val) > 0 && !(len(val) == 1 && val[0] == '.') {
-		rest := val
-		for len(rest) > 0 {
-			var seg []byte
-			if i := bytes.IndexByte(rest, ';'); i >= 0 {
-				seg, rest = rest[:i], rest[i+1:]
-			} else {
-				seg, rest = rest, nil
+	err := walkRecord(c.schema, record, func(index int, payload []byte) error {
+		c.bits[index][int(c.n)/8] |= 1 << (c.n % 8)
+		c.present[index]++
+		if c.schema[index].Type == TypeFlag {
+			if len(payload) != 0 {
+				return fmt.Errorf("immkv: base.col: Flag 字段 %q 带 %d 字节 payload",
+					c.schema[index].Name, len(payload))
 			}
-			if len(seg) == 0 {
-				return errors.New("immkv: base.col: empty INFO segment")
-			}
-			eq := bytes.IndexByte(seg, '=')
-			name := seg
-			var v []byte
-			if eq >= 0 {
-				name, v = seg[:eq], seg[eq+1:]
-				if eq == 0 {
-					return errors.New("immkv: base.col: empty INFO field name")
-				}
-			}
-			col, ok := c.idx[string(name)]
-			if !ok {
-				return fmt.Errorf("immkv: base.col: field %q not in schema", name)
-			}
-			if c.fields[col].Encoding == "bitmap" {
-				// Flag：只有存在位图。
-			} else {
-				if eq < 0 {
-					return fmt.Errorf("immkv: base.col: non-Flag field %q has no value", name)
-				}
-				c.vals[col] = binary.AppendUvarint(c.vals[col], uint64(len(v)))
-				c.vals[col] = append(c.vals[col], v...)
-				c.rawSum[col] += uint64(len(v))
-			}
-			c.bits[col][int(c.n)/8] |= 1 << (c.n % 8)
-			c.present[col]++
+			return nil
 		}
+		c.vals[index] = append(c.vals[index], payload...)
+		c.rawSum[index] += uint64(len(payload))
+		return nil
+	})
+	if err != nil {
+		return fmt.Errorf("immkv: base.col 记录 %d: %w", rec, err)
 	}
 	c.n++
 	return nil
@@ -274,7 +173,7 @@ func (c *colWriter) flushBin() error {
 	if !c.started || c.n == 0 {
 		return nil
 	}
-	ncol := len(c.fields)
+	ncol := len(c.schema)
 	compBit := make([][]byte, ncol)
 	compVal := make([][]byte, ncol)
 	err := parallelFor(ncol, func(i int) error {
@@ -292,7 +191,7 @@ func (c *colWriter) flushBin() error {
 	}
 	bitmapLen := int((c.n + 7) / 8)
 	entries := make([]colEntry, ncol)
-	for i := range c.fields {
+	for i := range c.schema {
 		if c.present[i] == 0 {
 			continue
 		}
@@ -304,7 +203,10 @@ func (c *colWriter) flushBin() error {
 		if err := c.write(compBit[i]); err != nil {
 			return err
 		}
-		if len(compVal[i]) > 0 {
+		if c.schema[i].Type != TypeFlag {
+			if len(compVal[i]) == 0 {
+				return fmt.Errorf("immkv: base.col: 字段 %q 有形变值但值流为空", c.schema[i].Name)
+			}
 			entries[i].valueOff = uint64(c.at)
 			entries[i].valueLen = uint32(len(compVal[i]))
 			if err := c.write(compVal[i]); err != nil {
@@ -373,10 +275,11 @@ func (c *colWriter) finish() error {
 	copy(h[16:32], c.buildID[:])
 	binary.LittleEndian.PutUint32(h[32:36], c.binWidth)
 	binary.LittleEndian.PutUint32(h[36:40], uint32(len(c.bins)))
-	binary.LittleEndian.PutUint32(h[40:44], uint32(len(c.fields)))
+	binary.LittleEndian.PutUint32(h[40:44], uint32(len(c.schema)))
 	binary.LittleEndian.PutUint32(h[44:48], colColumnEntrySize)
 	binary.LittleEndian.PutUint64(h[48:56], binDirOff)
-	binary.LittleEndian.PutUint64(h[56:64], colSchemaHash(c.fields))
+	hash := c.schema.Hash()
+	binary.LittleEndian.PutUint64(h[56:64], binary.LittleEndian.Uint64(hash[:]))
 	_, err := c.f.WriteAt(h, 0)
 	return err
 }
@@ -447,9 +350,10 @@ func parallelForN(n, workers int, fn func(int) error) error {
 }
 
 // writeColumnar 为已完成的记录序分片生成 base.col 与 base.manifest。
-// 失败时清掉半成品，不留 col 无 manifest 的配对。
-func writeColumnar(base string, sel []valueField, buildID [16]byte, stats colInfoStats) (err error) {
-	fields := colFieldsFromSel(sel)
+// binWidth 为 0 表示无位置语义的单 bin 库；nonFinite 是构建期按缺失处理的
+// 非有限 Float 次数，只写进 manifest 作诊断。失败时清掉半成品，不留 col 无
+// manifest 的配对。
+func writeColumnar(base string, schema Schema, buildID [16]byte, stats SourceInfoOrder, nonFinite int64, binWidth uint32) (err error) {
 	s, err := openShard(base, nil)
 	if err != nil {
 		return err
@@ -469,7 +373,7 @@ func writeColumnar(base string, sel []valueField, buildID [16]byte, stats colInf
 		os.Remove(base + ".manifest")
 		os.Remove(base + ".manifest.tmp")
 	}
-	cw, err := newColWriter(f, fields, colBinWidth, buildID)
+	cw, err := newColWriter(f, schema, binWidth, buildID)
 	if err != nil {
 		cleanup()
 		return err
@@ -480,12 +384,15 @@ func writeColumnar(base string, sel []valueField, buildID [16]byte, stats colInf
 		return err
 	}
 	defer vr.Close()
-	err = scanShardValues(s, vr, func(rec uint64, key, val []byte) error {
-		if len(key) < 5 {
-			return fmt.Errorf("immkv: base.col: 键 %x 不足 5 字节", key)
+	err = scanShardValues(s, vr, func(rec uint64, key, record []byte) error {
+		var pos uint32
+		if binWidth != 0 {
+			if len(key) < 5 {
+				return fmt.Errorf("immkv: base.col: 键 %x 不足 5 字节", key)
+			}
+			pos = binary.BigEndian.Uint32(key[1:5])
 		}
-		pos := binary.BigEndian.Uint32(key[1:5])
-		return cw.add(rec, pos, val)
+		return cw.add(rec, pos, record)
 	})
 	if err == nil {
 		err = cw.finish()
@@ -504,41 +411,39 @@ func writeColumnar(base string, sel []valueField, buildID [16]byte, stats colInf
 		cleanup()
 		return err
 	}
-	man, err := buildColManifest(base, fields, buildID, s.count, stats)
+	m, err := NewManifest(filepath.Base(base), schema)
 	if err != nil {
 		cleanup()
 		return err
 	}
-	if err := writeFileAtomic(base+".manifest", man); err != nil {
+	m.BuildID = hex.EncodeToString(buildID[:])
+	m.BinWidth = binWidth
+	m.RecordCount = s.count
+	m.SourceInfoOrder = stats
+	m.NonFiniteFloats = nonFinite
+	stK, err := os.Stat(base + ".keys")
+	if err != nil {
+		cleanup()
+		return err
+	}
+	stV, err := os.Stat(base + ".vals")
+	if err != nil {
+		cleanup()
+		return err
+	}
+	stC, err := os.Stat(colPath)
+	if err != nil {
+		cleanup()
+		return err
+	}
+	m.KeysBytes = stK.Size()
+	m.ValsBytes = stV.Size()
+	m.ColBytes = stC.Size()
+	if err := WriteManifest(base+".manifest", m); err != nil {
 		cleanup()
 		return err
 	}
 	return nil
-}
-
-// buildColManifest 汇总配对信息与 schema，写成 JSON。
-func buildColManifest(base string, fields []colField, buildID [16]byte, count uint64, stats colInfoStats) ([]byte, error) {
-	stK, err := os.Stat(base + ".keys")
-	if err != nil {
-		return nil, err
-	}
-	stV, err := os.Stat(base + ".vals")
-	if err != nil {
-		return nil, err
-	}
-	stC, err := os.Stat(base + ".col")
-	if err != nil {
-		return nil, err
-	}
-	m := colManifest{
-		Format: colManifestFormat, Version: colManifestVersion,
-		Base: filepath.Base(base), BuildID: hex.EncodeToString(buildID[:]),
-		BinWidth: colBinWidth, RecordCount: count,
-		KeysBytes: stK.Size(), ValsBytes: stV.Size(), ColBytes: stC.Size(),
-		SchemaHash: colSchemaString(fields), SourceInfoOrder: stats,
-		Fields: fields,
-	}
-	return json.MarshalIndent(m, "", "  ")
 }
 
 // newBuildID 产生 16 字节随机构建代号。

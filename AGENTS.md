@@ -28,8 +28,8 @@ names.
    codec paths must stay **frame-format interoperable**; no change may
    break either.
 2. On-disk format changes must change the magic (currently `IMKVK002` /
-   `IMKVV001`); silently changing the format under the same name is
-   forbidden — old libraries must either open as before or fail loudly,
+   `IMKVV003` / `IMKVC003`); silently changing the format under the same name
+   is forbidden — old libraries must either open as before or fail loudly,
    never produce wrong results.
 3. The read path does not adopt mmap direct access — explicit on-demand
    reads (pread/io_uring) are this engine's foundation. The predecessor

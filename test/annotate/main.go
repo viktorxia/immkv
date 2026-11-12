@@ -4,7 +4,7 @@
 //
 // Usage:
 //
-//	annotate -in query.vcf[.gz] -lib <immkvLibDir> -out out.vcf[.gz] \
+//	annotate -in query.vcf[.gz|.bgz] -lib <immkvLibDir> -out out.vcf[.gz|.bgz] \
 //	         -fields <fields.tsv> [-prefix gnomad_] [-batch 4096] [-threads 4]
 //
 // A .gz -out writes bgzf; the timed window then matches echtvar's gzip-only
@@ -22,10 +22,10 @@
 //
 // Output semantics (the appended INFO segment, <prefix>-prefixed):
 //   - Row bytes are passed through verbatim except for the appended segment.
-//     Values are emitted raw, byte-for-byte as stored in the library -- no
-//     float reformatting (the legacy vcfanno-comparison harness re-ordered
-//     floats like vcfgo; this tool deliberately does not).
-//   - Single hit: only the fields present in that library value.
+//     Library values are v003 records; each hit is rendered with the schema
+//     from base.manifest, so floats come out in normalized text form
+//     (strconv.FormatFloat 'g') rather than the source spelling.
+//   - Single hit: only the fields present in that library record.
 //   - Multiple hits: every whitelist field; Flag fields render as "name="
 //     (comma-joined empty values); Number=A fields expand across the query
 //     row's ALT positions (unhit positions get "."); other fields join the
@@ -42,7 +42,6 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -110,30 +109,24 @@ func loadFields(path string) ([]field, error) {
 	return out, nil
 }
 
-// resolveColumns maps the whitelist to base.manifest column numbers so the
-// engine can read only the needed columns. Without a manifest (old library)
-// it returns nil and the engine keeps the record-order contract. Whitelist
-// names absent from the schema are simply not selected.
-func resolveColumns(libDir string, fields []field) ([]int, error) {
+// resolveColumns reads the v003 schema from base.manifest and maps the
+// whitelist to column numbers so the engine reads only the needed columns.
+// Whitelist names absent from the schema are simply not selected.
+func resolveColumns(libDir string, fields []field) ([]int, immkv.Schema, error) {
 	paths, err := filepath.Glob(filepath.Join(libDir, "chr*.manifest"))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if len(paths) == 0 {
-		return nil, nil
+		return nil, nil, fmt.Errorf("%s: no chr*.manifest; annotate requires a v003 library", libDir)
 	}
-	raw, err := os.ReadFile(paths[0])
+	m, err := immkv.ReadManifest(paths[0])
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-	var m struct {
-		Fields []struct {
-			Name   string `json:"name"`
-			Column int    `json:"column"`
-		} `json:"fields"`
-	}
-	if err := json.Unmarshal(raw, &m); err != nil {
-		return nil, fmt.Errorf("%s: %w", paths[0], err)
+	schema, err := m.Schema()
+	if err != nil {
+		return nil, nil, err
 	}
 	want := make(map[string]bool, len(fields))
 	for _, fd := range fields {
@@ -145,10 +138,7 @@ func resolveColumns(libDir string, fields []field) ([]int, error) {
 			cols = append(cols, f.Column)
 		}
 	}
-	if len(cols) == 0 {
-		return nil, nil
-	}
-	return cols, nil
+	return cols, schema, nil
 }
 
 // row is one query line awaiting formatting.
@@ -173,7 +163,7 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 	for i, fd := range fields {
 		idxOf[fd.name] = i
 	}
-	cols, err := resolveColumns(libDir, fields)
+	cols, schema, err := resolveColumns(libDir, fields)
 	if err != nil {
 		return err
 	}
@@ -185,7 +175,7 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 	}
 	defer f.Close()
 	var r io.Reader = bufio.NewReaderSize(f, 1<<20)
-	if strings.HasSuffix(in, ".gz") {
+	if strings.HasSuffix(in, ".gz") || strings.HasSuffix(in, ".bgz") {
 		br, err := bgzf.NewReader(f, 0)
 		if err != nil {
 			return err
@@ -229,6 +219,15 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 		return make([]byte, 0, need)
 	}
 	var wgp sync.WaitGroup
+	var fmtMu sync.Mutex
+	var fmtErr error
+	setFmtErr := func(err error) {
+		fmtMu.Lock()
+		if fmtErr == nil {
+			fmtErr = err
+		}
+		fmtMu.Unlock()
+	}
 	for w := 0; w < threads; w++ {
 		wgp.Add(1)
 		go func() {
@@ -246,7 +245,11 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 				need += len(jw.header)
 				buf := bytes.NewBuffer(getBuf(need))
 				buf.Write(jw.header)
-				h := formatWindow(buf, jw.rows, jw.byFlat, jw.spanStart, jw.spanN, fields, idxOf, prefix, sc)
+				h, ferr := formatWindow(buf, jw.rows, jw.byFlat, jw.spanStart, jw.spanN, fields, idxOf, prefix, schema, sc)
+				if ferr != nil {
+					setFmtErr(ferr)
+					continue
+				}
 				hits.Add(h)
 				tFmt.Add(int64(time.Since(t0)))
 				b := buf.Bytes()
@@ -270,7 +273,7 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 	// plain-text expansion is then a separate, untimed step.
 	var gz *bgzf.Writer
 	var dst io.Writer = w
-	if strings.HasSuffix(out, ".gz") {
+	if strings.HasSuffix(out, ".gz") || strings.HasSuffix(out, ".bgz") {
 		gz = bgzf.NewWriter(w, 4)
 		dst = gz
 	}
@@ -465,6 +468,12 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 	if err := <-collectorDone; err != nil {
 		return err
 	}
+	fmtMu.Lock()
+	renderErr := fmtErr
+	fmtMu.Unlock()
+	if renderErr != nil {
+		return renderErr
+	}
 	fmt.Printf("rows %d, hits %d (%.2f%%), read %.1fGiB; key %.2fs / query %.2fs / format %.2fs (%d threads); wall %s\n",
 		total.Load(), hits.Load(), float64(hits.Load())*100/float64(total.Load()), float64(readBytes()-read0)/(1<<30),
 		float64(tKey.Load())/1e9, float64(tQuery.Load())/1e9, float64(tFmt.Load())/1e9, threads,
@@ -473,21 +482,39 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 }
 
 // formatWindow formats one window's rows into buf and returns the hit count.
-func formatWindow(buf *bytes.Buffer, rows []row, byFlat [][]byte, spanStart, spanN []int, fields []field, idxOf map[string]int, prefix string, sc *fmtScratch) uint64 {
+// Library values are v003 records; each hit's whitelisted fields are rendered
+// straight into a span arena, so the multi-hit merge never parses INFO text.
+func formatWindow(buf *bytes.Buffer, rows []row, byFlat [][]byte, spanStart, spanN []int, fields []field, idxOf map[string]int, prefix string, schema immkv.Schema, sc *fmtScratch) (uint64, error) {
 	var hits uint64
 	for i := range rows {
 		rw := &rows[i]
 		buf.Write(rw.line[:rw.infoOff])
 		info := rw.line[rw.infoOff:rw.infoEnd]
-		sc.perAlt = sc.perAlt[:0]
-		for e := 0; e < spanN[i]; e++ {
-			sc.perAlt = append(sc.perAlt, byFlat[spanStart[i]+e])
-		}
+		k := spanN[i]
+		sc.resetFound(k, len(fields))
+		sc.rendered = sc.rendered[:0]
+		sc.hit = sc.hit[:0]
 		has := false
-		for _, v := range sc.perAlt {
-			if len(v) > 0 {
-				has = true
-				break
+		for e := 0; e < k; e++ {
+			v := byFlat[spanStart[i]+e]
+			hit := len(v) > 0
+			sc.hit = append(sc.hit, hit)
+			if !hit {
+				continue
+			}
+			has = true
+			record, err := immkv.NewRecord(schema, v)
+			if err != nil {
+				return 0, fmt.Errorf("decode record: %w", err)
+			}
+			for field, value := range record.Values() {
+				fieldIndex, ok := idxOf[field.Name]
+				if !ok || sc.found[e][fieldIndex].off >= 0 {
+					continue
+				}
+				start := len(sc.rendered)
+				sc.rendered = appendFieldValue(sc.rendered, field, value)
+				sc.found[e][fieldIndex] = spanT{start, len(sc.rendered)}
 			}
 		}
 		if has {
@@ -498,14 +525,64 @@ func formatWindow(buf *bytes.Buffer, rows []row, byFlat [][]byte, spanStart, spa
 				buf.Write(info)
 				buf.WriteByte(';')
 			}
-			writeFields(buf, sc.perAlt, fields, idxOf, rw.line[rw.altOff:rw.altEnd], prefix, sc)
+			writeFields(buf, sc, k, fields, rw.line[rw.altOff:rw.altEnd], prefix)
 		} else {
 			buf.Write(info)
 		}
 		buf.Write(rw.line[rw.infoEnd:])
 		buf.WriteByte('\n')
 	}
-	return hits
+	return hits, nil
+}
+
+// appendFieldValue renders one typed value in normalized INFO form.
+func appendFieldValue(dst []byte, field immkv.Field, value immkv.Value) []byte {
+	if field.Type == immkv.TypeFlag {
+		return dst
+	}
+	if isArrayField(field) {
+		if len(value.Elems) == 0 {
+			return append(dst, '.')
+		}
+		for i := range value.Elems {
+			if i > 0 {
+				dst = append(dst, ',')
+			}
+			element := value.Elems[i]
+			if element.Type == 0 {
+				dst = append(dst, '.')
+				continue
+			}
+			dst = appendScalarField(dst, field.Type, element)
+		}
+		return dst
+	}
+	return appendScalarField(dst, field.Type, value)
+}
+
+func appendScalarField(dst []byte, fieldType immkv.FieldType, value immkv.Value) []byte {
+	switch fieldType {
+	case immkv.TypeInteger:
+		return strconv.AppendInt(dst, value.Int, 10)
+	case immkv.TypeFloat:
+		return strconv.AppendFloat(dst, value.Float, 'g', -1, 64)
+	case immkv.TypeString:
+		return append(dst, value.Bytes...)
+	default:
+		return dst
+	}
+}
+
+// isArrayField matches Schema's array rule: numeric Number R/G/. only.
+func isArrayField(field immkv.Field) bool {
+	if field.Type != immkv.TypeInteger && field.Type != immkv.TypeFloat {
+		return false
+	}
+	switch field.Number {
+	case "R", "G", ".":
+		return true
+	}
+	return false
 }
 
 // altEnd returns the end offset of the ALT column.
@@ -523,10 +600,11 @@ type spanT struct{ off, end int }
 // of garbage over a full query, and GC assist slows the query stage several
 // times over.
 type fmtScratch struct {
-	found  [][]spanT // [ALT element][field]
-	idxs   []int
-	elems  [][]byte
-	perAlt [][]byte
+	found    [][]spanT // [ALT element][field]; off < 0 = field absent
+	rendered []byte    // this row's rendered field values
+	hit      []bool    // per ALT element: record present
+	idxs     []int
+	elems    [][]byte
 }
 
 func (s *fmtScratch) resetFound(k, nFields int) {
@@ -546,49 +624,17 @@ func (s *fmtScratch) resetFound(k, nFields int) {
 }
 
 // writeFields appends the hit annotation segment for one row, following the
-// merge rules described in the header comment. See also the note on raw value
-// passthrough there.
-func writeFields(w io.Writer, perAlt [][]byte, fields []field, idxOf map[string]int, altCol []byte, prefix string, sc *fmtScratch) {
-	k := len(perAlt)
+// merge rules described in the header comment.
+func writeFields(w io.Writer, sc *fmtScratch, k int, fields []field, altCol []byte, prefix string) {
 	m := 0 // hit elements
-	for _, v := range perAlt {
-		if len(v) > 0 {
+	for _, hit := range sc.hit {
+		if hit {
 			m++
 		}
 	}
 	all := m >= 2
-	sc.resetFound(k, len(fields))
-	for e, info := range perAlt {
-		if len(info) == 0 {
-			continue
-		}
-		fs := sc.found[e]
-		rest := info
-		off := 0
-		for len(rest) > 0 {
-			var seg []byte
-			if j := bytes.IndexByte(rest, ';'); j >= 0 {
-				seg = rest[:j]
-				rest = rest[j+1:]
-			} else {
-				seg = rest
-				rest = nil
-			}
-			eq := bytes.IndexByte(seg, '=')
-			key := seg
-			if eq >= 0 {
-				key = seg[:eq]
-			}
-			if idx, ok := idxOf[string(key)]; ok && fs[idx].off < 0 {
-				fs[idx] = spanT{off, off + len(seg)}
-			}
-			off += len(seg) + 1
-		}
-	}
-	value := func(fd field, i, e int) []byte {
-		seg := perAlt[e][sc.found[e][i].off:sc.found[e][i].end]
-		eq := bytes.IndexByte(seg, '=')
-		return seg[eq+1:] // raw bytes as stored, no reformatting
+	value := func(i, e int) []byte {
+		return sc.rendered[sc.found[e][i].off:sc.found[e][i].end]
 	}
 	// Multi-hit join order is the ALT byte order of the hitting records
 	// (matching how a tabix stream meets same-site records).
@@ -640,19 +686,19 @@ func writeFields(w io.Writer, perAlt [][]byte, fields []field, idxOf map[string]
 					}
 				}
 				if hitHere {
-					w.Write(value(fd, i, j))
+					w.Write(value(i, j))
 				} else {
 					io.WriteString(w, ".")
 				}
 			}
 		case len(idxs) == 1:
-			w.Write(value(fd, i, idxs[0]))
+			w.Write(value(i, idxs[0]))
 		case len(idxs) > 1:
 			for n, e := range byByte(idxs) {
 				if n > 0 {
 					io.WriteString(w, ",")
 				}
-				w.Write(value(fd, i, e))
+				w.Write(value(i, e))
 			}
 		}
 	}

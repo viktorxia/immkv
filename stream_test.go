@@ -199,7 +199,7 @@ func TestGetBatchSingleKey(t *testing.T) {
 func TestGetBatchCorruptFrame(t *testing.T) {
 	dir := t.TempDir()
 	base := filepath.Join(dir, "chr1")
-	w, err := Create(base, Options{})
+	w, err := Create(base, Options{Schema: testRecordSchema})
 	if err != nil {
 		t.Fatal(err)
 	}

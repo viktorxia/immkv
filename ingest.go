@@ -15,6 +15,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -48,6 +49,9 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error {
 	if err := os.MkdirAll(filepath.Dir(basePath), 0o755); err != nil {
 		return err
 	}
+	// BuildFromTSVs 的值永远是原始字节，由 writer 包成单 String 字段 record；
+	// 调用方传进来的 Schema 不适用于这条入口。
+	opts.Schema = nil
 	w, err := Create(basePath, opts)
 	if err != nil {
 		return err
@@ -68,7 +72,11 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error {
 		return err
 	}
 	finished = true
-	return nil
+	buildID, err := newBuildID()
+	if err != nil {
+		return err
+	}
+	return writeColumnar(basePath, simpleKVSchema(), buildID, SourceInfoOrder{}, 0, 0)
 }
 
 // addTSVFile 把一个 TSV 文件的记录按顺序喂给 w。行切片会被 AddSorted 拷贝，
@@ -151,6 +159,7 @@ func BuildFromVCFs(outdir string, vcfs []string, fields []string, prefix string,
 	if err != nil {
 		return err
 	}
+	opts.Schema = plan.schema
 	if multi {
 		if err := buildVCFShardsParallel(outdir, plan, opts); err != nil {
 			return err
@@ -164,7 +173,7 @@ func BuildFromVCFs(outdir string, vcfs []string, fields []string, prefix string,
 		return err
 	}
 	return writeFileAtomic(filepath.Join(outdir, vcfImmkvHeaderName),
-		buildImmkvHeader(plan.header.fileFormat, plan.sel))
+		buildImmkvHeader(plan.header.fileFormat, plan.selectedFields))
 }
 
 // validateVCFPrefix 拒绝会破坏 INFO 语法的前缀。
@@ -230,28 +239,19 @@ type valueField struct {
 	order    int    // ##INFO 声明顺序（0 起）
 }
 
-// infoField 是一条待按 ##INFO 顺序重建的 INFO 字段。
-type infoField struct {
-	order  int
-	id     string
-	val    []byte
-	isFlag bool
-}
-
 // vcfPlan 是一次 BuildFromVCFs 的输入与字段方案。
 type vcfPlan struct {
-	header  *vcfHeader
-	raw     []byte
-	sel     []valueField
-	all     bool // fields 为空：值取整条 INFO
-	prefix  string
-	buildID [16]byte // 本次构建的记录序/列存配对代号
-	inputs  []vcfInput
+	header         *vcfHeader
+	raw            []byte
+	selectedFields []valueField
+	schema         Schema
+	buildID        [16]byte // 本次构建的记录序/列存配对代号
+	inputs         []vcfInput
 }
 
 // prepareVCFInputs 预读所有输入的头，校验一致性，并确定字段方案。
 func prepareVCFInputs(vcfs []string, fields []string, prefix string, multi bool) (*vcfPlan, error) {
-	plan := &vcfPlan{all: len(fields) == 0, prefix: prefix}
+	plan := &vcfPlan{}
 	var seen [25]bool
 	for _, path := range vcfs {
 		r, err := openVCF(path, 1)
@@ -287,17 +287,43 @@ func prepareVCFInputs(vcfs []string, fields []string, prefix string, multi bool)
 			plan.inputs = append(plan.inputs, vcfInput{path: path, cid: cid})
 		}
 	}
-	sel, err := selectValueFields(plan.header, fields, prefix)
+	selectedFields, err := selectValueFields(plan.header, fields, prefix)
 	if err != nil {
 		return nil, err
 	}
-	plan.sel = sel
+	plan.selectedFields = selectedFields
+	plan.schema, err = schemaFromSelectedFields(selectedFields)
+	if err != nil {
+		return nil, err
+	}
 	id, err := newBuildID()
 	if err != nil {
 		return nil, err
 	}
 	plan.buildID = id
 	return plan, nil
+}
+
+// schemaFromSelectedFields 把 ##INFO 字段方案转成 v003 schema：Flag 只占位，
+// 其余字段按 Type/Number 原样落进 schema。
+func schemaFromSelectedFields(fields []valueField) (Schema, error) {
+	schema := make(Schema, len(fields))
+	for i := range fields {
+		field := &fields[i]
+		if field.isFlag {
+			schema[i] = Field{Name: field.prefixed, Type: TypeFlag, Number: "0"}
+			continue
+		}
+		fieldType, ok := parseFieldType(field.typ)
+		if !ok {
+			return nil, fmt.Errorf("immkv: BuildFromVCFs: INFO field %q has unsupported type %q", field.id, field.typ)
+		}
+		schema[i] = Field{Name: field.prefixed, Type: fieldType, Number: field.number}
+	}
+	if err := schema.Validate(); err != nil {
+		return nil, err
+	}
+	return schema, nil
 }
 
 // selectValueFields 把 fields 解析成 valueField 列表；fields 为空时取全部
@@ -615,49 +641,48 @@ func (s *buildState) firstErr() error {
 type vcfShardBuilder struct {
 	outdir string
 	opts   Options
-	sel    []valueField
-	all    bool
-	prefix string
-	fixed  int // -1：跟随 CHROM 块；>=0：多文件模式只允许该染色体
+
+	selectedFields []valueField
+	schema         Schema
+	recordEncoder  *RecordEncoder
+	fixed          int // -1：跟随 CHROM 块；>=0：多文件模式只允许该染色体
 
 	cur  int
 	w    *Writer
 	seen [25]bool
 
-	hdr        *vcfHeader
-	seenInfo   []uint32
-	gen        uint32
-	infoFields []infoField
-
-	buildID [16]byte
-	stats   colInfoStats
-	srcLast int
-	srcBad  bool
+	hdr       *vcfHeader
+	seenInfo  []uint32
+	gen       uint32
+	buildID   [16]byte
+	stats     SourceInfoOrder
+	nonFinite int64 // 非有限 Float 按缺失处理的次数（诊断）
+	srcLast   int
+	srcBad    bool
 
 	idx     map[string]int
 	vals    [][]byte
 	has     []bool
 	touched []int
-	valBuf  []byte
-	infoBuf []byte
 	lineNo  int
 }
 
 func newVCFShardBuilder(outdir string, plan *vcfPlan, opts Options, fixed int) *vcfShardBuilder {
 	b := &vcfShardBuilder{
-		outdir: outdir, opts: opts, sel: plan.sel, all: plan.all,
-		prefix: plan.prefix, fixed: fixed, cur: -1,
+		outdir: outdir, opts: opts,
+		selectedFields: plan.selectedFields,
+		schema:         plan.schema,
+		recordEncoder:  NewRecordEncoder(plan.schema),
+		fixed:          fixed, cur: -1,
 		hdr: plan.header, seenInfo: make([]uint32, len(plan.header.infoOrder)),
 		buildID: plan.buildID,
 	}
-	if !b.all {
-		b.idx = make(map[string]int, len(b.sel))
-		for i := range b.sel {
-			b.idx[b.sel[i].id] = i
-		}
-		b.vals = make([][]byte, len(b.sel))
-		b.has = make([]bool, len(b.sel))
+	b.idx = make(map[string]int, len(b.selectedFields))
+	for i := range b.selectedFields {
+		b.idx[b.selectedFields[i].id] = i
 	}
+	b.vals = make([][]byte, len(b.selectedFields))
+	b.has = make([]bool, len(b.selectedFields))
 	return b
 }
 
@@ -709,7 +734,8 @@ func (b *vcfShardBuilder) addLine(line []byte) error {
 		if err := b.finishCurrent(); err != nil {
 			return err
 		}
-		b.stats = colInfoStats{}
+		b.stats = SourceInfoOrder{}
+		b.nonFinite = 0
 		w, err := Create(filepath.Join(b.outdir, "chr"+ChromName(cid)), b.opts)
 		if err != nil {
 			return err
@@ -717,29 +743,20 @@ func (b *vcfShardBuilder) addLine(line []byte) error {
 		b.w = w
 		b.cur = int(cid)
 	}
-	var common []byte
-	if b.all {
-		v, err := b.sortInfo(info)
-		if err != nil {
-			return fmt.Errorf("line %d: %w", b.lineNo, err)
-		}
-		common = v
-	} else if err := b.parseInfo(info); err != nil {
+	if err := b.parseInfo(info); err != nil {
 		return fmt.Errorf("line %d: %w", b.lineNo, err)
 	}
 	group := PosKey(cid, uint32(p))
-	for altIdx, a := range bytes.Split(alt, []byte(",")) {
-		if skipVCFAlt(a) {
+	for altIndex, altAllele := range bytes.Split(alt, []byte(",")) {
+		if skipVCFAlt(altAllele) {
 			continue
 		}
-		var val []byte
-		if b.all {
-			val = common
-		} else {
-			val = b.buildValue(altIdx)
+		record, err := b.buildRecord(altIndex)
+		if err != nil {
+			return fmt.Errorf("line %d: %w", b.lineNo, err)
 		}
-		key := VarKey(cid, uint32(p), string(ref), string(a))
-		if err := b.w.AddSorted(group, key, val); err != nil {
+		key := VarKey(cid, uint32(p), string(ref), string(altAllele))
+		if err := b.w.AddSorted(group, key, record); err != nil {
 			return fmt.Errorf("line %d: %w", b.lineNo, err)
 		}
 	}
@@ -811,7 +828,6 @@ func (b *vcfShardBuilder) parseInfo(info []byte) error {
 func (b *vcfShardBuilder) noteInfoOrder(d *infoDef) {
 	if d.order < b.srcLast {
 		b.srcBad = true
-		b.stats.Inversions++
 	}
 	b.srcLast = d.order
 }
@@ -825,36 +841,115 @@ func (b *vcfShardBuilder) endRecordOrder() {
 	}
 }
 
-// buildValue 按 ##INFO 声明顺序拼一个 ALT 的值；Number=A 取该 ALT 下标的
-// 元素；没有输出字段时返回 "."。
-func (b *vcfShardBuilder) buildValue(altIdx int) []byte {
-	b.valBuf = b.valBuf[:0]
-	for fi := range b.sel {
-		if !b.has[fi] {
+// buildRecord 把一个 ALT 的字段值编码成 v003 record。
+func (b *vcfShardBuilder) buildRecord(altIndex int) ([]byte, error) {
+	b.recordEncoder.Reset()
+	for fieldIndex := range b.selectedFields {
+		if !b.has[fieldIndex] {
 			continue
 		}
-		v := b.vals[fi]
-		if b.sel[fi].number == "A" {
+		field := &b.selectedFields[fieldIndex]
+		value := b.vals[fieldIndex]
+		if field.number == "A" {
 			var ok bool
-			v, ok = commaElem(v, altIdx)
+			value, ok = commaElem(value, altIndex)
 			if !ok {
 				continue
 			}
 		}
-		if len(b.valBuf) > 0 {
-			b.valBuf = append(b.valBuf, ';')
-		}
-		b.valBuf = append(b.valBuf, b.sel[fi].prefixed...)
-		if b.sel[fi].isFlag {
+		if field.isFlag {
+			b.recordEncoder.Flag(field.prefixed)
 			continue
 		}
-		b.valBuf = append(b.valBuf, '=')
-		b.valBuf = append(b.valBuf, v...)
+		if missingVCFValue(value) {
+			continue
+		}
+		switch field.typ {
+		case "Integer":
+			if isArrayNumber(field.number) {
+				if err := b.setIntegerArray(field, value); err != nil {
+					return nil, err
+				}
+				continue
+			}
+			parsed, err := strconv.ParseInt(string(value), 10, 64)
+			if err != nil {
+				return nil, fmt.Errorf("field %q value %q: %w", field.id, value, err)
+			}
+			b.recordEncoder.Int(field.prefixed, parsed)
+		case "Float":
+			if isArrayNumber(field.number) {
+				if err := b.setFloatArray(field, value); err != nil {
+					return nil, err
+				}
+				continue
+			}
+			parsed, err := strconv.ParseFloat(string(value), 64)
+			if err != nil {
+				return nil, fmt.Errorf("field %q value %q: %w", field.id, value, err)
+			}
+			if math.IsNaN(parsed) || math.IsInf(parsed, 0) {
+				b.nonFinite++
+				continue
+			}
+			b.recordEncoder.Float(field.prefixed, parsed)
+		case "String":
+			b.recordEncoder.Bytes(field.prefixed, value)
+		default:
+			return nil, fmt.Errorf("field %q has unsupported type %q", field.id, field.typ)
+		}
 	}
-	if len(b.valBuf) == 0 {
-		b.valBuf = append(b.valBuf, '.')
+	return b.recordEncoder.Encode()
+}
+
+func isArrayNumber(number string) bool {
+	switch number {
+	case "R", "G", ".":
+		return true
 	}
-	return b.valBuf
+	return false
+}
+
+func missingVCFValue(value []byte) bool {
+	return len(value) == 0 || (len(value) == 1 && value[0] == '.')
+}
+
+func (b *vcfShardBuilder) setIntegerArray(field *valueField, value []byte) error {
+	elements := bytes.Split(value, []byte(","))
+	values := make([]Value, len(elements))
+	for i := range elements {
+		if missingVCFValue(elements[i]) {
+			continue
+		}
+		parsed, err := strconv.ParseInt(string(elements[i]), 10, 64)
+		if err != nil {
+			return fmt.Errorf("field %q element %q: %w", field.id, elements[i], err)
+		}
+		values[i] = Value{Type: TypeInteger, Int: parsed}
+	}
+	b.recordEncoder.Values(field.prefixed, values)
+	return nil
+}
+
+func (b *vcfShardBuilder) setFloatArray(field *valueField, value []byte) error {
+	elements := bytes.Split(value, []byte(","))
+	values := make([]Value, len(elements))
+	for i := range elements {
+		if missingVCFValue(elements[i]) {
+			continue
+		}
+		parsed, err := strconv.ParseFloat(string(elements[i]), 64)
+		if err != nil {
+			return fmt.Errorf("field %q element %q: %w", field.id, elements[i], err)
+		}
+		if math.IsNaN(parsed) || math.IsInf(parsed, 0) {
+			b.nonFinite++
+			continue
+		}
+		values[i] = Value{Type: TypeFloat, Float: parsed}
+	}
+	b.recordEncoder.Values(field.prefixed, values)
+	return nil
 }
 
 // commaElem 返回逗号分隔值的第 n 个元素；元素可以是空串。
@@ -872,79 +967,6 @@ func commaElem(v []byte, n int) ([]byte, bool) {
 	return nil, false
 }
 
-// sortInfo 把整条 INFO 按 ##INFO 声明顺序重排并重建值；prefix 非空时每个
-// 字段名加 prefix_。INFO 为 "." 或空时返回 "."。未知字段、重复字段、空段、
-// Flag 带值、非 Flag 缺值都返回错误，不静默丢字段。
-func (b *vcfShardBuilder) sortInfo(info []byte) ([]byte, error) {
-	b.infoBuf = b.infoBuf[:0]
-	b.srcLast, b.srcBad = -1, false
-	if len(info) == 0 || (len(info) == 1 && info[0] == '.') {
-		b.endRecordOrder()
-		return []byte("."), nil
-	}
-	b.infoFields = b.infoFields[:0]
-	b.gen++
-	rest := info
-	for len(rest) > 0 {
-		var seg []byte
-		if i := bytes.IndexByte(rest, ';'); i >= 0 {
-			seg, rest = rest[:i], rest[i+1:]
-		} else {
-			seg, rest = rest, nil
-		}
-		if len(seg) == 0 {
-			return nil, errors.New("empty INFO segment")
-		}
-		eq := bytes.IndexByte(seg, '=')
-		key := seg
-		var v []byte
-		if eq >= 0 {
-			key, v = seg[:eq], seg[eq+1:]
-		}
-		if len(key) == 0 {
-			return nil, errors.New("empty INFO field name")
-		}
-		d, ok := b.hdr.info[string(key)]
-		if !ok {
-			return nil, fmt.Errorf("unknown INFO field %q", key)
-		}
-		b.noteInfoOrder(d)
-		if b.seenInfo[d.order] == b.gen {
-			return nil, fmt.Errorf("duplicate INFO field %q", key)
-		}
-		b.seenInfo[d.order] = b.gen
-		if d.isFlag && eq >= 0 {
-			return nil, fmt.Errorf("Flag INFO field %q has a value", key)
-		}
-		if !d.isFlag && eq < 0 {
-			return nil, fmt.Errorf("non-Flag INFO field %q has no value", key)
-		}
-		b.infoFields = append(b.infoFields, infoField{
-			order: d.order, id: string(key), val: v, isFlag: d.isFlag,
-		})
-	}
-	sort.Slice(b.infoFields, func(i, j int) bool {
-		return b.infoFields[i].order < b.infoFields[j].order
-	})
-	for _, f := range b.infoFields {
-		if len(b.infoBuf) > 0 {
-			b.infoBuf = append(b.infoBuf, ';')
-		}
-		if b.prefix != "" {
-			b.infoBuf = append(b.infoBuf, b.prefix...)
-			b.infoBuf = append(b.infoBuf, '_')
-		}
-		b.infoBuf = append(b.infoBuf, f.id...)
-		if f.isFlag {
-			continue
-		}
-		b.infoBuf = append(b.infoBuf, '=')
-		b.infoBuf = append(b.infoBuf, f.val...)
-	}
-	b.endRecordOrder()
-	return b.infoBuf, nil
-}
-
 // finishCurrent 落盘当前染色体的 writer。
 func (b *vcfShardBuilder) finishCurrent() error {
 	if b.w == nil {
@@ -956,7 +978,7 @@ func (b *vcfShardBuilder) finishCurrent() error {
 		return err
 	}
 	base := filepath.Join(b.outdir, "chr"+ChromName(uint8(b.cur)))
-	return writeColumnar(base, b.sel, b.buildID, b.stats)
+	return writeColumnar(base, b.schema, b.buildID, b.stats, b.nonFinite, colBinWidth)
 }
 
 // finish 结束构建；一条可建记录都没有时报错。
@@ -1073,15 +1095,15 @@ func buildOneVCFShard(outdir string, in vcfInput, plan *vcfPlan, opts Options, s
 
 // buildImmkvHeader 生成 vcf.immkv.header：fileformat + 选中字段的 ##INFO
 // （ID 加前缀，按 ##INFO 声明顺序）+ 无样本的 #CHROM 行。
-func buildImmkvHeader(fileFormat string, sel []valueField) []byte {
+func buildImmkvHeader(fileFormat string, selectedFields []valueField) []byte {
 	if fileFormat == "" {
 		fileFormat = "##fileformat=VCFv4.2"
 	}
-	out := make([]byte, 0, len(fileFormat)+64*len(sel)+64)
+	out := make([]byte, 0, len(fileFormat)+64*len(selectedFields)+64)
 	out = append(out, fileFormat...)
 	out = append(out, '\n')
-	for i := range sel {
-		out = append(out, prefixInfoLine(sel[i].defLine, sel[i].prefixed)...)
+	for i := range selectedFields {
+		out = append(out, prefixInfoLine(selectedFields[i].defLine, selectedFields[i].prefixed)...)
 		out = append(out, '\n')
 	}
 	out = append(out, "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n"...)
