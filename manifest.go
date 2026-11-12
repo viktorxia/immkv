@@ -164,6 +164,45 @@ func ReadManifest(path string) (*Manifest, error) {
 	return &m, nil
 }
 
+// ReadSchema 读库目录里任意一个 shard 的 manifest，返回整库 schema。
+// 所有 shard 的 schema 必须一致；一个 manifest 都找不到时报错。
+// 需要 shard 级诊断信息（build id、记录数、字节数）时用 ReadManifest。
+func ReadSchema(dir string) (Schema, error) {
+	if dir == "" {
+		return nil, fmt.Errorf("immkv: ReadSchema: empty dir")
+	}
+	var (
+		schema Schema
+		hash   string
+		first  string
+	)
+	for id := uint8(0); id <= 24; id++ {
+		path := filepath.Join(dir, "chr"+ChromName(id)+".manifest")
+		m, err := ReadManifest(path)
+		if err != nil {
+			if os.IsNotExist(err) {
+				continue
+			}
+			return nil, err
+		}
+		if first == "" {
+			s, err := m.Schema()
+			if err != nil {
+				return nil, err
+			}
+			schema, hash, first = s, m.SchemaHash, path
+			continue
+		}
+		if !strings.EqualFold(hash, m.SchemaHash) {
+			return nil, fmt.Errorf("immkv: %s 与 %s 的 schema 不一致", first, path)
+		}
+	}
+	if first == "" {
+		return nil, fmt.Errorf("immkv: %s 下没有 chr*.manifest", dir)
+	}
+	return schema, nil
+}
+
 // WriteManifest 校验后原子写 base.manifest。
 func WriteManifest(path string, m *Manifest) error {
 	if err := m.Validate(); err != nil {

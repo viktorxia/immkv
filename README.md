@@ -67,10 +67,11 @@ sdb, _ = immkv.OpenStreaming(cacheDir, immkv.Options{Threads: 9, Columns: []int{
 ```
 
 Genomic libraries store v003 records: `vals` values are a presence bitmap plus
-typed payload, not INFO text. Read the schema with
-`immkv.ReadManifest(dir+"/chr1.manifest")` then `Manifest.Schema()`, view a value
-with `immkv.NewRecord(schema, v)` (typed getters or `Values()`), or render
-normalized INFO text with `immkv.RenderRecord(schema, v)`. `OpenSimpleKV` is the
+typed payload, not INFO text. Read the library schema with
+`immkv.ReadSchema(dir)`, view a value with `immkv.NewRecord(schema, v)` (typed
+getters or `Values()`), or render normalized INFO text with
+`immkv.RenderRecord(schema, v)`. `ReadManifest` stays available for per-shard
+diagnostics (build id, record counts, byte sizes). `OpenSimpleKV` is the
 exception: it unwraps the single `value` String field back to the original bytes.
 
 Plain KV (no chromosome/position) has its own single-library handle:

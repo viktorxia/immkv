@@ -49,6 +49,51 @@ func TestManifestRoundTrip(t *testing.T) {
 	}
 }
 
+func TestReadSchema(t *testing.T) {
+	dir := t.TempDir()
+	for _, base := range []string{"chr7", "chrM"} {
+		m := v003Manifest(t)
+		m.Base = base
+		if err := WriteManifest(filepath.Join(dir, base+".manifest"), m); err != nil {
+			t.Fatal(err)
+		}
+	}
+	got, err := ReadSchema(dir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(got, v003Schema()) {
+		t.Fatalf("schema = %+v, want %+v", got, v003Schema())
+	}
+}
+
+func TestReadSchemaNoManifest(t *testing.T) {
+	if _, err := ReadSchema(t.TempDir()); err == nil {
+		t.Fatal("ReadSchema() = nil error, want no-manifest error")
+	}
+}
+
+func TestReadSchemaMismatch(t *testing.T) {
+	dir := t.TempDir()
+	m1 := v003Manifest(t)
+	m1.Base = "chr1"
+	if err := WriteManifest(filepath.Join(dir, "chr1.manifest"), m1); err != nil {
+		t.Fatal(err)
+	}
+	m2 := v003Manifest(t)
+	m2.Base = "chr2"
+	if err := m2.SetSchema(Schema{{Name: "AF", Type: TypeFloat, Number: "A"}}); err != nil {
+		t.Fatal(err)
+	}
+	if err := WriteManifest(filepath.Join(dir, "chr2.manifest"), m2); err != nil {
+		t.Fatal(err)
+	}
+	_, err := ReadSchema(dir)
+	if err == nil || !strings.Contains(err.Error(), "schema 不一致") {
+		t.Fatalf("ReadSchema error = %v, want schema mismatch", err)
+	}
+}
+
 func TestManifestRejectsOldFormat(t *testing.T) {
 	path := filepath.Join(t.TempDir(), "chr1.manifest")
 	old := `{"format":"immkv-col-manifest","version":1,"base":"chr1","fields":[{"name":"AF","column":0,"type":"Float","number":"A","encoding":"raw"}]}`
