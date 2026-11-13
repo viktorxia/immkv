@@ -23,8 +23,8 @@
 // 与 lens 推导（bit29 同帧位不加前条帧长）。
 //
 // 生命周期契约：
-//   - Finish 走 临时文件 + fsync + rename 原子替换；vals 先换、keys 后换，
-//     keys 文件的最终 rename 是本次构建对外可见的分界。
+//   - Create 的目标文件必须不存在；已有库不会被覆盖，重建前先删除旧文件。
+//   - Finish 走临时文件 + fsync + rename；失败时返回错误并清掉本次的 .tmp。
 //   - 同一份数据文件可被任意多进程同时打开（无锁）。
 //   - 查询返回的切片只保证到下一次查询前有效，要保留就拷贝。
 //
@@ -68,39 +68,46 @@ const (
 	packTarget           = 64 << 10 // 打包帧的目标未压字节数
 	flushChunk           = 4 << 20  // AddSorted 攒集缓冲上限（key+val 字节数）
 
-	// 每值成帧模式（Options.PackTarget < 0）的字典训练参数
+	// 每值成帧模式（CreateOptions.PackTarget < 0）的字典训练参数
 	trainSamples = 5000      // Contents 条数（训熵表用）
 	trainHistory = 512 << 10 // History 上限：实测 512KB 时 chr22 为 bgzip 的 82%，128KB 涨到 110% 破体积线
 	dictID       = 1         // 字典 ID；帧头记录它，解码侧按 vals 头还原
 )
 
-// Options 是创建与打开的选项。
-type Options struct {
-	// Threads 是 OpenStreaming 的并发旋钮：同时决定在途 pread 请求数与并行
-	// 解压 goroutine 数，默认 1。生产口径由调用方在多个句柄间分配总预算。
-	Threads int
-	// CacheMB 是 OpenEager 解压缓存（锚点组 + 值帧）的容量上限（MB），0 表示
-	// 不缓存、每次现解压。多个句柄各持一份，不跨进程共享。OpenStreaming
-	// 不用它——批次就是预取窗口。
-	CacheMB int
-	// RawValueBelow 是 Create 的参数：值短于该字节数时裸存（不压缩、免解压），
-	// 0 取默认 64；设成大值即全裸存（对应旧 immdb 的 raw 档）。读侧按每条
-	// 记录的裸存标记识别，不依赖这个参数。
+// CreateOptions 是 Create 的选项。
+type CreateOptions struct {
+	// RawValueBelow：值短于该字节数时裸存（不压缩、免解压），0 取默认 64；
+	// 设成大值即全裸存（对应旧 immdb 的 raw 档）。读侧按每条记录的裸存
+	// 标记识别，不依赖这个参数。
 	RawValueBelow int
-	// PackTarget 是 Create 的参数：打包帧的目标未压字节数，0 取默认 64KB。
-	// 小包解码与读量都小、体积大；大包反之。负值表示不打包——每条值独立
-	// 成帧，并用首批值训练 zstd 字典嵌进 vals 头（稀疏点查读得最省，体积
-	// 比打包大 ~20%）。读侧不依赖这个参数。
+	// PackTarget：打包帧的目标未压字节数，0 取默认 64KB。小包解码与读量都
+	// 小、体积大；大包反之。负值表示不打包——每条值独立成帧，并用首批值
+	// 训练 zstd 字典嵌进 vals 头（稀疏点查读得最省，体积比打包大 ~20%）。
+	// 读侧不依赖这个参数。
 	PackTarget int
-	// Columns 是 OpenStreaming 的字段选择：nil 或空表示库内全部列，非空
-	// 是 base.manifest 里的列号；顺序无关，输出始终按 schema 顺序。选择只
-	// 决定读哪些列，不决定走记录序还是列存——路径由读侧按估算 I/O 成本选。
-	// 没有 base.col/manifest 的库用非空 Columns 会报错。
-	Columns []int
-	// Schema 是 Create 的字段表。nil/空表示单 String 字段 value：Add 与
-	// AddSorted 收原始值字节，writer 包成 record。非空表示调用方传入的
-	// value 已经是 record 字节，writer 只落盘、不校验内容。
+	// Schema 是字段表。nil/空表示单 String 字段 value：Add 与 AddSorted
+	// 收原始值字节，writer 包成 record。非空表示调用方传入的 value 已经
+	// 是 record 字节，writer 只落盘、不校验内容。
 	Schema []Field
+}
+
+// BuildOptions 是 BuildFromVCFs 与 BuildFromTSVs 的构建选项；schema 由输入
+// 格式决定，调用方不能指定。
+type BuildOptions struct {
+	RawValueBelow int
+	PackTarget    int
+}
+
+// StreamOptions 是 OpenStreaming 的选项。
+type StreamOptions struct {
+	// Threads 是并发旋钮：同时决定在途 pread 请求数与并行解压 goroutine
+	// 数，默认 1。生产口径由调用方在多个句柄间分配总预算。
+	Threads int
+	// Columns 是字段选择：nil 或空表示库内全部列，非空是 base.manifest 里
+	// 的列号；顺序无关，输出始终按 schema 顺序。选择只决定读出哪些字段，
+	// 不决定走记录序还是列存——路径由读侧按估算 I/O 成本选。没有
+	// base.col/manifest 的库用非空 Columns 会报错。
+	Columns []int
 }
 
 // ---- Writer ----
@@ -125,7 +132,7 @@ type Writer struct {
 	valsTmp       string
 	kf, vf        *os.File
 	kw, vw        *bufio.Writer
-	opts          Options
+	opts          CreateOptions
 	rawBelow      int
 	packTarget    int // <0：每值独立成帧模式（配合训练字典）
 	wrapRawValues bool
@@ -136,8 +143,10 @@ type Writer struct {
 	dictLen       uint32
 	dictOff       uint64
 
-	mode     int8 // 0 未定，1 任意序（Add），2 组升序（AddSorted）；两种模式不可混用
-	finished bool
+	mode     int8  // 0 未定，1 任意序（Add），2 组升序（AddSorted）；两种模式不可混用
+	finished bool  // Finish 已被调用（无论成败）
+	closed   bool  // 资源已释放，Abort/Finish 成功后再调用无操作
+	err      error // 首个构建错误；一旦置位，后续 Add/AddSorted/Finish 都返回它
 
 	recs   []kvRec // Add 全量驻存；AddSorted 是当前攒集缓冲
 	pend   int     // 攒集缓冲里 key+val 的字节数
@@ -165,10 +174,11 @@ type Writer struct {
 }
 
 // Create 创建最终文件为 basePath.keys 与 basePath.vals 的构建器。
-// Finish 前磁盘上只有两个 .tmp 文件。Options.Schema 决定 Add/AddSorted
-// 收到的是原始值还是已编码 record：空 schema 由 writer 包 record，非空
-// schema 要求调用方自己编码。
-func Create(basePath string, opts Options) (*Writer, error) {
+// 目标文件或 .tmp 文件已存在时返回错误，绝不覆盖已有库；构建失败后由调用方
+// 删除残留再重建。Finish 前磁盘上只有两个 .tmp 文件。CreateOptions.Schema
+// 决定 Add/AddSorted 收到的是原始值还是已编码 record：空 schema 由 writer
+// 包 record，非空 schema 要求调用方自己编码。
+func Create(basePath string, opts CreateOptions) (*Writer, error) {
 	if len(opts.Schema) > 0 {
 		if err := Schema(opts.Schema).Validate(); err != nil {
 			return nil, err
@@ -176,11 +186,18 @@ func Create(basePath string, opts Options) (*Writer, error) {
 	}
 	kp, vp := basePath+".keys", basePath+".vals"
 	kt, vt := kp+".tmp", vp+".tmp"
-	kf, err := os.Create(kt)
+	for _, p := range []string{kp, vp, kt, vt} {
+		if _, err := os.Lstat(p); err == nil {
+			return nil, fmt.Errorf("immkv: %s already exists; delete it and rebuild", p)
+		} else if !os.IsNotExist(err) {
+			return nil, err
+		}
+	}
+	kf, err := os.OpenFile(kt, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
 	if err != nil {
 		return nil, err
 	}
-	vf, err := os.Create(vt)
+	vf, err := os.OpenFile(vt, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
 	if err != nil {
 		kf.Close()
 		os.Remove(kt)
@@ -230,18 +247,24 @@ func Create(basePath string, opts Options) (*Writer, error) {
 
 // Add 投入一条记录，键值内容会被拷贝，调用方可复用自己的缓冲。键可重复，
 // Get 返回排序后的第一条，GetPrefix/Scan 能看到全部。与 AddSorted 不可混用。
-// Options.Schema 为空时 val 是原始值，writer 包成单 String 字段 record；
+// CreateOptions.Schema 为空时 val 是原始值，writer 包成单 String 字段 record；
 // 非空时 val 必须已经是 record。键值全量驻内存（ClinVar 规模约 GB 级）；
-// TB 级用 AddSorted。键或值超出格式上限（u16 / u31）直接 panic。
+// TB 级用 AddSorted。键或值超出格式上限（u16 / u31）返回错误。
+// 任一错误都会粘住 writer：之后的操作与 Finish 都返回该错误。
 func (w *Writer) Add(key, val []byte) error {
 	if w.finished {
 		return errors.New("immkv: Writer already finished")
 	}
+	if w.err != nil {
+		return w.err
+	}
 	if w.mode == 2 {
-		return errors.New("immkv: Add after AddSorted")
+		return w.fail(errors.New("immkv: Add after AddSorted"))
 	}
 	val = w.prepareValue(val)
-	checkRecCaps(key, val)
+	if err := checkRecCaps(key, val); err != nil {
+		return w.fail(err)
+	}
 	w.recs = append(w.recs, kvRec{bytes.Clone(key), bytes.Clone(val)})
 	w.mode = 1
 	return nil
@@ -252,29 +275,33 @@ func (w *Writer) Add(key, val []byte) error {
 // （4MB）即时落盘。组结束（group 变化或 Finish）时组内按完整键排序后进入落盘路径。
 // group 倒序、或键低于已进入攒集缓冲的最大键（组间倒挂在该条投入时即已注定）返回
 // error 且该条不进库。内存有界：攒集缓冲 + 当前组（组大小由数据决定）。与 Add
-// 不可混用。Options.Schema 为空时 val 是原始值，writer 包成单 String 字段
-// record；非空时 val 必须已经是 record。
+// 不可混用。CreateOptions.Schema 为空时 val 是原始值，writer 包成单 String
+// 字段 record；非空时 val 必须已经是 record。
 //
 // 基因组数据的标准用法：group 传键的位置前缀（如 [chrom][pos]），同一位置
 // (ref, alt) 的乱序由库吸收，升序条件收窄为「本染色体内按位置有序」；输入已
 // 全排序时 group 传键本身，行为与逐条升序一致。
+// 任一错误都会粘住 writer：之后的操作与 Finish 都返回该错误。
 func (w *Writer) AddSorted(group, key, val []byte) error {
 	if w.finished {
 		return errors.New("immkv: Writer already finished")
 	}
+	if w.err != nil {
+		return w.err
+	}
 	if w.mode == 1 {
-		return errors.New("immkv: AddSorted after Add")
+		return w.fail(errors.New("immkv: AddSorted after Add"))
 	}
 	if w.curGroup == nil {
 		w.curGroup = bytes.Clone(group)
 	} else {
 		c := bytes.Compare(group, w.curGroup)
 		if c < 0 {
-			return fmt.Errorf("immkv: AddSorted group out of order: %q < current %q", group, w.curGroup)
+			return w.fail(fmt.Errorf("immkv: AddSorted group out of order: %q < current %q", group, w.curGroup))
 		}
 		if c > 0 {
 			if err := w.closeGroup(); err != nil {
-				return err
+				return w.fail(err)
 			}
 			w.curGroup = bytes.Clone(group)
 		}
@@ -282,10 +309,12 @@ func (w *Writer) AddSorted(group, key, val []byte) error {
 	// 到这里 lastKey 已含先前全部已接受记录；键低于它 ⇒ 本组最小键必然更低，
 	// 组间倒挂已定，该条立即拒绝
 	if w.lastKey != nil && bytes.Compare(key, w.lastKey) < 0 {
-		return fmt.Errorf("immkv: AddSorted key %q below last emitted %q", key, w.lastKey)
+		return w.fail(fmt.Errorf("immkv: AddSorted key %q below last emitted %q", key, w.lastKey))
 	}
 	val = w.prepareValue(val)
-	checkRecCaps(key, val)
+	if err := checkRecCaps(key, val); err != nil {
+		return w.fail(err)
+	}
 	w.grp = append(w.grp, kvRec{bytes.Clone(key), bytes.Clone(val)})
 	w.mode = 2
 	return nil
@@ -513,7 +542,15 @@ func (w *Writer) flushPacked() error {
 	return nil
 }
 
-// checkRecCaps 检查键值长度是否在格式上限内，超出直接 panic。
+// fail 记录首个构建错误并返回它；后续操作与 Finish 都返回同一个错误。
+func (w *Writer) fail(err error) error {
+	if w.err == nil {
+		w.err = err
+	}
+	return w.err
+}
+
+// checkRecCaps 检查键值长度是否在格式上限内，超出返回错误。
 // prepareValue 在空 schema 的库里把原始值包成单 String 字段的 record：
 // 8B bitmap（bit0=1）+ uvarint(len) + 原字节。非空 schema 的库认为调用方
 // 已经编码好 record，原样落盘。
@@ -530,13 +567,14 @@ func (w *Writer) prepareValue(val []byte) []byte {
 	return w.wrapBuf
 }
 
-func checkRecCaps(key, val []byte) {
+func checkRecCaps(key, val []byte) error {
 	if len(key) > maxKeyLen {
-		panic(fmt.Sprintf("immkv: key 长度 %d 超过 u16 上限 %d", len(key), maxKeyLen))
+		return fmt.Errorf("immkv: key 长度 %d 超过 u16 上限 %d", len(key), maxKeyLen)
 	}
 	if len(val) > maxValLen {
-		panic(fmt.Sprintf("immkv: 值长度 %d 超过 u31 上限 %d", len(val), maxValLen))
+		return fmt.Errorf("immkv: 值长度 %d 超过 u31 上限 %d", len(val), maxValLen)
 	}
+	return nil
 }
 
 // emitRec 发射一条键流记录进微块组装器；frameMark 含裸存/打包标记（低 29 位
@@ -609,20 +647,52 @@ func (w *Writer) blkLensToBytes() []byte {
 }
 
 // Finish 排序（Add 模式）、落盘锚点、回填两个文件头、fsync、rename，然后
-// 关闭构建器。再次调用返回错误。任何一步失败都会清掉两个 .tmp 文件，
-// 原有正式文件（若有）不受影响。
+// 关闭构建器。再次调用返回错误。构建期间出现过错误时，Finish 返回该错误且
+// 不发布任何文件。任何一步失败都会清掉两个 .tmp 文件。
 func (w *Writer) Finish() error {
 	if w.finished {
 		return errors.New("immkv: Writer already finished")
 	}
 	w.finished = true
+	if w.err != nil {
+		w.closeEnc()
+		if cerr := w.abort(); cerr != nil {
+			return fmt.Errorf("%w; cleanup: %v", w.err, cerr)
+		}
+		return w.err
+	}
 	err := w.finish()
-	w.enc.Close()
+	w.closeEnc()
 	if err != nil {
-		w.abort()
+		if cerr := w.abort(); cerr != nil {
+			return fmt.Errorf("%w; cleanup: %v", err, cerr)
+		}
 		return err
 	}
+	w.closed = true
 	return nil
+}
+
+// Abort 放弃构建：关闭文件与编码器、删除本次构建的 .tmp 文件。幂等；
+// Finish 成功后调用是无操作并返回 nil，不会删除已发布的库。
+func (w *Writer) Abort() error {
+	if w.closed {
+		return nil
+	}
+	w.finished = true
+	w.closeEnc()
+	if err := w.abort(); err != nil {
+		return err
+	}
+	w.closed = true
+	return nil
+}
+
+func (w *Writer) closeEnc() {
+	if w.enc != nil {
+		w.enc.Close()
+		w.enc = nil
+	}
 }
 
 func (w *Writer) finish() error {
@@ -709,16 +779,25 @@ func (w *Writer) writeValsHeader() error {
 	return err
 }
 
-// abort 清理失败路径：关闭文件、删除两个 .tmp。
-func (w *Writer) abort() {
+// abort 清理失败路径：关闭文件、删除两个 .tmp，返回首个清理错误。
+func (w *Writer) abort() error {
+	var first error
 	if w.kf != nil {
-		w.kf.Close()
+		if err := w.kf.Close(); err != nil {
+			first = err
+		}
 		w.kf = nil
 	}
 	if w.vf != nil {
-		w.vf.Close()
+		if err := w.vf.Close(); err != nil && first == nil {
+			first = err
+		}
 		w.vf = nil
 	}
-	os.Remove(w.keysTmp)
-	os.Remove(w.valsTmp)
+	for _, p := range []string{w.keysTmp, w.valsTmp} {
+		if err := os.Remove(p); err != nil && !os.IsNotExist(err) && first == nil {
+			first = err
+		}
+	}
+	return first
 }

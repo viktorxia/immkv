@@ -270,7 +270,7 @@ func (c *colShard) entry(dir []byte, col int) colEntry {
 	}
 }
 
-// selectedColumns 把 Options.Columns 展开为 schema 序的列号；nil/空 = 全部。
+// selectedColumns 把 StreamOptions.Columns 展开为 schema 序的列号；nil/空 = 全部。
 func selectedColumns(schema Schema, sel []int) []int {
 	if len(sel) == 0 {
 		out := make([]int, len(schema))
@@ -653,6 +653,11 @@ func (c *colShard) readColBatch(hits []sHit, sel []int, out [][]byte, threads in
 			ch = load(groups[i+1])
 		}
 		if err := c.processBin(res.ld, g, out, threads); err != nil {
+			// 下一 bin 的预取可能还在跑；等它退出再返回，否则调用方紧接着
+			// Close 会与 fadvise/ReadAt 争用文件句柄。
+			if i+1 < len(groups) {
+				<-ch
+			}
 			return err
 		}
 	}

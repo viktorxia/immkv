@@ -30,7 +30,7 @@ func buildColTestLib(t *testing.T) (string, Schema, [][]byte) {
 		ingestRec("1", 1_500_000, "G", "T", "AN=200")+
 		ingestRec("2", 50, "T", "C", "."))
 	out := filepath.Join(dir, "lib")
-	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err != nil {
+	if err := BuildFromVCFs(out, []string{vcf}, nil, "", BuildOptions{}); err != nil {
 		t.Fatal(err)
 	}
 	schema := ingestSchema(t, out)
@@ -83,13 +83,16 @@ func TestBuildFromVCFsWritesColumnar(t *testing.T) {
 	defer db.Close()
 	want := make([][]byte, len(keys))
 	for i, key := range keys {
-		value, ok := db.Get(key)
+		value, ok, err := db.Get(key)
+		if err != nil {
+			t.Fatal(err)
+		}
 		if !ok {
 			t.Fatalf("record-order miss for %x", key)
 		}
 		want[i] = bytes.Clone(value)
 	}
-	sdb, err := OpenStreaming(out, Options{Threads: 2})
+	sdb, err := OpenStreaming(out, StreamOptions{Threads: 2})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -110,7 +113,7 @@ func TestBuildFromVCFsWritesColumnar(t *testing.T) {
 
 func TestColumnarSelectedColumns(t *testing.T) {
 	out, schema, keys := buildColTestLib(t)
-	sdb, err := OpenStreaming(out, Options{Threads: 2, Columns: []int{0, 3, 5}})
+	sdb, err := OpenStreaming(out, StreamOptions{Threads: 2, Columns: []int{0, 3, 5}})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -159,7 +162,7 @@ func TestColumnarPresentCountMismatch(t *testing.T) {
 	if err := os.WriteFile(path, raw, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	sdb, err := OpenStreaming(out, Options{Threads: 2})
+	sdb, err := OpenStreaming(out, StreamOptions{Threads: 2})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -185,7 +188,7 @@ func TestColumnarValueStreamTruncated(t *testing.T) {
 	if err := os.WriteFile(path, raw, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	sdb, err := OpenStreaming(out, Options{Threads: 2})
+	sdb, err := OpenStreaming(out, StreamOptions{Threads: 2})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -207,7 +210,7 @@ func TestColumnarManifestMismatch(t *testing.T) {
 	if err := WriteManifest(path, manifest); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := OpenStreaming(out, Options{Threads: 1}); err == nil {
+	if _, err := OpenStreaming(out, StreamOptions{Threads: 1}); err == nil {
 		t.Fatal("vals 字节数与 manifest 不符应报错")
 	}
 }
@@ -223,7 +226,7 @@ func TestColumnarOldMagicRejected(t *testing.T) {
 	if err := os.WriteFile(path, raw, 0o644); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := OpenStreaming(out, Options{Threads: 1}); err == nil {
+	if _, err := OpenStreaming(out, StreamOptions{Threads: 1}); err == nil {
 		t.Fatal("旧 col magic 应报错")
 	}
 }
@@ -233,20 +236,20 @@ func TestColumnarPairMissing(t *testing.T) {
 	if err := os.Remove(filepath.Join(out, "chr1.manifest")); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := OpenStreaming(out, Options{Threads: 1}); err == nil {
+	if _, err := OpenStreaming(out, StreamOptions{Threads: 1}); err == nil {
 		t.Fatal("col 缺 manifest 应报错")
 	}
 }
 
 func TestColumnarColumnsValidation(t *testing.T) {
 	out, _, _ := buildColTestLib(t)
-	if _, err := OpenStreaming(out, Options{Threads: 1, Columns: []int{0, 0}}); err == nil {
+	if _, err := OpenStreaming(out, StreamOptions{Threads: 1, Columns: []int{0, 0}}); err == nil {
 		t.Fatal("重复列号应报错")
 	}
-	if _, err := OpenStreaming(out, Options{Threads: 1, Columns: []int{-1}}); err == nil {
+	if _, err := OpenStreaming(out, StreamOptions{Threads: 1, Columns: []int{-1}}); err == nil {
 		t.Fatal("负列号应报错")
 	}
-	if _, err := OpenStreaming(out, Options{Threads: 1, Columns: []int{99}}); err == nil {
+	if _, err := OpenStreaming(out, StreamOptions{Threads: 1, Columns: []int{99}}); err == nil {
 		t.Fatal("越界列号应报错")
 	}
 }
@@ -256,7 +259,7 @@ func TestBuildFromTSVsWritesColumnar(t *testing.T) {
 	tsv := filepath.Join(dir, "in.tsv")
 	writeIngestFile(t, tsv, "b\tB1\nc\tC1\tC2\nd\tD1\n")
 	base := filepath.Join(dir, "genes")
-	if err := BuildFromTSVs(base, []string{tsv}, Options{}); err != nil {
+	if err := BuildFromTSVs(base, []string{tsv}, BuildOptions{}); err != nil {
 		t.Fatal(err)
 	}
 	manifest, err := ReadManifest(base + ".manifest")
@@ -285,7 +288,41 @@ func TestBuildFromTSVsWritesColumnar(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	if v, ok := db.Get([]byte("c")); !ok || string(v) != "C1\tC2" {
-		t.Fatalf("Get(c) = %q, %v", v, ok)
+	if v, ok, err := db.Get([]byte("c")); err != nil || !ok || string(v) != "C1\tC2" {
+		t.Fatalf("Get(c) = %q, %v, %v", v, ok, err)
+	}
+}
+
+// TestSelectedColumnsBothPaths 验证记录序与列存两条路径返回相同的字段投影。
+func TestSelectedColumnsBothPaths(t *testing.T) {
+	out, _, keys := buildColTestLib(t)
+	sel := []int{0, 3, 5}
+
+	colDB, err := OpenStreaming(out, StreamOptions{Threads: 2, Columns: sel})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer colDB.Close()
+	colDB.forceCol = true
+	colOut, err := colDB.GetBatch(keys)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	t.Setenv("IMMKV_FORCE_RECORD", "1")
+	recDB, err := OpenStreaming(out, StreamOptions{Threads: 2, Columns: sel})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer recDB.Close()
+	recOut, err := recDB.GetBatch(keys)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	for i := range keys {
+		if !bytes.Equal(colOut[i], recOut[i]) {
+			t.Fatalf("key %x: 记录序 %x ≠ 列存 %x", keys[i], recOut[i], colOut[i])
+		}
 	}
 }

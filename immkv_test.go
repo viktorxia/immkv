@@ -299,12 +299,12 @@ func genValue(rnd *rand.Rand) []byte {
 // 原样落盘；这些测试只检查键流与帧布局，不解码 record 内容。
 var testRecordSchema = []Field{{Name: "value", Type: TypeString, Number: "1"}}
 
-func testWriteOptions() Options {
-	return Options{Schema: testRecordSchema}
+func testWriteOptions() CreateOptions {
+	return CreateOptions{Schema: testRecordSchema}
 }
 
 func TestCreateRejectsInvalidSchema(t *testing.T) {
-	_, err := Create(filepath.Join(t.TempDir(), "lib"), Options{
+	_, err := Create(filepath.Join(t.TempDir(), "lib"), CreateOptions{
 		Schema: []Field{{Name: "F", Type: TypeFlag, Number: "1"}},
 	})
 	if err == nil {
@@ -401,8 +401,12 @@ func TestWriterOrderingErrors(t *testing.T) {
 	if err == nil || !strings.Contains(err.Error(), "out of order") {
 		t.Fatalf("group 倒序应报错，得到 %v", err)
 	}
-	if err := w.Finish(); err != nil {
-		t.Fatal(err)
+	// 错误一旦发生就粘住 writer：Finish 返回同一错误，且不发布文件。
+	if err := w.Finish(); err == nil {
+		t.Fatal("已报错的 writer，Finish 应返回错误")
+	}
+	if _, statErr := os.Stat(filepath.Join(dir, "a.keys")); !os.IsNotExist(statErr) {
+		t.Fatal("失败的构建不应发布 keys 文件")
 	}
 
 	// 组间键倒挂：组键升序但键低于已进入缓冲的最大键
@@ -458,7 +462,7 @@ func TestWriterOrderingErrors(t *testing.T) {
 
 func TestWriterRawThreshold(t *testing.T) {
 	base := filepath.Join(t.TempDir(), "chr3")
-	w, err := Create(base, Options{Schema: testRecordSchema, RawValueBelow: 128})
+	w, err := Create(base, CreateOptions{Schema: testRecordSchema, RawValueBelow: 128})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -598,7 +602,7 @@ func TestWriterPacked(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	sdb, err := OpenStreaming(filepath.Dir(base), Options{Threads: 2})
+	sdb, err := OpenStreaming(filepath.Dir(base), StreamOptions{Threads: 2})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -613,8 +617,8 @@ func TestWriterPacked(t *testing.T) {
 	}
 	for i, r := range recs {
 		want := append(append([]byte{}, prefix...), []byte(fmt.Sprintf("N=%06d", i))...)
-		if v, ok := db.Get(r.key); !ok || !bytes.Equal(v, want) {
-			t.Fatalf("OpenEager 记录 %d 读回不符", i)
+		if v, ok, err := db.Get(r.key); err != nil || !ok || !bytes.Equal(v, want) {
+			t.Fatalf("OpenEager 记录 %d 读回不符（ok=%v err=%v）", i, ok, err)
 		}
 		if !bytes.Equal(batch[i], want) {
 			t.Fatalf("GetBatch 记录 %d 读回不符", i)
@@ -622,20 +626,93 @@ func TestWriterPacked(t *testing.T) {
 	}
 }
 
-// TestWriterKeyTooLong 验证键超 u16 上限时 panic（格式装不下，属数据问题）。
-func TestWriterKeyTooLong(t *testing.T) {
-	defer func() {
-		if recover() == nil {
-			t.Fatal("超长键应 panic")
+// TestWriterAbort 验证放弃构建会清掉 .tmp、可重复调用，成功后调用不删成品。
+func TestWriterAbort(t *testing.T) {
+	base := filepath.Join(t.TempDir(), "chr7")
+	w, err := Create(base, testWriteOptions())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := w.Add(VarKey(0, 1, "A", "T"), []byte("v")); err != nil {
+		t.Fatal(err)
+	}
+	if err := w.Abort(); err != nil {
+		t.Fatal(err)
+	}
+	for _, p := range []string{base + ".keys", base + ".vals", base + ".keys.tmp", base + ".vals.tmp"} {
+		if _, err := os.Stat(p); !os.IsNotExist(err) {
+			t.Fatalf("%s 应被清理", p)
 		}
-	}()
+	}
+	if err := w.Abort(); err != nil {
+		t.Fatalf("Abort 应幂等: %v", err)
+	}
+	if err := w.Finish(); err == nil {
+		t.Fatal("Abort 后 Finish 应返回错误")
+	}
+
+	// 放弃后目标未被占用，可以重建；成功后 Abort 无操作、不删成品。
+	w2, err := Create(base, testWriteOptions())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := w2.Add(VarKey(0, 1, "A", "T"), []byte("v2")); err != nil {
+		t.Fatal(err)
+	}
+	if err := w2.Finish(); err != nil {
+		t.Fatal(err)
+	}
+	if err := w2.Abort(); err != nil {
+		t.Fatalf("成功后 Abort 应返回 nil: %v", err)
+	}
+	kb, err := os.ReadFile(base + ".keys")
+	if err != nil {
+		t.Fatalf("成功后 Abort 不应删除成品: %v", err)
+	}
+	if len(kb) == 0 {
+		t.Fatal("keys 文件为空")
+	}
+}
+
+func TestCreateRejectsExistingTarget(t *testing.T) {
+	base := filepath.Join(t.TempDir(), "chr8")
+	w, err := Create(base, testWriteOptions())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := w.Add(VarKey(0, 1, "A", "T"), []byte("v")); err != nil {
+		t.Fatal(err)
+	}
+	if err := w.Finish(); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Create(base, testWriteOptions()); err == nil {
+		t.Fatal("已有目标应拒绝覆盖")
+	}
+	if err := os.Remove(base + ".keys"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := Create(base, testWriteOptions()); err == nil {
+		t.Fatal("残留 .vals 也应拒绝（keys/vals 必须成对重建）")
+	}
+}
+
+// TestWriterKeyTooLong 验证键超 u16 上限时返回错误，且报错后 Finish 不会成功。
+func TestWriterKeyTooLong(t *testing.T) {
 	base := filepath.Join(t.TempDir(), "chr6")
 	w, err := Create(base, testWriteOptions())
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err := w.Add(make([]byte, maxKeyLen+1), []byte("v")); err != nil {
-		t.Fatal(err)
+	if err := w.Add(make([]byte, maxKeyLen+1), []byte("v")); err == nil {
+		t.Fatal("超长键应返回错误")
 	}
-	_ = w.Finish()
+	if err := w.Finish(); err == nil {
+		t.Fatal("报错后 Finish 应返回错误")
+	}
+	for _, p := range []string{base + ".keys", base + ".vals"} {
+		if _, err := os.Stat(p); !os.IsNotExist(err) {
+			t.Fatalf("%s 不应存在", p)
+		}
+	}
 }

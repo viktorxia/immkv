@@ -36,7 +36,7 @@ func main() {
 	}
 
 	// 3. 输出目录：构建成功后里面是 chrN.keys/.vals/.col/.manifest。
-	//    目录不必为空，但不能已有这些 shard 文件；构建会覆盖 vcf.*.header。
+	//    目录必须不存在；已有同名目录或库文件时构建直接报错，不覆盖。
 	libraryDir := filepath.Join(workDir, "library")
 
 	// 4. 输入 VCF 列表：这里只有一个文件；多个文件时每个文件只能含一条染色体。
@@ -49,11 +49,11 @@ func main() {
 	// 6. 字段名前缀：空表示 INFO 键原名落盘；非空时写成 prefix_键。
 	fieldNamePrefix := ""
 
-	// 7. 构建选项：Options{} 全是默认值——短值裸存阈值 64 字节，值帧按 64KB 打包。
-	//    Schema 由 VCF 头生成；Threads/CacheMB/Columns 是读侧参数，构建不用。
+	// 7. 构建选项：BuildOptions{} 全是默认值——短值裸存阈值 64 字节，值帧按
+	//    64KB 打包。Schema 由 VCF 头生成，调用方不能指定。
 	//    点查库可设 PackTarget: -1 改成每值独立成帧 + 训练字典，
 	//    但需要真实规模语料，这种三行 VCF 训练不出字典。
-	buildOptions := immkv.Options{}
+	buildOptions := immkv.BuildOptions{}
 
 	// 8. 构建，五个实参依次是 outdir、vcfs、fields、prefix、opts。
 	if err := immkv.BuildFromVCFs(

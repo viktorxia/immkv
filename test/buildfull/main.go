@@ -81,7 +81,7 @@ func run(gnomadDir, outDir, only string) error {
 	for i := range inputs {
 		vcfs[i] = inputs[i].path
 	}
-	opts := immkv.Options{}
+	opts := immkv.BuildOptions{}
 	if os.Getenv("IMMKV_RAW") != "" {
 		opts.RawValueBelow = 1 << 30
 	}

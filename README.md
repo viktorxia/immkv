@@ -44,7 +44,7 @@ schema := immkv.Schema{
     {Name: "AF", Type: immkv.TypeFloat, Number: "A"},
     {Name: "AN", Type: immkv.TypeInteger, Number: "1"},
 }
-w, _ := immkv.Create(cacheDir+"/chr1", immkv.Options{Schema: schema})
+w, _ := immkv.Create(cacheDir+"/chr1", immkv.CreateOptions{Schema: schema})
 enc := immkv.NewRecordEncoder(schema)
 record, _ := enc.Reset().Float("AF", af).Int("AN", an).Encode()
 w.AddSorted(immkv.PosKey(0, 1000), key, record)
@@ -52,18 +52,18 @@ w.Finish()
 
 // Point-lookup handle: one key answered whenever it arrives (random keys, online serving)
 db, _ := immkv.OpenEager(cacheDir, 512)          // cacheMB: decompressed-cache budget
-v, ok := db.Get(key)                              // miss → ok=false; v is a v003 record
-db.GetPrefix(prefix, func(k, v []byte) bool { … })
-db.Scan(lo, hi, func(k, v []byte) bool { … })     // lo/hi may be nil
+v, ok, err := db.Get(key)                         // miss → ok=false, err=nil; v is a v003 record
+if err := db.GetPrefix(prefix, func(k, v []byte) bool { … }); err != nil { … }
+if err := db.Scan(lo, hi, func(k, v []byte) bool { … }); err != nil { … } // lo/hi may be nil
 db.Close()
 
 // Streaming handle: query a fully sorted VCF start to finish, then exit (batch annotation)
-sdb, _ := immkv.OpenStreaming(cacheDir, immkv.Options{Threads: 9})
+sdb, _ := immkv.OpenStreaming(cacheDir, immkv.StreamOptions{Threads: 9})
 vals, _ := sdb.GetBatch(keys)   // keys ascending; returns equal length & order, nil = miss
 sdb.Close()
 
 // Optional: read only the columns this query needs (numbers from base.manifest)
-sdb, _ = immkv.OpenStreaming(cacheDir, immkv.Options{Threads: 9, Columns: []int{2, 7, 11}})
+sdb, _ = immkv.OpenStreaming(cacheDir, immkv.StreamOptions{Threads: 9, Columns: []int{2, 7, 11}})
 ```
 
 Genomic libraries store v003 records: `vals` values are a presence bitmap plus
@@ -77,12 +77,12 @@ exception: it unwraps the single `value` String field back to the original bytes
 Plain KV (no chromosome/position) has its own single-library handle:
 
 ```go
-w, _ := immkv.Create("genes", immkv.Options{})
+w, _ := immkv.Create("genes", immkv.CreateOptions{})
 w.Add([]byte("BRCA1"), value)                // arbitrary key/value bytes, any order
 w.Finish()
 
 kv, _ := immkv.OpenSimpleKV("genes", 64)     // cacheMB: decompressed-cache budget
-sv, ok := kv.Get([]byte("BRCA1"))            // miss → ok=false
+sv, ok, err := kv.Get([]byte("BRCA1"))       // miss → ok=false, err=nil
 kv.Close()
 ```
 
@@ -97,10 +97,10 @@ Build directly from input formats:
 
 ```go
 // VCF → per-chromosome library (outdir/chrN.keys + chrN.vals)
-err := immkv.BuildFromVCFs(outdir, vcfs, fields, "IMMKV", immkv.Options{})
+err := immkv.BuildFromVCFs(outdir, vcfs, fields, "IMMKV", immkv.BuildOptions{})
 
 // Headerless TSV (first column key, rest value) → single library
-err := immkv.BuildFromTSVs(basePath, tsvs, immkv.Options{})
+err := immkv.BuildFromTSVs(basePath, tsvs, immkv.BuildOptions{})
 ```
 
 `fields` nil or empty stores every INFO field; otherwise only the listed
@@ -117,9 +117,9 @@ contract: [docs/ingest-design.md](docs/ingest-design.md).
 `BuildFromVCFs` also writes a per-chromosome `chrN.col` + `chrN.manifest`
 columnar scan copy (format contract: [docs/v003-format.md](docs/v003-format.md)
 §5–§6). `OpenStreaming` uses it when its estimated I/O cost beats the
-record-order path (media-aware: rotational disk vs SSD); `Options.Columns`
+record-order path (media-aware: rotational disk vs SSD); `StreamOptions.Columns`
 only selects fields (column numbers from the manifest, nil/empty = all),
-never the path. `OpenEager` and every point/prefix/range query stay on the
+never the path; both paths return the same projected record shape. `OpenEager` and every point/prefix/range query stay on the
 record order. Libraries built through `Create` alone have no columnar copy
 and stay on record order; passing a non-empty `Columns` to such a library is
 an error.
@@ -224,11 +224,17 @@ field dose series); highlights:
 
 ## Contracts
 
-- **Lifecycle**: Finish goes through temp file + fsync + rename; callers
-  never see a half-built library; handles already open keep reading the old
-  data. The same data files can be opened by any number of processes at
-  once (no locks), and within one handle, concurrent use by multiple
-  goroutines is safe.
+- **Lifecycle**: build targets must not already exist — `immkv.Create` and
+  `immkv.BuildFromVCFs` refuse to overwrite an existing library or directory.
+  `Finish` writes through temp files + fsync + rename; a failed build returns
+  an error and cleans up the artifacts it created. Call `immkv.Writer.Abort`
+  to stop early; delete leftovers and rebuild. The same data files can be
+  opened by any number of processes at once (no locks), and within one
+  handle, concurrent use by multiple goroutines is safe.
+- **Query errors**: `immkv.DB.Get`, `immkv.DB.GetPrefix`, `immkv.DB.Scan`,
+  and `immkv.SimpleKVDB.Get` return an error for read, parse, or
+  decompression failures; a miss is `(nil, false, nil)`. A callback returning
+  `false` stops iteration and is not an error.
 - **Returned slices**: guaranteed valid only until the next query; copy
   anything you want to keep.
 - **Duplicate keys**: allowed; `Get` returns the first one in sorted order,
@@ -293,7 +299,7 @@ chr1.vals: [64B header][dictionary (per-value mode)][value frames ×N]
   (default 64B) stored raw; in packed mode, values below `packBelow` are
   grouped by `packTarget` (default 64KB) into one frame (the group header
   holds the first record number and a length table; small values get their
-  compression ratio from in-group context); `Options.PackTarget < 0`
+  compression ratio from in-group context); `CreateOptions.PackTarget < 0`
   enters **per-value framing mode** — every value becomes its own frame,
   and a zstd dictionary trained at build time from the first batch of
   values (512KB corpus, 5000 samples, libzstd L9) is embedded in the vals

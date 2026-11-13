@@ -32,7 +32,7 @@ schema := immkv.Schema{
     {Name: "AF", Type: immkv.TypeFloat, Number: "A"},
     {Name: "AN", Type: immkv.TypeInteger, Number: "1"},
 }
-w, _ := immkv.Create(cacheDir+"/chr1", immkv.Options{Schema: schema})
+w, _ := immkv.Create(cacheDir+"/chr1", immkv.CreateOptions{Schema: schema})
 enc := immkv.NewRecordEncoder(schema)
 record, _ := enc.Reset().Float("AF", af).Int("AN", an).Encode()
 w.AddSorted(immkv.PosKey(0, 1000), key, record)
@@ -40,18 +40,18 @@ w.Finish()
 
 // 点查句柄：随时来一条答一条（随机键、在线服务）
 db, _ := immkv.OpenEager(cacheDir, 512)          // cacheMB：解压缓存上限
-v, ok := db.Get(key)                              // 未命中 ok=false；v 是 v003 record
-db.GetPrefix(prefix, func(k, v []byte) bool { … })
-db.Scan(lo, hi, func(k, v []byte) bool { … })     // lo/hi 可为 nil
+v, ok, err := db.Get(key)                         // 未命中 ok=false、err=nil；v 是 v003 record
+if err := db.GetPrefix(prefix, func(k, v []byte) bool { … }); err != nil { … }
+if err := db.Scan(lo, hi, func(k, v []byte) bool { … }); err != nil { … } // lo/hi 可为 nil
 db.Close()
 
 // 流式句柄：整份排好序的 VCF 从头查到尾，跑完退出（批量注释）
-sdb, _ := immkv.OpenStreaming(cacheDir, immkv.Options{Threads: 9})
+sdb, _ := immkv.OpenStreaming(cacheDir, immkv.StreamOptions{Threads: 9})
 vals, _ := sdb.GetBatch(keys)   // keys 升序；返回等长同序，nil = 未命中
 sdb.Close()
 
 // 可选：只读本次查询需要的列（列号来自 base.manifest）
-sdb, _ = immkv.OpenStreaming(cacheDir, immkv.Options{Threads: 9, Columns: []int{2, 7, 11}})
+sdb, _ = immkv.OpenStreaming(cacheDir, immkv.StreamOptions{Threads: 9, Columns: []int{2, 7, 11}})
 ```
 
 基因组库存的是 v003 record：`vals` 每条是存在位图 + typed payload，不是 INFO
@@ -63,12 +63,12 @@ sdb, _ = immkv.OpenStreaming(cacheDir, immkv.Options{Threads: 9, Columns: []int{
 普通 KV（无染色体/坐标）走独立的单库句柄：
 
 ```go
-w, _ := immkv.Create("genes", immkv.Options{})
+w, _ := immkv.Create("genes", immkv.CreateOptions{})
 w.Add([]byte("BRCA1"), value)                // 任意字节键值，顺序随意
 w.Finish()
 
 kv, _ := immkv.OpenSimpleKV("genes", 64)     // cacheMB：解压缓存上限
-sv, ok := kv.Get([]byte("BRCA1"))              // 未命中 ok=false
+sv, ok, err := kv.Get([]byte("BRCA1"))       // 未命中 ok=false、err=nil
 kv.Close()
 ```
 
@@ -82,10 +82,10 @@ kv.Close()
 
 ```go
 // VCF → 分染色体库（outdir/chrN.keys + chrN.vals）
-err := immkv.BuildFromVCFs(outdir, vcfs, fields, "IMMKV", immkv.Options{})
+err := immkv.BuildFromVCFs(outdir, vcfs, fields, "IMMKV", immkv.BuildOptions{})
 
 // 无表头 TSV（首列键，其余为值）→ 单库
-err := immkv.BuildFromTSVs(basePath, tsvs, immkv.Options{})
+err := immkv.BuildFromTSVs(basePath, tsvs, immkv.BuildOptions{})
 ```
 
 `fields` 为 nil 或空取全部 INFO 字段；非空时只存这些字段。值一律按 `##INFO`
@@ -99,8 +99,9 @@ err := immkv.BuildFromTSVs(basePath, tsvs, immkv.Options{})
 `BuildFromVCFs` 同时为每条染色体写 `chrN.col` + `chrN.manifest` 列存扫描件
 （格式契约见 [docs/v003-format.md](docs/v003-format.md) §5–§6）。`OpenStreaming`
 按估算的 I/O 成本决定走记录序还是列存（按目录所在盘是机械盘/SSD 分档）；
-`Options.Columns` 只选字段（列号来自 manifest，nil/空 = 全部列），不决定路径。
-`OpenEager` 与所有点查/前缀/区间查询仍走记录序。直接用 `Create` 建、没有
+`StreamOptions.Columns` 只选字段（列号来自 manifest，nil/空 = 全部列），
+不决定路径；两条路径返回相同的字段投影。`OpenEager` 与所有点查/前缀/区间
+查询仍走记录序。直接用 `Create` 建、没有
 `base.col`/`manifest` 的库照常按记录序服务；给这种库传非空 `Columns` 会报错。
 
 `GetBatch` 的契约：输入必须升序（VCF 按染色体自然序 + 位置排序即天然
@@ -185,9 +186,14 @@ bcftools sort -O z -o sorted.vcf.gz in.vcf.gz
 
 ## 契约
 
-- **生命周期**：Finish 走 临时文件 + fsync + rename，调用方永远看不到
-  半成品；已打开的旧句柄继续读旧数据。同一份数据文件可被任意多进程
+- **生命周期**：构建目标必须不存在——`immkv.Create` 与
+  `immkv.BuildFromVCFs` 拒绝覆盖已有库或目录。`Finish` 走临时文件 + fsync +
+  rename；构建失败返回错误并清理本次创建的产物；提前结束用
+  `immkv.Writer.Abort`，残留删除后重建。同一份数据文件可被任意多进程
   同时打开（无锁），每个句柄内多 goroutine 并发安全。
+- **查询错误**：`immkv.DB.Get`、`immkv.DB.GetPrefix`、`immkv.DB.Scan`、
+  `immkv.SimpleKVDB.Get` 在读取、解析或解压失败时返回 error；未命中是
+  `(nil, false, nil)`。回调返回 `false` 表示提前停止，不是错误。
 - **返回切片**：只保证到下一次查询前有效，要保留自己拷。
 - **重复键**：允许；`Get` 返回排序后的第一条，`GetPrefix`/`Scan` 看到全部。
 - **普通 KV**：`OpenSimpleKV` 打开一对 `basePath.keys`/`basePath.vals`；
@@ -234,7 +240,7 @@ chr1.vals: [64B 头][字典（每值模式）][值帧 ×N]
   （bit29 同帧位不加前条帧长），键流体积明显小于逐条绝对偏移方案。
 - 值帧三种：短于 `RawValueBelow`（默认 64B）裸存；打包模式下小于
   `packBelow` 的值按 `packTarget`（默认 64KB）攒组一帧（组头含首记录号
-  与长度表，小值靠组内上下文取得压缩率）；`Options.PackTarget < 0`
+  与长度表，小值靠组内上下文取得压缩率）；`CreateOptions.PackTarget < 0`
   进入**每值成帧模式**——所有值独立成帧，构建期用首批值训练 zstd 字典
   （512KB 正文、5000 样本、libzstd L9）嵌入 vals 头。gnomAD 类大值库
   用每值模式，ClinVar 类小值库用默认打包模式。

@@ -459,9 +459,9 @@ func newBuildID() ([16]byte, error) {
 // fn 返回前有效。
 func scanShardValues(s *shard, vr *seqValReader, fn func(rec uint64, key, val []byte) error) error {
 	for b := 0; b < int(s.nBlock); b++ {
-		e := s.block(b)
-		if e == nil {
-			return fmt.Errorf("immkv: base.col: 读微块 %d 失败", b)
+		e, err := s.block(b)
+		if err != nil {
+			return err
 		}
 		n := s.nRecs(b)
 		for j := 0; j < n; j++ {

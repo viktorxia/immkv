@@ -25,9 +25,19 @@ func simplePairs() []simplePair {
 	}
 }
 
+// getOK 调用 Get 并要求无错误；返回 (value, found)。仅用于期望读取成功的用例。
+func getOK(t *testing.T, kv *SimpleKVDB, key []byte) ([]byte, bool) {
+	t.Helper()
+	v, ok, err := kv.Get(key)
+	if err != nil {
+		t.Fatalf("Get(%x): %v", key, err)
+	}
+	return v, ok
+}
+
 func buildSimpleLib(t *testing.T, base string, sortedMode bool) {
 	t.Helper()
-	w, err := Create(base, Options{})
+	w, err := Create(base, CreateOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -54,7 +64,7 @@ func buildSimpleLib(t *testing.T, base string, sortedMode bool) {
 func checkSimpleLib(t *testing.T, kv *SimpleKVDB) {
 	t.Helper()
 	for _, p := range simplePairs() {
-		v, ok := kv.Get([]byte(p.key))
+		v, ok := getOK(t, kv, []byte(p.key))
 		if !ok {
 			t.Fatalf("Get(%q) miss", p.key)
 		}
@@ -63,7 +73,7 @@ func checkSimpleLib(t *testing.T, kv *SimpleKVDB) {
 		}
 	}
 	for _, k := range []string{"", "BRCA", "BRCA2", "ZZZ"} {
-		if v, ok := kv.Get([]byte(k)); ok {
+		if v, ok := getOK(t, kv, []byte(k)); ok {
 			t.Fatalf("Get(%q) = %d bytes, want miss", k, len(v))
 		}
 	}
@@ -109,7 +119,7 @@ func TestSimpleKVCache(t *testing.T) {
 // 多次查询结果一致。
 func TestSimpleKVDuplicateKey(t *testing.T) {
 	base := filepath.Join(t.TempDir(), "dup")
-	w, err := Create(base, Options{})
+	w, err := Create(base, CreateOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -126,14 +136,14 @@ func TestSimpleKVDuplicateKey(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer kv.Close()
-	v, ok := kv.Get([]byte("DUP"))
+	v, ok := getOK(t, kv, []byte("DUP"))
 	if !ok {
 		t.Fatal("Get(DUP) miss")
 	}
 	if !bytes.Equal(v, []byte("first")) && !bytes.Equal(v, []byte("second")) {
 		t.Fatalf("Get(DUP) = %q, want one of the duplicates", v)
 	}
-	v2, _ := kv.Get([]byte("DUP"))
+	v2, _ := getOK(t, kv, []byte("DUP"))
 	if !bytes.Equal(v, v2) {
 		t.Fatalf("duplicate lookup not deterministic: %q vs %q", v, v2)
 	}
@@ -155,16 +165,16 @@ func TestSimpleKVConcurrent(t *testing.T) {
 			defer wg.Done()
 			for i := 0; i < 200; i++ {
 				if i%10 == 0 {
-					if _, ok := kv.Get([]byte("MISS")); ok {
-						t.Errorf("goroutine %d: Get(MISS) hit, want miss", g)
+					if _, ok, err := kv.Get([]byte("MISS")); err != nil || ok {
+						t.Errorf("goroutine %d: Get(MISS) hit or error: %v", g, err)
 						return
 					}
 					continue
 				}
 				p := pairs[(g+i)%len(pairs)]
-				v, ok := kv.Get([]byte(p.key))
-				if !ok || !bytes.Equal(v, p.val) {
-					t.Errorf("goroutine %d: Get(%q) miss or wrong value", g, p.key)
+				v, ok, err := kv.Get([]byte(p.key))
+				if err != nil || !ok || !bytes.Equal(v, p.val) {
+					t.Errorf("goroutine %d: Get(%q) miss or wrong value (err %v)", g, p.key, err)
 					return
 				}
 			}
@@ -180,7 +190,7 @@ func TestSimpleKVCloseReopen(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, ok := kv.Get([]byte("BRCA1")); !ok {
+	if _, ok := getOK(t, kv, []byte("BRCA1")); !ok {
 		t.Fatal("Get(BRCA1) miss before close")
 	}
 	if err := kv.Close(); err != nil {
@@ -204,7 +214,7 @@ type simpleRec struct {
 	key, val []byte
 }
 
-func buildSimpleRecords(t *testing.T, base string, opts Options, recs []simpleRec, sortedMode bool) {
+func buildSimpleRecords(t *testing.T, base string, opts CreateOptions, recs []simpleRec, sortedMode bool) {
 	t.Helper()
 	w, err := Create(base, opts)
 	if err != nil {
@@ -229,10 +239,20 @@ func buildSimpleRecords(t *testing.T, base string, opts Options, recs []simpleRe
 	}
 }
 
+// removeSimpleArtifacts 删除单库的全部构建产物，供需要重建同一 base 的测试使用。
+func removeSimpleArtifacts(t *testing.T, base string) {
+	t.Helper()
+	for _, ext := range []string{".keys", ".vals", ".keys.tmp", ".vals.tmp", ".col", ".manifest"} {
+		if err := os.Remove(base + ext); err != nil && !os.IsNotExist(err) {
+			t.Fatal(err)
+		}
+	}
+}
+
 func checkSimpleRecords(t *testing.T, kv *SimpleKVDB, recs []simpleRec) {
 	t.Helper()
 	for _, r := range recs {
-		v, ok := kv.Get(r.key)
+		v, ok := getOK(t, kv, r.key)
 		if !ok {
 			t.Fatalf("Get(key len %d) miss", len(r.key))
 		}
@@ -244,7 +264,7 @@ func checkSimpleRecords(t *testing.T, kv *SimpleKVDB, recs []simpleRec) {
 
 func TestSimpleKVEmptyLib(t *testing.T) {
 	base := filepath.Join(t.TempDir(), "empty")
-	w, err := Create(base, Options{})
+	w, err := Create(base, CreateOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -256,10 +276,10 @@ func TestSimpleKVEmptyLib(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer kv.Close()
-	if v, ok := kv.Get([]byte("BRCA1")); ok {
+	if v, ok := getOK(t, kv, []byte("BRCA1")); ok {
 		t.Fatalf("empty lib Get = %d bytes, want miss", len(v))
 	}
-	if v, ok := kv.Get(nil); ok {
+	if v, ok := getOK(t, kv, nil); ok {
 		t.Fatalf("empty lib Get(nil) = %d bytes, want miss", len(v))
 	}
 }
@@ -275,7 +295,7 @@ func TestSimpleKVMicroBlockBoundary(t *testing.T) {
 				}
 			}
 			base := filepath.Join(t.TempDir(), "lib")
-			buildSimpleRecords(t, base, Options{}, recs, true)
+			buildSimpleRecords(t, base, CreateOptions{}, recs, true)
 			kv, err := OpenSimpleKV(base, 0)
 			if err != nil {
 				t.Fatal(err)
@@ -283,7 +303,7 @@ func TestSimpleKVMicroBlockBoundary(t *testing.T) {
 			defer kv.Close()
 			checkSimpleRecords(t, kv, recs)
 			next := []byte(fmt.Sprintf("k%04d", n))
-			if v, ok := kv.Get(next); ok {
+			if v, ok := getOK(t, kv, next); ok {
 				t.Fatalf("Get(%q) = %d bytes, want miss", next, len(v))
 			}
 		})
@@ -302,13 +322,13 @@ func TestSimpleKVDuplicateAcrossBlocks(t *testing.T) {
 		recs = append(recs, simpleRec{key: []byte(fmt.Sprintf("Z%04d", i)), val: []byte("Z")})
 	}
 	base := filepath.Join(t.TempDir(), "lib")
-	buildSimpleRecords(t, base, Options{}, recs, true)
+	buildSimpleRecords(t, base, CreateOptions{}, recs, true)
 	kv, err := OpenSimpleKV(base, 0)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer kv.Close()
-	v, ok := kv.Get([]byte("DUP"))
+	v, ok := getOK(t, kv, []byte("DUP"))
 	if !ok {
 		t.Fatal("Get(DUP) miss")
 	}
@@ -322,7 +342,7 @@ func TestSimpleKVDuplicateAcrossBlocks(t *testing.T) {
 	if !dupOK {
 		t.Fatalf("Get(DUP) = %q, want one of the duplicates", v)
 	}
-	v2, _ := kv.Get([]byte("DUP"))
+	v2, _ := getOK(t, kv, []byte("DUP"))
 	if !bytes.Equal(v, v2) {
 		t.Fatalf("duplicate lookup not deterministic: %q vs %q", v, v2)
 	}
@@ -330,7 +350,7 @@ func TestSimpleKVDuplicateAcrossBlocks(t *testing.T) {
 		{"A0061", "A"},
 		{"Z0003", "Z"},
 	} {
-		got, ok := kv.Get([]byte(kvp.key))
+		got, ok := getOK(t, kv, []byte(kvp.key))
 		if !ok || !bytes.Equal(got, []byte(kvp.val)) {
 			t.Fatalf("Get(%q) = %q, %v", kvp.key, got, ok)
 		}
@@ -357,7 +377,7 @@ func TestSimpleKVKeyBoundaries(t *testing.T) {
 	} {
 		t.Run(mode.name, func(t *testing.T) {
 			base := filepath.Join(t.TempDir(), "lib")
-			buildSimpleRecords(t, base, Options{}, recs, mode.sorted)
+			buildSimpleRecords(t, base, CreateOptions{}, recs, mode.sorted)
 			kv, err := OpenSimpleKV(base, 0)
 			if err != nil {
 				t.Fatal(err)
@@ -365,11 +385,11 @@ func TestSimpleKVKeyBoundaries(t *testing.T) {
 			defer kv.Close()
 			checkSimpleRecords(t, kv, recs)
 			for _, miss := range [][]byte{{0x01}, []byte("AAAA"), []byte("B")} {
-				if v, ok := kv.Get(miss); ok {
+				if v, ok := getOK(t, kv, miss); ok {
 					t.Fatalf("Get(%x) = %d bytes, want miss", miss, len(v))
 				}
 			}
-			if v, ok := kv.Get(nil); !ok || !bytes.Equal(v, []byte("empty")) {
+			if v, ok := getOK(t, kv, nil); !ok || !bytes.Equal(v, []byte("empty")) {
 				t.Fatalf("Get(nil) = %q, %v; want empty-key value", v, ok)
 			}
 		})
@@ -386,7 +406,7 @@ func TestSimpleKVValueBoundaries(t *testing.T) {
 		}
 	}
 	base := filepath.Join(t.TempDir(), "lib")
-	buildSimpleRecords(t, base, Options{}, recs, true)
+	buildSimpleRecords(t, base, CreateOptions{}, recs, true)
 	kv, err := OpenSimpleKV(base, 0)
 	if err != nil {
 		t.Fatal(err)
@@ -413,7 +433,7 @@ func TestSimpleKVPerValueFraming(t *testing.T) {
 		}
 	}
 	base := filepath.Join(t.TempDir(), "lib")
-	buildSimpleRecords(t, base, Options{PackTarget: -1}, recs, true)
+	buildSimpleRecords(t, base, CreateOptions{PackTarget: -1}, recs, true)
 	kv, err := OpenSimpleKV(base, 0)
 	if err != nil {
 		t.Fatal(err)
@@ -425,10 +445,10 @@ func TestSimpleKVPerValueFraming(t *testing.T) {
 func TestSimpleKVRawThreshold(t *testing.T) {
 	for _, tc := range []struct {
 		name string
-		opts Options
+		opts CreateOptions
 	}{
-		{"threshold128", Options{RawValueBelow: 128}},
-		{"allRaw", Options{RawValueBelow: 1 << 30}},
+		{"threshold128", CreateOptions{RawValueBelow: 128}},
+		{"allRaw", CreateOptions{RawValueBelow: 1 << 30}},
 	} {
 		t.Run(tc.name, func(t *testing.T) {
 			recs := []simpleRec{
@@ -451,7 +471,7 @@ func TestSimpleKVRawThreshold(t *testing.T) {
 func TestOpenSimpleKVBadLibrary(t *testing.T) {
 	base := filepath.Join(t.TempDir(), "lib")
 	recs := []simpleRec{{key: []byte("BRCA1"), val: []byte("v")}}
-	buildSimpleRecords(t, base, Options{}, recs, true)
+	buildSimpleRecords(t, base, CreateOptions{}, recs, true)
 
 	f, err := os.OpenFile(base+".keys", os.O_WRONLY, 0)
 	if err != nil {
@@ -467,7 +487,8 @@ func TestOpenSimpleKVBadLibrary(t *testing.T) {
 		t.Fatal("bad keys magic should error")
 	}
 
-	buildSimpleRecords(t, base, Options{}, recs, true)
+	removeSimpleArtifacts(t, base)
+	buildSimpleRecords(t, base, CreateOptions{}, recs, true)
 	f, err = os.OpenFile(base+".vals", os.O_WRONLY, 0)
 	if err != nil {
 		t.Fatal(err)
@@ -494,19 +515,19 @@ func TestSimpleKVMaxKeyLen(t *testing.T) {
 	key := bytes.Repeat([]byte("k"), maxKeyLen)
 	val := []byte("max-key")
 	base := filepath.Join(t.TempDir(), "lib")
-	buildSimpleRecords(t, base, Options{}, []simpleRec{{key: key, val: val}}, true)
+	buildSimpleRecords(t, base, CreateOptions{}, []simpleRec{{key: key, val: val}}, true)
 	kv, err := OpenSimpleKV(base, 0)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer kv.Close()
-	v, ok := kv.Get(key)
+	v, ok := getOK(t, kv, key)
 	if !ok || !bytes.Equal(v, val) {
 		t.Fatalf("Get(maxKeyLen key) = %d bytes, %v", len(v), ok)
 	}
 	miss := bytes.Clone(key)
 	miss[len(miss)-1] = 'x'
-	if _, ok := kv.Get(miss); ok {
+	if _, ok := getOK(t, kv, miss); ok {
 		t.Fatal("Get(maxKeyLen key + 1 change) should miss")
 	}
 }
@@ -521,19 +542,19 @@ func TestSimpleKVManyRecords(t *testing.T) {
 		}
 	}
 	base := filepath.Join(t.TempDir(), "lib")
-	buildSimpleRecords(t, base, Options{}, recs, true)
+	buildSimpleRecords(t, base, CreateOptions{}, recs, true)
 	kv, err := OpenSimpleKV(base, 1)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer kv.Close()
 	for i := 0; i < n; i += 7 {
-		v, ok := kv.Get(recs[i].key)
+		v, ok := getOK(t, kv, recs[i].key)
 		if !ok || !bytes.Equal(v, recs[i].val) {
 			t.Fatalf("Get(%q) = %d bytes, %v", recs[i].key, len(v), ok)
 		}
 	}
-	v, ok := kv.Get(recs[n-1].key)
+	v, ok := getOK(t, kv, recs[n-1].key)
 	if !ok || !bytes.Equal(v, recs[n-1].val) {
 		t.Fatalf("Get(last) = %d bytes, %v", len(v), ok)
 	}
@@ -542,7 +563,10 @@ func TestSimpleKVManyRecords(t *testing.T) {
 func TestOpenSimpleKVHeaderValidation(t *testing.T) {
 	base := filepath.Join(t.TempDir(), "lib")
 	recs := []simpleRec{{key: []byte("BRCA1"), val: []byte("v")}}
-	build := func() { buildSimpleRecords(t, base, Options{}, recs, true) }
+	build := func() {
+		removeSimpleArtifacts(t, base)
+		buildSimpleRecords(t, base, CreateOptions{}, recs, true)
+	}
 	corrupt := func(file string, off int64, b []byte) {
 		t.Helper()
 		f, err := os.OpenFile(file, os.O_WRONLY, 0)
@@ -581,7 +605,7 @@ func TestOpenSimpleKVHeaderValidation(t *testing.T) {
 
 func TestSimpleKVCorruptValueFrame(t *testing.T) {
 	base := filepath.Join(t.TempDir(), "lib")
-	w, err := Create(base, Options{})
+	w, err := Create(base, CreateOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -611,15 +635,15 @@ func TestSimpleKVCorruptValueFrame(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer kv.Close()
-	if v, ok := kv.Get(key); ok {
-		t.Fatalf("corrupt frame Get = %d bytes, want miss", len(v))
+	if v, ok, err := kv.Get(key); err == nil || ok {
+		t.Fatalf("corrupt frame Get = %d bytes, ok=%v, err=%v; want error", len(v), ok, err)
 	}
 }
 
 func TestSimpleKVRecordWrapping(t *testing.T) {
 	base := filepath.Join(t.TempDir(), "lib")
 	value := []byte("hello")
-	w, err := Create(base, Options{})
+	w, err := Create(base, CreateOptions{})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -635,7 +659,10 @@ func TestSimpleKVRecordWrapping(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer shard.Close()
-	raw, ok := shard.get([]byte("k"))
+	raw, ok, err := shard.get([]byte("k"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	if !ok {
 		t.Fatal("raw record missing")
 	}
@@ -653,7 +680,7 @@ func TestSimpleKVRecordWrapping(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer kv.Close()
-	got, ok := kv.Get([]byte("k"))
+	got, ok := getOK(t, kv, []byte("k"))
 	if !ok || !bytes.Equal(got, value) {
 		t.Fatalf("Get = %q, %v; want %q", got, ok, value)
 	}

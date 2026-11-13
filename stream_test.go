@@ -13,7 +13,7 @@ import (
 
 func openStream(t *testing.T, dir string, threads int) *StreamDB {
 	t.Helper()
-	sdb, err := OpenStreaming(dir, Options{Threads: threads})
+	sdb, err := OpenStreaming(dir, StreamOptions{Threads: threads})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -23,7 +23,7 @@ func openStream(t *testing.T, dir string, threads int) *StreamDB {
 
 func TestGetBatchRoundTrip(t *testing.T) {
 	dir := t.TempDir()
-	byKey, all := buildTestLib(t, dir, Options{}, true) // 键流 ~1.5MB，跨多个窗口
+	byKey, all := buildTestLib(t, dir, CreateOptions{}, true) // 键流 ~1.5MB，跨多个窗口
 	sdb := openStream(t, dir, 4)
 	out, err := sdb.GetBatch(all)
 	if err != nil {
@@ -63,7 +63,7 @@ func TestGetBatchRoundTrip(t *testing.T) {
 
 func TestGetBatchUnsorted(t *testing.T) {
 	dir := t.TempDir()
-	_, all := buildTestLib(t, dir, Options{}, false)
+	_, all := buildTestLib(t, dir, CreateOptions{}, false)
 	sdb := openStream(t, dir, 1)
 	bad := [][]byte{all[0], all[1], all[0]} // 第三个 < 第二个
 	if _, err := sdb.GetBatch(bad); !errors.Is(err, ErrUnsorted) {
@@ -73,7 +73,7 @@ func TestGetBatchUnsorted(t *testing.T) {
 
 func TestGetBatchEmptyInput(t *testing.T) {
 	dir := t.TempDir()
-	buildTestLib(t, dir, Options{}, false)
+	buildTestLib(t, dir, CreateOptions{}, false)
 	sdb := openStream(t, dir, 1)
 	out, err := sdb.GetBatch(nil)
 	if err != nil || len(out) != 0 {
@@ -87,7 +87,7 @@ func TestGetBatchEmptyInput(t *testing.T) {
 
 func TestGetBatchEmptyKeyAndUnknownChrom(t *testing.T) {
 	dir := t.TempDir()
-	_, all := buildTestLib(t, dir, Options{}, false)
+	_, all := buildTestLib(t, dir, CreateOptions{}, false)
 	sdb := openStream(t, dir, 2)
 	// 空键排最前；chrM（24）未构建、排在 chrX（22）之后
 	batch := [][]byte{{}, all[0], all[1], VarKey(24, 100, "A", "T")}
@@ -108,7 +108,7 @@ func TestGetBatchEmptyKeyAndUnknownChrom(t *testing.T) {
 
 func TestGetBatchThreadsEquivalence(t *testing.T) {
 	dir := t.TempDir()
-	_, all := buildTestLib(t, dir, Options{}, false)
+	_, all := buildTestLib(t, dir, CreateOptions{}, false)
 	s1 := openStream(t, dir, 1)
 	s4 := openStream(t, dir, 4)
 	o1, err := s1.GetBatch(all)
@@ -130,7 +130,7 @@ func TestGetBatchThreadsEquivalence(t *testing.T) {
 // lowerBound 那条记录（重复键下是同一条），值必须相等。
 func TestGetBatchMatchesGet(t *testing.T) {
 	dir := t.TempDir()
-	byKey, all := buildTestLib(t, dir, Options{}, false)
+	byKey, all := buildTestLib(t, dir, CreateOptions{}, false)
 	db, err := OpenEager(dir, 32)
 	if err != nil {
 		t.Fatal(err)
@@ -154,7 +154,10 @@ func TestGetBatchMatchesGet(t *testing.T) {
 		t.Fatal(err)
 	}
 	for i, k := range sorted {
-		sv, ok := db.Get(k)
+		sv, ok, err := db.Get(k)
+		if err != nil {
+			t.Fatal(err)
+		}
 		if ok != (batch[i] != nil) {
 			t.Fatalf("键 %x：Get 命中 %v，GetBatch 命中 %v", k, ok, batch[i] != nil)
 		}
@@ -166,7 +169,7 @@ func TestGetBatchMatchesGet(t *testing.T) {
 
 func TestGetBatchDuplicateInputKeys(t *testing.T) {
 	dir := t.TempDir()
-	byKey, all := buildTestLib(t, dir, Options{}, false)
+	byKey, all := buildTestLib(t, dir, CreateOptions{}, false)
 	sdb := openStream(t, dir, 2)
 	k := all[len(all)/2]
 	out, err := sdb.GetBatch([][]byte{k, bytes.Clone(k), k})
@@ -182,7 +185,7 @@ func TestGetBatchDuplicateInputKeys(t *testing.T) {
 
 func TestGetBatchSingleKey(t *testing.T) {
 	dir := t.TempDir()
-	_, all := buildTestLib(t, dir, Options{}, false)
+	_, all := buildTestLib(t, dir, CreateOptions{}, false)
 	sdb := openStream(t, dir, 1)
 	out, err := sdb.GetBatch([][]byte{all[7]})
 	if err != nil || len(out) != 1 || out[0] == nil {
@@ -199,7 +202,7 @@ func TestGetBatchSingleKey(t *testing.T) {
 func TestGetBatchCorruptFrame(t *testing.T) {
 	dir := t.TempDir()
 	base := filepath.Join(dir, "chr1")
-	w, err := Create(base, Options{Schema: testRecordSchema})
+	w, err := Create(base, CreateOptions{Schema: testRecordSchema})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -240,7 +243,7 @@ func TestGetBatchCorruptFrame(t *testing.T) {
 
 func TestGetBatchConcurrent(t *testing.T) {
 	dir := t.TempDir()
-	_, all := buildTestLib(t, dir, Options{}, false)
+	_, all := buildTestLib(t, dir, CreateOptions{}, false)
 	sdb := openStream(t, dir, 4)
 	var wg sync.WaitGroup
 	errs := make(chan error, 8)

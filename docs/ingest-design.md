@@ -7,16 +7,16 @@
 ## 1. API
 
 ```go
-func BuildFromVCFs(outdir string, vcfs []string, fields []string, prefix string, opts Options) error
-func BuildFromTSVs(basePath string, tsvs []string, opts Options) error
+func BuildFromVCFs(outdir string, vcfs []string, fields []string, prefix string, opts BuildOptions) error
+func BuildFromTSVs(basePath string, tsvs []string, opts BuildOptions) error
 ```
 
 - `BuildFromVCFs` 产出 `outdir/chrN.keys`、`chrN.vals`、`chrN.col`、
   `chrN.manifest`。
 - `BuildFromTSVs` 产出 `basePath.keys`、`basePath.vals`、`basePath.col`、
   `basePath.manifest`；`OpenSimpleKV` 只读前两个。
-- `opts` 只用到构建字段：`RawValueBelow`、`PackTarget`；`Threads`、`CacheMB`
-  是读侧参数，建库时忽略。`Schema` 由两个入口自己决定，调用方传入的值被覆盖。
+- `opts` 只包含构建参数 `RawValueBelow`、`PackTarget`；schema 由输入格式
+  决定，调用方不能指定。
 
 ## 2. BuildFromTSVs 契约
 
@@ -28,7 +28,8 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error
 - 值是原始字节：writer 按单 String 字段 schema（`Name="value"`、`Number="1"`）
   包成 record；`OpenSimpleKV.Get` 解包回原字节，调用方语义不变。
 - 输出单库，`OpenSimpleKV(basePath, cacheMB)` 打开；`basePath` 的父目录不存在时
-  创建。
+  创建，`.keys`/`.vals`/`.col`/`.manifest` 任一已存在时报错。构建失败删除本次
+  创建的产物。
 - 无位置语义：`col` 是单 bin（`bin_width=0`、`bin_count=1`），与 vals 同源。
 
 ## 3. BuildFromVCFs 契约
@@ -77,8 +78,7 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error
 ### 3.4 输出与头文件
 
 - 每条染色体 `outdir/chr<ChromName>.keys` + `.vals` + `.col` + `.manifest`。
-- `outdir` 里已有的 `chrN.keys`/`chrN.vals`/`chrN.col`/`chrN.manifest` 视为冲突：
-  构建前检查，存在就报错，要求用空目录。
+- `outdir` 必须不存在（父目录可以存在）；已存在即报错，包括空目录，绝不覆盖。
 - 全部染色体 `Finish` 成功后写：
   - `vcf.raw.header`：第一个输入文件的完整头（所有 `##` 行 + `#CHROM` 行），
     逐字节保留。
@@ -96,8 +96,9 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error
 - 多文件模式：一个文件一个 goroutine、一个 writer；`bgzf.NewReader(f, 1)`，
   并行度来自文件而不是解压线程。文件级并发上限 `GOMAXPROCS/2`。
 - 仅 `.gz`/`.bgz` 后缀走 bgzf 读取；其余按纯文本。
-- 失败时当前及未完成 writer 的 `.tmp` 删除；已 `Finish` 的染色体保留；两个
-  header 不写。多文件模式首个错误取消其他 worker，返回首个错误。
+- 失败时返回错误；`BuildFromVCFs` 删除本次创建（因此必然不存在旧数据）的
+  `outdir`，`BuildFromTSVs` 删除本次创建的 `basePath` 产物。清理失败与原始
+  构建错误一并返回。多文件模式首个错误取消其他 worker，返回首个错误。
 - 输入只有 `.gz`/`.bgz`/纯文本文件路径，不支持 stdin。
 
 ### 3.6 列存伴生文件
@@ -108,7 +109,8 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error
   契约见 [v003-format.md](v003-format.md) §5–§6。
 - 同一构建的全部染色体共用一个 16B 随机 `build_id`，写进 col 头与 manifest；
   打开时用 build_id、schema hash、文件字节数与记录数配对校验，不一致报错。
-- 列存写失败时删除该染色体的 col/manifest 半成品；已 `Finish` 的记录序保留。
+- 列存写失败时删除该染色体的 col/manifest 半成品；整个入口失败时由
+  `BuildFromVCFs` 删除本次创建的 outdir。
 
 ## 4. 实现结构（ingest.go）
 

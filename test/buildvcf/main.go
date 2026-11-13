@@ -9,7 +9,7 @@
 //
 // -fields is an optional TSV whose first column is the INFO name (extra
 // columns are ignored); empty means all INFO fields. The output values always
-// follow the ##INFO declaration order. Options.PackTarget can be overridden
+// follow the ##INFO declaration order. BuildOptions.PackTarget can be overridden
 // with IMMKV_PACK_KB (negative = per-value framing + trained dictionary);
 // IMMKV_RAW=1 stores values uncompressed, matching buildfull's knobs.
 package main
@@ -86,7 +86,7 @@ func run(gnomadDir, outDir, only, fieldsPath, prefix string) error {
 			return err
 		}
 	}
-	opts := immkv.Options{}
+	opts := immkv.BuildOptions{}
 	if os.Getenv("IMMKV_RAW") != "" {
 		opts.RawValueBelow = 1 << 30
 	}

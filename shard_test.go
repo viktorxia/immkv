@@ -93,7 +93,7 @@ func genLib(n int, seed int64, c uint8) []kvRec {
 // buildTestLib 在 dir 里构建 chr1（9 千位置，约 2 万条记录，键流约 480KB，
 // 跨约 20 组与 2 个流式窗口）与 chrX（1.5 千位置）。sorted=true 用 AddSorted
 // 流式，false 用 Add 乱序。返回键→全部值（含重复）与全部键的升序列表（含重复）。
-func buildTestLib(t *testing.T, dir string, opts Options, sortedMode bool) (map[string][][]byte, [][]byte) {
+func buildTestLib(t *testing.T, dir string, opts CreateOptions, sortedMode bool) (map[string][][]byte, [][]byte) {
 	t.Helper()
 	if opts.Schema == nil {
 		opts.Schema = testRecordSchema
@@ -162,14 +162,17 @@ func missKey(byKey map[string][][]byte, rnd *rand.Rand) []byte {
 
 func TestEagerGetRoundTrip(t *testing.T) {
 	dir := t.TempDir()
-	byKey, all := buildTestLib(t, dir, Options{}, false)
+	byKey, all := buildTestLib(t, dir, CreateOptions{}, false)
 	db, err := OpenEager(dir, 64)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer db.Close()
 	for _, k := range all {
-		v, ok := db.Get(k)
+		v, ok, err := db.Get(k)
+		if err != nil {
+			t.Fatal(err)
+		}
 		if !ok {
 			t.Fatalf("键 %x 应命中", k)
 		}
@@ -179,25 +182,30 @@ func TestEagerGetRoundTrip(t *testing.T) {
 	}
 	rnd := rand.New(rand.NewSource(3))
 	for i := 0; i < 500; i++ {
-		if k := missKey(byKey, rnd); func() bool { _, ok := db.Get(k); return ok }() {
+		k := missKey(byKey, rnd)
+		_, ok, err := db.Get(k)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if ok {
 			t.Fatalf("键 %x 不应命中", k)
 		}
 	}
-	if _, ok := db.Get(nil); ok {
-		t.Fatal("空键不应命中")
+	if _, ok, err := db.Get(nil); err != nil || ok {
+		t.Fatalf("空键不应命中（err %v）", err)
 	}
-	if _, ok := db.Get([]byte{}); ok {
-		t.Fatal("零长键不应命中")
+	if _, ok, err := db.Get([]byte{}); err != nil || ok {
+		t.Fatalf("零长键不应命中（err %v）", err)
 	}
 	// 缺席染色体（chr2 未构建）
-	if _, ok := db.Get(VarKey(1, 100, "A", "T")); ok {
-		t.Fatal("缺席染色体不应命中")
+	if _, ok, err := db.Get(VarKey(1, 100, "A", "T")); err != nil || ok {
+		t.Fatalf("缺席染色体不应命中（err %v）", err)
 	}
 }
 
 func TestEagerNoCacheRoundTrip(t *testing.T) {
 	dir := t.TempDir()
-	byKey, all := buildTestLib(t, dir, Options{}, true) // 换 AddSorted 构建路径
+	byKey, all := buildTestLib(t, dir, CreateOptions{}, true) // 换 AddSorted 构建路径
 	db, err := OpenEager(dir, 0)
 	if err != nil {
 		t.Fatal(err)
@@ -206,16 +214,16 @@ func TestEagerNoCacheRoundTrip(t *testing.T) {
 	rnd := rand.New(rand.NewSource(5))
 	for i := 0; i < 1000; i++ {
 		k := all[rnd.Intn(len(all))]
-		v, ok := db.Get(k)
-		if !ok || !hitIn(byKey, k, v) {
-			t.Fatalf("键 %x 未命中或值不符（%v）", k, ok)
+		v, ok, err := db.Get(k)
+		if err != nil || !ok || !hitIn(byKey, k, v) {
+			t.Fatalf("键 %x 未命中或值不符（ok=%v err=%v）", k, ok, err)
 		}
 	}
 }
 
 func TestEagerGetPrefix(t *testing.T) {
 	dir := t.TempDir()
-	byKey, all := buildTestLib(t, dir, Options{}, false)
+	byKey, all := buildTestLib(t, dir, CreateOptions{}, false)
 	db, err := OpenEager(dir, 64)
 	if err != nil {
 		t.Fatal(err)
@@ -264,7 +272,7 @@ func TestEagerGetPrefix(t *testing.T) {
 
 func TestEagerScan(t *testing.T) {
 	dir := t.TempDir()
-	byKey, all := buildTestLib(t, dir, Options{}, false)
+	byKey, all := buildTestLib(t, dir, CreateOptions{}, false)
 	db, err := OpenEager(dir, 64)
 	if err != nil {
 		t.Fatal(err)
@@ -334,14 +342,17 @@ func TestEagerScan(t *testing.T) {
 
 func TestEagerSliceLifetime(t *testing.T) {
 	dir := t.TempDir()
-	byKey, all := buildTestLib(t, dir, Options{}, false)
+	byKey, all := buildTestLib(t, dir, CreateOptions{}, false)
 	db, err := OpenEager(dir, 1) // 1MB 小缓存，扫荡必然逐出
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer db.Close()
 	k := all[len(all)/2]
-	v1, ok := db.Get(k)
+	v1, ok, err := db.Get(k)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if !ok {
 		t.Fatal("应命中")
 	}
@@ -355,18 +366,15 @@ func TestEagerSliceLifetime(t *testing.T) {
 	_ = byKey
 }
 
-func TestOpenEmptyDirPanic(t *testing.T) {
-	defer func() {
-		if recover() == nil {
-			t.Fatal("空目录应 panic")
-		}
-	}()
-	_, _ = OpenEager(t.TempDir(), 0)
+func TestOpenEmptyDirError(t *testing.T) {
+	if _, err := OpenEager(t.TempDir(), 0); err == nil {
+		t.Fatal("空目录应返回错误")
+	}
 }
 
 func TestOpenBadMagic(t *testing.T) {
 	dir := t.TempDir()
-	buildTestLib(t, dir, Options{}, false)
+	buildTestLib(t, dir, CreateOptions{}, false)
 	// 破坏 keys 魔数
 	f, err := os.OpenFile(filepath.Join(dir, "chr1.keys"), os.O_WRONLY, 0)
 	if err != nil {
@@ -383,7 +391,14 @@ func TestOpenBadMagic(t *testing.T) {
 	f, _ = os.OpenFile(filepath.Join(dir, "chr1.keys"), os.O_WRONLY, 0)
 	f.WriteAt([]byte{keysMagic[0]}, 0)
 	f.Close()
-	buildTestLib(t, dir, Options{}, false) // 重建干净的
+	for _, base := range []string{"chr1", "chrX"} {
+		for _, ext := range []string{".keys", ".vals"} {
+			if err := os.Remove(filepath.Join(dir, base+ext)); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	buildTestLib(t, dir, CreateOptions{}, false) // 重建干净的
 	f, _ = os.OpenFile(filepath.Join(dir, "chrX.vals"), os.O_WRONLY, 0)
 	f.WriteAt([]byte{0xFF}, 0)
 	f.Close()
@@ -394,7 +409,7 @@ func TestOpenBadMagic(t *testing.T) {
 
 func TestOpenIncompletePair(t *testing.T) {
 	dir := t.TempDir()
-	buildTestLib(t, dir, Options{}, false)
+	buildTestLib(t, dir, CreateOptions{}, false)
 	if err := os.Remove(filepath.Join(dir, "chr1.vals")); err != nil {
 		t.Fatal(err)
 	}
@@ -405,7 +420,7 @@ func TestOpenIncompletePair(t *testing.T) {
 
 func TestIgnoresForeignFiles(t *testing.T) {
 	dir := t.TempDir()
-	byKey, all := buildTestLib(t, dir, Options{}, false)
+	byKey, all := buildTestLib(t, dir, CreateOptions{}, false)
 	for _, name := range []string{"notes.txt", "chrY.keys.bak", "chrM.vals.tmp"} {
 		if err := os.WriteFile(filepath.Join(dir, name), []byte("x"), 0o644); err != nil {
 			t.Fatal(err)
@@ -416,58 +431,62 @@ func TestIgnoresForeignFiles(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	if _, ok := db.Get(VarKey(23, 100, "A", "T")); ok { // chrY 未构建
-		t.Fatal("chrY 不应命中")
+	if _, ok, err := db.Get(VarKey(23, 100, "A", "T")); err != nil || ok { // chrY 未构建
+		t.Fatalf("chrY 不应命中（err %v）", err)
 	}
-	if v, ok := db.Get(all[0]); !ok || !hitIn(byKey, all[0], v) {
-		t.Fatal("正常键应照常命中")
+	if v, ok, err := db.Get(all[0]); err != nil || !ok || !hitIn(byKey, all[0], v) {
+		t.Fatalf("正常键应照常命中（ok=%v err=%v）", ok, err)
 	}
 }
 
-func TestReopenAfterReplace(t *testing.T) {
+func TestRejectOverwrite(t *testing.T) {
 	dir := t.TempDir()
-	build := func(tag string) {
-		t.Helper()
-		w, err := Create(filepath.Join(dir, "chr1"), Options{Schema: testRecordSchema})
-		if err != nil {
-			t.Fatal(err)
-		}
-		for i := 0; i < 100; i++ {
-			if err := w.Add(VarKey(0, uint32(i), "A", "T"), []byte(tag)); err != nil {
-				t.Fatal(err)
-			}
-		}
-		if err := w.Finish(); err != nil {
-			t.Fatal(err)
-		}
-	}
-	build("v1")
-	db1, err := OpenEager(dir, 0)
+	base := filepath.Join(dir, "chr1")
+	w, err := Create(base, CreateOptions{Schema: testRecordSchema})
 	if err != nil {
 		t.Fatal(err)
 	}
+	for i := 0; i < 100; i++ {
+		if err := w.Add(VarKey(0, uint32(i), "A", "T"), []byte("v1")); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := w.Finish(); err != nil {
+		t.Fatal(err)
+	}
+	before, err := os.ReadFile(base + ".keys")
+	if err != nil {
+		t.Fatal(err)
+	}
+	db, err := OpenEager(dir, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
 	k := VarKey(0, 50, "A", "T")
-	if v, _ := db1.Get(k); string(v) != "v1" {
-		t.Fatalf("替换前应读到 v1，得到 %q", v)
+	if v, ok, err := db.Get(k); err != nil || !ok || string(v) != "v1" {
+		t.Fatalf("首次构建应读到 v1，得到 %q（ok=%v err=%v）", v, ok, err)
 	}
-	build("v2") // 原子替换
-	if v, _ := db1.Get(k); string(v) != "v1" {
-		t.Fatalf("旧句柄应继续读旧数据，得到 %q", v)
+
+	// 同名目标已存在：第二次构建必须被拒绝，原文件与已打开句柄都不受影响。
+	if _, err := Create(base, CreateOptions{Schema: testRecordSchema}); err == nil {
+		t.Fatal("已有目标应拒绝覆盖")
 	}
-	db2, err := OpenEager(dir, 0)
+	after, err := os.ReadFile(base + ".keys")
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer db2.Close()
-	if v, _ := db2.Get(k); string(v) != "v2" {
-		t.Fatalf("新句柄应读新数据，得到 %q", v)
+	if !bytes.Equal(before, after) {
+		t.Fatal("拒绝覆盖后原 keys 文件不应变化")
 	}
-	db1.Close()
+	if v, ok, err := db.Get(k); err != nil || !ok || string(v) != "v1" {
+		t.Fatalf("拒绝覆盖后旧句柄应继续读 v1，得到 %q（ok=%v err=%v）", v, ok, err)
+	}
 }
 
 func TestEagerMultiDBSameDir(t *testing.T) {
 	dir := t.TempDir()
-	byKey, all := buildTestLib(t, dir, Options{}, false)
+	byKey, all := buildTestLib(t, dir, CreateOptions{}, false)
 	d1, err := OpenEager(dir, 0)
 	if err != nil {
 		t.Fatal(err)
@@ -479,22 +498,22 @@ func TestEagerMultiDBSameDir(t *testing.T) {
 	}
 	defer d2.Close()
 	for _, db := range []*DB{d1, d2} {
-		v, ok := db.Get(all[0])
-		if !ok || !hitIn(byKey, all[0], v) {
-			t.Fatal("同目录多句柄应各自正确")
+		v, ok, err := db.Get(all[0])
+		if err != nil || !ok || !hitIn(byKey, all[0], v) {
+			t.Fatalf("同目录多句柄应各自正确（ok=%v err=%v）", ok, err)
 		}
 	}
 }
 
 func TestConcurrentMixedReads(t *testing.T) {
 	dir := t.TempDir()
-	_, all := buildTestLib(t, dir, Options{}, false)
+	_, all := buildTestLib(t, dir, CreateOptions{}, false)
 	db, err := OpenEager(dir, 8)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	sdb, err := OpenStreaming(dir, Options{Threads: 4})
+	sdb, err := OpenStreaming(dir, StreamOptions{Threads: 4})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -508,14 +527,18 @@ func TestConcurrentMixedReads(t *testing.T) {
 			for i := 0; i < 200; i++ {
 				switch rnd.Intn(3) {
 				case 0:
-					db.Get(all[rnd.Intn(len(all))])
+					if _, _, err := db.Get(all[rnd.Intn(len(all))]); err != nil {
+						panic(err)
+					}
 				case 1:
 					lo := rnd.Intn(len(all) - 1)
 					hi := lo + 1 + rnd.Intn(100)
 					if hi >= len(all) {
 						hi = len(all) - 1
 					}
-					db.Scan(all[lo], all[hi], func(k, v []byte) bool { return true })
+					if err := db.Scan(all[lo], all[hi], func(k, v []byte) bool { return true }); err != nil {
+						panic(err)
+					}
 				default:
 					span := 200
 					if len(all) < span+1 {
@@ -536,14 +559,14 @@ func TestConcurrentMixedReads(t *testing.T) {
 // TestEmptyChromLib：单染色体空库（count=0）与其他染色体共存。
 func TestEmptyChromLib(t *testing.T) {
 	dir := t.TempDir()
-	w, err := Create(filepath.Join(dir, "chr1"), Options{Schema: testRecordSchema})
+	w, err := Create(filepath.Join(dir, "chr1"), CreateOptions{Schema: testRecordSchema})
 	if err != nil {
 		t.Fatal(err)
 	}
 	if err := w.Finish(); err != nil {
 		t.Fatal(err)
 	}
-	w2, err := Create(filepath.Join(dir, "chrX"), Options{Schema: testRecordSchema})
+	w2, err := Create(filepath.Join(dir, "chrX"), CreateOptions{Schema: testRecordSchema})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -560,15 +583,15 @@ func TestEmptyChromLib(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	if _, ok := db.Get(VarKey(0, 1, "A", "T")); ok {
-		t.Fatal("空染色体不应命中")
+	if _, ok, err := db.Get(VarKey(0, 1, "A", "T")); err != nil || ok {
+		t.Fatalf("空染色体不应命中（err %v）", err)
 	}
 	n := 0
 	db.GetPrefix(PosKey(0, 1), func(k, v []byte) bool { n++; return true })
 	if n != 0 {
 		t.Fatal("空染色体前缀不应回调")
 	}
-	sdb, err := OpenStreaming(dir, Options{Threads: 2})
+	sdb, err := OpenStreaming(dir, StreamOptions{Threads: 2})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -579,5 +602,63 @@ func TestEmptyChromLib(t *testing.T) {
 	}
 	if out[0] != nil || string(out[1]) != "x" {
 		t.Fatalf("空染色体 nil、正常染色体命中：得到 %v %q", out[0], out[1])
+	}
+}
+
+// TestEagerCorruptFrameReportsError 验证点查、前缀、区间查询在值帧损坏时都
+// 返回错误，而不是静默当作未命中。
+func TestEagerCorruptFrameReportsError(t *testing.T) {
+	dir := t.TempDir()
+	base := filepath.Join(dir, "chr1")
+	w, err := Create(base, CreateOptions{Schema: testRecordSchema})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i := 0; i < 50; i++ {
+		if err := w.Add(VarKey(0, uint32(i), "A", "T"), bytes.Repeat([]byte("val"), 300)); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := w.Finish(); err != nil {
+		t.Fatal(err)
+	}
+	recs, _, _ := parseKeys(t, base+".keys")
+	var victim []byte
+	var vOff uint64
+	for _, r := range recs {
+		if !r.raw { // 挑一个 zstd 帧
+			victim = r.key
+			vOff = r.valOff
+			break
+		}
+	}
+	if victim == nil {
+		t.Fatal("找不到 zstd 帧")
+	}
+	f, err := os.OpenFile(base+".vals", os.O_WRONLY, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := f.WriteAt([]byte{0xFF, 0xFF, 0xFF, 0xFF}, int64(vOff)); err != nil {
+		t.Fatal(err)
+	}
+	if err := f.Close(); err != nil {
+		t.Fatal(err)
+	}
+
+	db, err := OpenEager(dir, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	if v, ok, err := db.Get(victim); err == nil || ok {
+		t.Fatalf("Get 应报错，得到 (%d bytes, ok=%v, err=%v)", len(v), ok, err)
+	}
+	if err := db.GetPrefix(victim[:5], func(k, v []byte) bool { return true }); err == nil {
+		t.Fatal("GetPrefix 应报错")
+	}
+	hi := append(bytes.Clone(victim), 0xFF)
+	if err := db.Scan(victim, hi, func(k, v []byte) bool { return true }); err == nil {
+		t.Fatal("Scan 应报错")
 	}
 }

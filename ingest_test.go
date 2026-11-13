@@ -49,7 +49,10 @@ func writeIngestBGZF(t *testing.T, path, content string) {
 
 func mustIngestGet(t *testing.T, db *DB, key []byte, schema Schema) string {
 	t.Helper()
-	value, ok := db.Get(key)
+	value, ok, err := db.Get(key)
+	if err != nil {
+		t.Fatalf("key %x: %v", key, err)
+	}
 	if !ok {
 		t.Fatalf("key %x: not found", key)
 	}
@@ -87,8 +90,8 @@ func ingestSchema(t *testing.T, dir string) Schema {
 
 func mustIngestMiss(t *testing.T, db *DB, key []byte) {
 	t.Helper()
-	if v, ok := db.Get(key); ok {
-		t.Fatalf("key %x: unexpected hit %q", key, v)
+	if v, ok, err := db.Get(key); err != nil || ok {
+		t.Fatalf("key %x: unexpected hit %q (err %v)", key, v, err)
 	}
 }
 
@@ -114,7 +117,7 @@ func TestBuildFromTSVs(t *testing.T) {
 	writeIngestFile(t, p1, "b\tB1\nb\tB1\nc\tC1\tC2\n\n")
 	writeIngestFile(t, p2, "d\tD1\n")
 	base := filepath.Join(dir, "sub", "genes")
-	if err := BuildFromTSVs(base, []string{p1, p2}, Options{}); err != nil {
+	if err := BuildFromTSVs(base, []string{p1, p2}, BuildOptions{}); err != nil {
 		t.Fatal(err)
 	}
 	db, err := OpenSimpleKV(base, 0)
@@ -127,13 +130,13 @@ func TestBuildFromTSVs(t *testing.T) {
 		{"c", "C1\tC2"},
 		{"d", "D1"},
 	} {
-		v, ok := db.Get([]byte(tc.key))
-		if !ok || string(v) != tc.want {
-			t.Fatalf("Get(%q) = %q, %v; want %q", tc.key, v, ok, tc.want)
+		v, ok, err := db.Get([]byte(tc.key))
+		if err != nil || !ok || string(v) != tc.want {
+			t.Fatalf("Get(%q) = %q, %v, %v; want %q", tc.key, v, ok, err, tc.want)
 		}
 	}
-	if _, ok := db.Get([]byte("zzz")); ok {
-		t.Fatal("unexpected hit for zzz")
+	if _, ok, err := db.Get([]byte("zzz")); err != nil || ok {
+		t.Fatalf("unexpected hit for zzz (err %v)", err)
 	}
 }
 
@@ -142,7 +145,7 @@ func TestBuildFromTSVsUnsorted(t *testing.T) {
 	p := filepath.Join(dir, "x.tsv")
 	writeIngestFile(t, p, "c\tC\nb\tB\n")
 	base := filepath.Join(dir, "genes")
-	if err := BuildFromTSVs(base, []string{p}, Options{}); err == nil {
+	if err := BuildFromTSVs(base, []string{p}, BuildOptions{}); err == nil {
 		t.Fatal("expected unsorted error")
 	}
 	for _, suffix := range []string{".keys", ".vals", ".keys.tmp", ".vals.tmp"} {
@@ -160,7 +163,7 @@ func TestBuildFromVCFsAllFieldsSorted(t *testing.T) {
 		ingestRec("1", 100, "C", "T", "AN=100;AF=0.5;AC=10")+
 		ingestRec("2", 50, "G", "A", "AF=0.3;AC=7;AN=100"))
 	out := filepath.Join(dir, "lib")
-	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err != nil {
+	if err := BuildFromVCFs(out, []string{vcf}, nil, "", BuildOptions{}); err != nil {
 		t.Fatal(err)
 	}
 	db, err := OpenEager(out, 0)
@@ -217,7 +220,7 @@ func TestBuildFromVCFsSelectedFields(t *testing.T) {
 		ingestRec("2", 50, "G", "A", "AF=0.3;AC=7;AN=100"))
 	out := filepath.Join(dir, "lib")
 	fields := []string{"DB", "AN", "AC", "AF"}
-	if err := BuildFromVCFs(out, []string{vcf}, fields, "IMMKV", Options{}); err != nil {
+	if err := BuildFromVCFs(out, []string{vcf}, fields, "IMMKV", BuildOptions{}); err != nil {
 		t.Fatal(err)
 	}
 	db, err := OpenEager(out, 0)
@@ -269,7 +272,7 @@ func TestBuildFromVCFsAllFieldsPrefix(t *testing.T) {
 		ingestRec("1", 10, "A", "C", "DB;AN=100;AF=0.1,0.2")+
 		ingestRec("1", 20, "A", "G", "."))
 	out := filepath.Join(dir, "lib")
-	if err := BuildFromVCFs(out, []string{vcf}, nil, "IMMKV", Options{}); err != nil {
+	if err := BuildFromVCFs(out, []string{vcf}, nil, "IMMKV", BuildOptions{}); err != nil {
 		t.Fatal(err)
 	}
 	db, err := OpenEager(out, 0)
@@ -293,7 +296,7 @@ func TestBuildFromVCFsMultiFile(t *testing.T) {
 	writeIngestFile(t, f1, ingestTestHeader+ingestRec("1", 100, "C", "A", "AF=0.1;AC=1;AN=100"))
 	writeIngestFile(t, f2, ingestTestHeader+ingestRec("2", 50, "G", "A", "AF=0.2;AC=2;AN=100"))
 	out := filepath.Join(dir, "lib")
-	if err := BuildFromVCFs(out, []string{f1, f2}, []string{"AF"}, "IMMKV", Options{}); err != nil {
+	if err := BuildFromVCFs(out, []string{f1, f2}, []string{"AF"}, "IMMKV", BuildOptions{}); err != nil {
 		t.Fatal(err)
 	}
 	db, err := OpenEager(out, 0)
@@ -316,7 +319,7 @@ func TestBuildFromVCFsMultiFileErrors(t *testing.T) {
 	f2 := filepath.Join(dir, "1b.vcf")
 	writeIngestFile(t, f1, ingestTestHeader+ingestRec("1", 100, "C", "A", "AF=0.1"))
 	writeIngestFile(t, f2, ingestTestHeader+ingestRec("1", 200, "C", "T", "AF=0.2"))
-	if err := BuildFromVCFs(filepath.Join(dir, "dup"), []string{f1, f2}, nil, "", Options{}); err == nil ||
+	if err := BuildFromVCFs(filepath.Join(dir, "dup"), []string{f1, f2}, nil, "", BuildOptions{}); err == nil ||
 		!strings.Contains(err.Error(), "more than one input") {
 		t.Fatalf("duplicate chromosome error = %v", err)
 	}
@@ -327,7 +330,7 @@ func TestBuildFromVCFsMultiFileErrors(t *testing.T) {
 		ingestRec("1", 100, "C", "A", "AF=0.1")+
 		ingestRec("2", 50, "G", "A", "AF=0.2"))
 	writeIngestFile(t, f4, ingestTestHeader+ingestRec("3", 10, "A", "C", "AF=0.3"))
-	if err := BuildFromVCFs(filepath.Join(dir, "mixed"), []string{f3, f4}, nil, "", Options{}); err == nil {
+	if err := BuildFromVCFs(filepath.Join(dir, "mixed"), []string{f3, f4}, nil, "", BuildOptions{}); err == nil {
 		t.Fatal("expected multi-chromosome file error")
 	}
 
@@ -338,7 +341,7 @@ func TestBuildFromVCFsMultiFileErrors(t *testing.T) {
 	f6 := filepath.Join(dir, "6.vcf")
 	writeIngestFile(t, f5, hdr2+ingestRec("1", 100, "C", "A", "AF=0.1"))
 	writeIngestFile(t, f6, ingestTestHeader+ingestRec("2", 50, "G", "A", "AF=0.2"))
-	if err := BuildFromVCFs(filepath.Join(dir, "hdr"), []string{f5, f6}, nil, "", Options{}); err == nil {
+	if err := BuildFromVCFs(filepath.Join(dir, "hdr"), []string{f5, f6}, nil, "", BuildOptions{}); err == nil {
 		t.Fatal("expected header mismatch error")
 	}
 
@@ -352,7 +355,7 @@ func TestBuildFromVCFsMultiFileErrors(t *testing.T) {
 	f8 := filepath.Join(dir, "8.vcf")
 	writeIngestFile(t, f7, hdrOrder+ingestRec("1", 100, "C", "A", "AF=0.1"))
 	writeIngestFile(t, f8, ingestTestHeader+ingestRec("2", 50, "G", "A", "AF=0.2"))
-	if err := BuildFromVCFs(filepath.Join(dir, "order"), []string{f7, f8}, nil, "", Options{}); err == nil ||
+	if err := BuildFromVCFs(filepath.Join(dir, "order"), []string{f7, f8}, nil, "", BuildOptions{}); err == nil ||
 		!strings.Contains(err.Error(), "order") {
 		t.Fatalf("INFO order mismatch error = %v", err)
 	}
@@ -370,7 +373,7 @@ func TestBuildFromVCFsTypedArrays(t *testing.T) {
 	writeIngestFile(t, vcf, header+
 		ingestRec("1", 100, "C", "A", "AD=1,.,3;GL=0.5,.;XX=1,2;STR=a,b"))
 	out := filepath.Join(dir, "lib")
-	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err != nil {
+	if err := BuildFromVCFs(out, []string{vcf}, nil, "", BuildOptions{}); err != nil {
 		t.Fatal(err)
 	}
 	db, err := OpenEager(out, 0)
@@ -378,7 +381,10 @@ func TestBuildFromVCFsTypedArrays(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer db.Close()
-	raw, ok := db.Get(VarKey(0, 100, "C", "A"))
+	raw, ok, err := db.Get(VarKey(0, 100, "C", "A"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	if !ok {
 		t.Fatal("typed array record missing")
 	}
@@ -425,7 +431,7 @@ func TestBuildFromVCFsTypedMissingPerALT(t *testing.T) {
 	writeIngestFile(t, vcf, header+
 		ingestRec("1", 100, "C", "A,G", "AF=.,0.2;AC=1,2"))
 	out := filepath.Join(dir, "lib")
-	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err != nil {
+	if err := BuildFromVCFs(out, []string{vcf}, nil, "", BuildOptions{}); err != nil {
 		t.Fatal(err)
 	}
 	db, err := OpenEager(out, 0)
@@ -443,7 +449,10 @@ func TestBuildFromVCFsTypedMissingPerALT(t *testing.T) {
 		{VarKey(0, 100, "C", "A"), false, 1, "AC=1"},
 		{VarKey(0, 100, "C", "G"), true, 2, "AF=0.2;AC=2"},
 	} {
-		raw, ok := db.Get(testCase.key)
+		raw, ok, err := db.Get(testCase.key)
+		if err != nil {
+			t.Fatal(err)
+		}
 		if !ok {
 			t.Fatalf("key %x missing", testCase.key)
 		}
@@ -508,7 +517,7 @@ func TestBuildFromVCFsErrors(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			vcf := filepath.Join(dir, tc.name+".vcf")
 			writeIngestFile(t, vcf, ingestTestHeader+tc.body)
-			err := BuildFromVCFs(filepath.Join(dir, tc.name+"-lib"), []string{vcf}, tc.fields, tc.prefix, Options{})
+			err := BuildFromVCFs(filepath.Join(dir, tc.name+"-lib"), []string{vcf}, tc.fields, tc.prefix, BuildOptions{})
 			if err == nil || !strings.Contains(err.Error(), tc.want) {
 				t.Fatalf("error = %v; want substring %q", err, tc.want)
 			}
@@ -522,11 +531,11 @@ func TestBuildFromVCFsErrors(t *testing.T) {
 		t.Fatal(err)
 	}
 	writeIngestFile(t, filepath.Join(out, "chr1.keys"), "")
-	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err == nil ||
+	if err := BuildFromVCFs(out, []string{vcf}, nil, "", BuildOptions{}); err == nil ||
 		!strings.Contains(err.Error(), "already exists") {
 		t.Fatalf("existing outdir error = %v", err)
 	}
-	if err := BuildFromVCFs(dir, nil, nil, "", Options{}); err == nil {
+	if err := BuildFromVCFs(dir, nil, nil, "", BuildOptions{}); err == nil {
 		t.Fatal("expected empty vcfs error")
 	}
 }
@@ -544,7 +553,7 @@ func TestBuildFromVCFsNonFiniteFloatsAreMissing(t *testing.T) {
 	vcf := filepath.Join(dir, "in.vcf")
 	writeIngestFile(t, vcf, header+body)
 	out := filepath.Join(dir, "lib")
-	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err != nil {
+	if err := BuildFromVCFs(out, []string{vcf}, nil, "", BuildOptions{}); err != nil {
 		t.Fatal(err)
 	}
 	db, err := OpenEager(out, 0)
@@ -579,7 +588,7 @@ func TestBuildFromVCFsBGZF(t *testing.T) {
 	vcf := filepath.Join(dir, "in.vcf.gz")
 	writeIngestBGZF(t, vcf, ingestTestHeader+ingestRec("1", 10, "A", "C", "AF=0.1;AC=1;AN=100"))
 	out := filepath.Join(dir, "lib")
-	if err := BuildFromVCFs(out, []string{vcf}, []string{"AF"}, "IMMKV", Options{}); err != nil {
+	if err := BuildFromVCFs(out, []string{vcf}, []string{"AF"}, "IMMKV", BuildOptions{}); err != nil {
 		t.Fatal(err)
 	}
 	db, err := OpenEager(out, 0)
@@ -613,7 +622,7 @@ func TestBuildFromVCFsTypedRecord(t *testing.T) {
 	writeIngestFile(t, vcf, header+
 		ingestRec("1", 100, "C", "A", "AF=0.25;AC=3;AN=100;DB;STR=foo"))
 	out := filepath.Join(dir, "lib")
-	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err != nil {
+	if err := BuildFromVCFs(out, []string{vcf}, nil, "", BuildOptions{}); err != nil {
 		t.Fatal(err)
 	}
 	db, err := OpenEager(out, 0)
@@ -622,7 +631,10 @@ func TestBuildFromVCFsTypedRecord(t *testing.T) {
 	}
 	defer db.Close()
 
-	raw, ok := db.Get(VarKey(0, 100, "C", "A"))
+	raw, ok, err := db.Get(VarKey(0, 100, "C", "A"))
+	if err != nil {
+		t.Fatal(err)
+	}
 	if !ok {
 		t.Fatal("typed record missing")
 	}
@@ -678,7 +690,7 @@ func TestBuildFromVCFsSampleColumns(t *testing.T) {
 	writeIngestFile(t, vcf, header+
 		"1\t10\t.\tA\tC\t.\tPASS\tAF=0.1;AN=100\tGT\t0/1\n")
 	out := filepath.Join(dir, "lib")
-	if err := BuildFromVCFs(out, []string{vcf}, nil, "", Options{}); err != nil {
+	if err := BuildFromVCFs(out, []string{vcf}, nil, "", BuildOptions{}); err != nil {
 		t.Fatal(err)
 	}
 	db, err := OpenEager(out, 0)
@@ -689,5 +701,47 @@ func TestBuildFromVCFsSampleColumns(t *testing.T) {
 	schema := ingestSchema(t, out)
 	if got := mustIngestGet(t, db, VarKey(0, 10, "A", "C"), schema); got != "AF=0.1;AN=100" {
 		t.Fatalf("Get = %q; sample columns must not enter the value", got)
+	}
+}
+
+func TestBuildFromVCFsRejectsExistingOutdir(t *testing.T) {
+	dir := t.TempDir() // 已存在，哪怕是空目录也必须拒绝
+	err := BuildFromVCFs(dir, []string{filepath.Join(dir, "unused.vcf")}, nil, "", BuildOptions{})
+	if err == nil || !strings.Contains(err.Error(), "already exists") {
+		t.Fatalf("已存在的 outdir 应报错，得到 %v", err)
+	}
+}
+
+func TestBuildFromVCFsCleansFailedBuild(t *testing.T) {
+	dir := t.TempDir()
+	vcf := filepath.Join(dir, "empty.vcf")
+	writeIngestFile(t, vcf, "") // 没有 #CHROM，准备输入阶段报错
+	out := filepath.Join(dir, "lib")
+	if err := BuildFromVCFs(out, []string{vcf}, nil, "", BuildOptions{}); err == nil {
+		t.Fatal("空 VCF 应报错")
+	}
+	if _, err := os.Stat(out); !os.IsNotExist(err) {
+		t.Fatalf("失败构建应删除本次创建的 outdir，得到 %v", err)
+	}
+}
+
+func TestBuildFromTSVsRejectsExisting(t *testing.T) {
+	dir := t.TempDir()
+	tsv := filepath.Join(dir, "a.tsv")
+	writeIngestFile(t, tsv, "a\tA\n")
+	base := filepath.Join(dir, "lib")
+	if err := BuildFromTSVs(base, []string{tsv}, BuildOptions{}); err != nil {
+		t.Fatal(err)
+	}
+	if err := BuildFromTSVs(base, []string{tsv}, BuildOptions{}); err == nil {
+		t.Fatal("已有同名库应拒绝重建")
+	}
+	db, err := OpenSimpleKV(base, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	if v, ok, err := db.Get([]byte("a")); err != nil || !ok || string(v) != "A" {
+		t.Fatalf("拒绝覆盖后原库应仍可读：%q %v %v", v, ok, err)
 	}
 }

@@ -4,6 +4,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 
 	"github.com/viktorxia/immkv"
@@ -25,8 +26,8 @@ var annotationSchema = immkv.Schema{
 // 批量注释工具为了性能通常不走这里，而是一次 Values() 遍历直接拼输出缓冲。
 
 // renderInfoText 把 raw 渲染成 INFO 文本。
-func renderInfoText(recordBytes []byte) (string, error) {
-	infoBytes, err := immkv.RenderRecord(annotationSchema, recordBytes)
+func renderInfoText(schema immkv.Schema, recordBytes []byte) (string, error) {
+	infoBytes, err := immkv.RenderRecord(schema, recordBytes)
 	if err != nil {
 		return "", err
 	}
@@ -45,13 +46,13 @@ type PlainAnnotation struct {
 }
 
 // decodePlainAnnotation 用一次 Values() 遍历把 raw 填进普通结构体。
-func decodePlainAnnotation(recordBytes []byte) (PlainAnnotation, error) {
+func decodePlainAnnotation(schema immkv.Schema, recordBytes []byte) (PlainAnnotation, error) {
 	var decoded PlainAnnotation
 
 	// recordBytes 是 Get/GetBatch 返回的二进制 record，本身不自描述。
 	// NewRecord 校验它，并返回绑定 schema 的只读视图 Record；
 	// 不复制 recordBytes，也不是转换成另一种格式。
-	record, err := immkv.NewRecord(annotationSchema, recordBytes)
+	record, err := immkv.NewRecord(schema, recordBytes)
 	if err != nil {
 		return decoded, err
 	}
@@ -73,9 +74,9 @@ func decodePlainAnnotation(recordBytes []byte) (PlainAnnotation, error) {
 // present 位图只能分两态：
 //   位 = 1：这条 record 里该字段有值（值即使为 0 也算有值）
 //   位 = 0：该字段在这条 record 里没有值，或该字段未参与构建
-// 只看 present 位无法区分后两者；用 IsBuiltField 查构建字段清单：
-//   IsBuiltField = true  -> 字段无值
-//   IsBuiltField = false -> 字段未构建
+// 只看 present 位无法区分后两者；用构建字段清单（-lib 模式从 ReadSchema 派生）：
+//   清单里有该字段 -> 字段无值
+//   清单里没有     -> 字段未构建
 
 // maxFields 是这个示例的 validityBitmap 容量（1024 位）。
 // 这不是 immkv 的限制：immkv 的 record 位图按 schema 字段数动态增长。
@@ -102,9 +103,37 @@ var fieldBitIndex = map[string]int{
 }
 
 // builtFields 是这份构建实际保留的字段，也就是构建字段清单。
-// CLNSIG 在字段表里，但这次构建被列裁剪裁掉，所以任何记录里都没有值。
-var builtFields = map[string]bool{
-	"AN": true, "AF": true, "DB": true,
+// 单库演示里它从 annotationSchema 派生；-lib 模式从 immkv.ReadSchema 派生。
+// CLNSIG 只在候选字段表里，这次构建被列裁剪裁掉，所以任何记录里都没有值。
+var builtFields = builtFieldsFromSchema(annotationSchema)
+
+// candidateFieldTypes 是候选字段表里的类型，用于 -lib 模式启动时校验库 schema。
+var candidateFieldTypes = map[string]immkv.FieldType{
+	"AF": immkv.TypeFloat, "AN": immkv.TypeInteger,
+	"DB": immkv.TypeFlag, "CLNSIG": immkv.TypeString,
+}
+
+func builtFieldsFromSchema(schema immkv.Schema) map[string]bool {
+	out := make(map[string]bool, len(schema))
+	for _, field := range schema {
+		out[field.Name] = true
+	}
+	return out
+}
+
+// validateCandidateFields 校验库 schema 的每个字段都在候选字段表里且类型一致。
+// 真实使用中候选表由调用方维护；库新增字段时这里会报错，提示补表。
+func validateCandidateFields(schema immkv.Schema) error {
+	for _, field := range schema {
+		want, ok := candidateFieldTypes[field.Name]
+		if !ok {
+			return fmt.Errorf("库字段 %q 不在候选字段表里", field.Name)
+		}
+		if field.Type != want {
+			return fmt.Errorf("库字段 %q 类型 %s，候选表期望 %s", field.Name, field.Type, want)
+		}
+	}
+	return nil
 }
 
 // PresentAnnotation 保存值，并用有效位图记录每个字段是否有值。
@@ -125,24 +154,15 @@ func (annotation *PresentAnnotation) HasValue(fieldName string) bool {
 	return annotation.present[bit/64]&(1<<(bit%64)) != 0
 }
 
-// IsBuiltField 是数据集层的方法：这个字段参与这次构建了吗。
-// 字段名不在字段表时 panic。
-func (annotation *PresentAnnotation) IsBuiltField(fieldName string) bool {
-	if _, ok := fieldBitIndex[fieldName]; !ok {
-		panic("unknown field: " + fieldName)
-	}
-	return builtFields[fieldName]
-}
-
 // fieldState 按三态判断：
 //   - HasValue 为 true：字段有值；
-//   - HasValue 为 false、IsBuiltField 为 true：字段无值；
-//   - IsBuiltField 为 false：字段未构建。
-func fieldState(annotation PresentAnnotation, fieldName string) string {
+//   - HasValue 为 false、构建清单里有该字段：字段无值；
+//   - 构建清单里没有：字段未构建。
+func fieldState(annotation PresentAnnotation, built map[string]bool, fieldName string) string {
 	switch {
 	case annotation.HasValue(fieldName):
 		return "有值"
-	case annotation.IsBuiltField(fieldName):
+	case built[fieldName]:
 		return "无值"
 	default:
 		return "未构建"
@@ -150,9 +170,9 @@ func fieldState(annotation PresentAnnotation, fieldName string) string {
 }
 
 // decodePresentAnnotation 用一次 Values() 遍历同时填值和有效位图。
-func decodePresentAnnotation(recordBytes []byte) (PresentAnnotation, error) {
+func decodePresentAnnotation(schema immkv.Schema, recordBytes []byte) (PresentAnnotation, error) {
 	var decoded PresentAnnotation
-	record, err := immkv.NewRecord(annotationSchema, recordBytes)
+	record, err := immkv.NewRecord(schema, recordBytes)
 	if err != nil {
 		return decoded, err
 	}
@@ -194,18 +214,29 @@ func encodeRecord(af float64, an int64, withAN bool) []byte {
 }
 
 func main() {
+	lib := flag.String("lib", "", "immkv library directory; empty runs the self-contained demo")
+	flag.Parse()
+	if *lib != "" {
+		runLibraryDemo(*lib)
+		return
+	}
+	runStandaloneDemo()
+}
+
+// runStandaloneDemo 不依赖外部库：用 RecordEncoder 造 record，演示三种解析方式。
+func runStandaloneDemo() {
 	// 1. 造一条 raw：AF=0.01、AN=1200、DB；CLNSIG 未参与构建。
 	recordBytes := encodeRecord(0.01, 1200, true)
 
 	// 2. 解析成 INFO 文本。
-	infoText, err := renderInfoText(recordBytes)
+	infoText, err := renderInfoText(annotationSchema, recordBytes)
 	if err != nil {
 		panic(err)
 	}
 	fmt.Println("INFO:", infoText)
 
 	// 3. 解析成普通结构体。
-	plainAnnotation, err := decodePlainAnnotation(recordBytes)
+	plainAnnotation, err := decodePlainAnnotation(annotationSchema, recordBytes)
 	if err != nil {
 		panic(err)
 	}
@@ -213,7 +244,7 @@ func main() {
 		plainAnnotation.AF, plainAnnotation.AN, plainAnnotation.DB)
 
 	// 4. 解析成带有效位图的结构体。
-	presentAnnotation, err := decodePresentAnnotation(recordBytes)
+	presentAnnotation, err := decodePresentAnnotation(annotationSchema, recordBytes)
 	if err != nil {
 		panic(err)
 	}
@@ -228,11 +259,68 @@ func main() {
 
 	// 5. 三态判断：有值 / 无值 / 未构建。
 	missingBytes := encodeRecord(0.50, 0, false) // 这条 record 没有 AN
-	missingAnnotation, err := decodePresentAnnotation(missingBytes)
+	missingAnnotation, err := decodePresentAnnotation(annotationSchema, missingBytes)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println("state AF:", fieldState(missingAnnotation, "AF"))         // 有值
-	fmt.Println("state AN:", fieldState(missingAnnotation, "AN"))         // 无值
-	fmt.Println("state CLNSIG:", fieldState(missingAnnotation, "CLNSIG")) // 未构建
+	fmt.Println("state AF:", fieldState(missingAnnotation, builtFields, "AF"))         // 有值
+	fmt.Println("state AN:", fieldState(missingAnnotation, builtFields, "AN"))         // 无值
+	fmt.Println("state CLNSIG:", fieldState(missingAnnotation, builtFields, "CLNSIG")) // 未构建
+}
+
+// runLibraryDemo 从真实库读取 schema 和第一条 record，再走同一套解析路径。
+func runLibraryDemo(dir string) {
+	schema, err := immkv.ReadSchema(dir)
+	if err != nil {
+		panic(err)
+	}
+	if err := validateCandidateFields(schema); err != nil {
+		panic(err)
+	}
+	built := builtFieldsFromSchema(schema)
+
+	db, err := immkv.OpenEager(dir, 0)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+
+	var key, recordBytes []byte
+	if err := db.Scan(nil, nil, func(k, v []byte) bool {
+		key = append([]byte(nil), k...)
+		recordBytes = append([]byte(nil), v...)
+		return false
+	}); err != nil {
+		panic(err)
+	}
+	if recordBytes == nil {
+		fmt.Println("library has no records:", dir)
+		return
+	}
+
+	fmt.Println("library:", dir)
+	fmt.Print("schema:")
+	for _, field := range schema {
+		fmt.Printf(" %s(%s)", field.Name, field.Type)
+	}
+	fmt.Println()
+	fmt.Printf("record: key=%x\n", key)
+
+	infoText, err := renderInfoText(schema, recordBytes)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("INFO:", infoText)
+
+	present, err := decodePresentAnnotation(schema, recordBytes)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("present: AF=%v(%v) AN=%d(%v) DB=%v\n",
+		present.AF, present.HasValue("AF"),
+		present.AN, present.HasValue("AN"),
+		present.HasValue("DB"))
+	fmt.Println("state AF:", fieldState(present, built, "AF"))
+	fmt.Println("state AN:", fieldState(present, built, "AN"))
+	fmt.Println("state CLNSIG:", fieldState(present, built, "CLNSIG"))
 }

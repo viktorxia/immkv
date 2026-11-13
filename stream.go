@@ -32,21 +32,22 @@ type StreamDB struct {
 	shardSet
 	threads int
 	cols    [25]*colShard
-	colSel  []int // 选中的列号（升序）；nil = 全部
+	colSel  []int  // 选中的列号（升序）；nil = 全部
+	selMask []bool // colSel 对应的位图；nil = 全部
 	profile ioProfile
 
 	forceCol bool // 测试用：跳过成本估算，强制列存路径
 }
 
-// OpenStreaming 打开 dir 下的批量流式句柄。Options.Threads 是唯一并发旋钮：
-// 同时决定在途 pread 请求数与并行解压 goroutine 数（默认 1）；机械硬盘上
-// 它不起作用（单磁头，引擎靠相邻合并转顺序读）。
+// OpenStreaming 打开 dir 下的批量流式句柄。StreamOptions.Threads 是唯一并发
+// 旋钮：同时决定在途 pread 请求数与并行解压 goroutine 数（默认 1）；机械
+// 硬盘上它不起作用（单磁头，引擎靠相邻合并转顺序读）。
 //
 // 库里有 base.col/manifest 时，顺序查按估算的 I/O 成本在记录序与列存之间
-// 选路；Options.Columns 只选字段（nil/空 = 全部列），不决定路径。直接由
-// Create 建、没有 base.col/manifest 的库仍按记录序服务；此时给非空 Columns
-// 会报错。
-func OpenStreaming(dir string, opts Options) (*StreamDB, error) {
+// 选路；StreamOptions.Columns 只选字段（nil/空 = 全部列），不决定路径；
+// 两条路径返回的 record 都只含选中字段。直接由 Create 建、没有
+// base.col/manifest 的库仍按记录序服务；此时给非空 Columns 会报错。
+func OpenStreaming(dir string, opts StreamOptions) (*StreamDB, error) {
 	if opts.Threads <= 0 {
 		opts.Threads = 1
 	}
@@ -106,6 +107,10 @@ func OpenStreaming(dir string, opts Options) (*StreamDB, error) {
 		}
 		sort.Ints(sel)
 		d.colSel = sel
+		d.selMask = make([]bool, len(d.cols[d.chroms[0]].schema))
+		for _, c := range sel {
+			d.selMask[c] = true
+		}
 	}
 	return d, nil
 }
@@ -228,6 +233,8 @@ func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 		}()
 	}
 	// 生产者：按染色体分段（键升序 ⇒ 同染色体键连续）合并连接、切读段投递
+	type recSpan struct{ start, end int }
+	var recSpans []recSpan
 	i := 0
 	for i < len(keys) && !failed() {
 		if len(keys[i]) == 0 { // 空键排最前，直接未命中
@@ -260,6 +267,7 @@ func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 					continue
 				}
 			}
+			recSpans = append(recSpans, recSpan{i, j})
 			for _, ch := range chunkExtents(buildExtents(d.shards[id], hits)) {
 				select {
 				case extCh <- ch:
@@ -278,6 +286,23 @@ func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 	wgRead.Wait()
 	close(decCh)
 	wgDec.Wait()
+	// 记录序路径按 Columns 裁剪，与列存路径返回同形状的 record；列存路径
+	// 已在 readColBatch 里按同一列选择装配。
+	if ferr == nil && len(d.selMask) > 0 {
+		schema := d.cols[d.chroms[0]].schema
+		for _, sp := range recSpans {
+			for k := sp.start; k < sp.end; k++ {
+				if out[k] == nil {
+					continue
+				}
+				projected, perr := projectRecord(schema, out[k], d.selMask)
+				if perr != nil {
+					return nil, perr
+				}
+				out[k] = projected
+			}
+		}
+	}
 	if ferr != nil {
 		return nil, ferr
 	}
@@ -520,7 +545,7 @@ func buildExtents(s *shard, hits []sHit) []extent {
 }
 
 // readChunk 把一块读段全部读入（每 reader 一路在途读，threads 个 reader 即
-// Options.Threads 路并发读），读完对该块覆盖的文件区间做 fadvise(DONTNEED)
+// StreamOptions.Threads 路并发读），读完对该块覆盖的文件区间做 fadvise(DONTNEED)
 // ——值只读一次，页缓存留着只会顶爆 cgroup 限额、拖慢后续读。
 func readChunk(chunk []extent) error {
 	for i := range chunk {

@@ -16,7 +16,7 @@ import (
 // io_uring 直连 + O_DIRECT：值文件以 O_DIRECT 打开（绕开页缓存——3GiB cgroup
 // 下缓冲读的页缓存记账回收会把单读延迟拖到 ~220µs），读请求经 512 深的提交
 // 队列异步下发，单个驱动 goroutine 完成提交与收割——在途读深度与线程数彻底
-// 解耦，线程预算仍由 Options.Threads 约束在解压池上。O_DIRECT 要求 4KB 对齐：
+// 解耦，线程预算仍由 StreamOptions.Threads 约束在解压池上。O_DIRECT 要求 4KB 对齐：
 // 每段读 [对齐下界, 对齐上界)，命中视图按段内偏移切出。建环或 O_DIRECT 不可
 // 用时 GetBatch 退回 pread 读池。要求内核 ≥5.6。
 

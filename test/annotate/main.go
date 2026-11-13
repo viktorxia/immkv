@@ -71,7 +71,7 @@ func main() {
 	fieldsPath := flag.String("fields", "", "field whitelist TSV from genfields (name/Type/Number)")
 	prefix := flag.String("prefix", "gnomad_", "prefix for appended INFO keys")
 	batch := flag.Int("batch", 4096, "rows per GetBatch window")
-	threads := flag.Int("threads", 4, "format worker threads == immkv Options.Threads")
+	threads := flag.Int("threads", 4, "format worker threads == immkv StreamOptions.Threads")
 	flag.Parse()
 	if *in == "" || *libDir == "" || *out == "" || *fieldsPath == "" {
 		flag.Usage()
@@ -183,7 +183,7 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 		defer br.Close()
 		r = br
 	}
-	sdb, err := immkv.OpenStreaming(libDir, immkv.Options{Threads: threads, Columns: cols})
+	sdb, err := immkv.OpenStreaming(libDir, immkv.StreamOptions{Threads: threads, Columns: cols})
 	if err != nil {
 		return err
 	}

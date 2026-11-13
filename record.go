@@ -478,6 +478,27 @@ func validateRecord(s Schema, raw []byte) error {
 	return walkRecord(s, raw, nil)
 }
 
+// projectRecord 返回只含 selected 列的 record：位图长度不变，未选字段按缺失
+// 处理，payload 按 schema 顺序重排。selected 的长度必须等于 len(s)；全选时
+// 结果与输入逐字节一致。
+func projectRecord(s Schema, raw []byte, selected []bool) ([]byte, error) {
+	bl := recordBitmapLen(len(s))
+	out := make([]byte, bl, bl+len(raw))
+	var payload []byte
+	err := walkRecord(s, raw, func(i int, p []byte) error {
+		if !selected[i] {
+			return nil
+		}
+		out[i>>6] |= 1 << uint(i&63)
+		payload = append(payload, p...)
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	return append(out, payload...), nil
+}
+
 // walkRecord 校验 record 结构，并按 schema 顺序把每个有值字段的编码 payload
 // 交给 fn。payload 是 raw 的视图，数组不展开；fn 为 nil 时只校验。
 func walkRecord(s Schema, raw []byte, fn func(index int, payload []byte) error) error {

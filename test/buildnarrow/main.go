@@ -99,5 +99,5 @@ func run(gnomadDir, outDir, fieldsPath string) error {
 		return a.Size() > b.Size()
 	})
 	fmt.Printf("building %d chromosome(s) -> %s (fields=%d)\n", len(inputs), outDir, len(fields))
-	return immkv.BuildFromVCFs(outDir, inputs, fields, "", immkv.Options{})
+	return immkv.BuildFromVCFs(outDir, inputs, fields, "", immkv.BuildOptions{})
 }

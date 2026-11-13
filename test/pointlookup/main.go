@@ -135,8 +135,11 @@ func doLookups(db *immkv.DB, keys [][]byte, t, count int, wantHit bool) ([]int64
 			for i := g; i < count; i += t {
 				k := keys[i]
 				t0 := time.Now()
-				v, ok := db.Get(k)
+				v, ok, err := db.Get(k)
 				d := time.Since(t0)
+				if err != nil {
+					panic(fmt.Sprintf("get key %x: %v", k, err))
+				}
 				if ok {
 					hits[g]++
 					if !wantHit {

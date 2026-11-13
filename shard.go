@@ -355,12 +355,12 @@ func (s *shard) nRecs(b int) int {
 	return n
 }
 
-// block 取第 b 块（LRU 缓存，键取块偏移正值域）。
-func (s *shard) block(b int) *blockEnt {
+// block 取第 b 块（LRU 缓存，键取块偏移正值域）；读取或解析失败返回错误。
+func (s *shard) block(b int) (*blockEnt, error) {
 	ck := int64(s.blkOff[b])
 	if s.cache != nil {
 		if v, ok := s.cache.get(ck); ok {
-			return v.(*blockEnt)
+			return v.(*blockEnt), nil
 		}
 	}
 	hi := s.keysEnd
@@ -369,16 +369,16 @@ func (s *shard) block(b int) *blockEnt {
 	}
 	buf := make([]byte, hi-s.blkOff[b])
 	if _, err := s.kf.ReadAt(buf, int64(s.blkOff[b])); err != nil {
-		return nil
+		return nil, fmt.Errorf("immkv: 读微块 %d: %w", b, err)
 	}
 	e, _, err := parseBlock(buf, s.nRecs(b))
 	if err != nil {
-		return nil
+		return nil, fmt.Errorf("immkv: 解析微块 %d: %w", b, err)
 	}
 	if s.cache != nil {
 		s.cache.add(ck, e, len(buf)+len(e.cum)*8+64)
 	}
-	return e
+	return e, nil
 }
 
 // key8 把键前 8 字节按大端装进 u64（不足补零），供块索引二分。
@@ -401,30 +401,30 @@ func (s *shard) blockFor(key []byte) int {
 }
 
 // seek 返回首个 key ≥ 目标 的位置 (块号, 块内下标)；超过数据末尾返回
-// (nBlock, 0)。
-func (s *shard) seek(key []byte) (int, int) {
+// (nBlock, 0)。读取失败返回错误。
+func (s *shard) seek(key []byte) (int, int, error) {
 	for b := s.blockFor(key); b < int(s.nBlock); b++ {
-		e := s.block(b)
-		if e == nil {
-			return 0, 0
+		e, err := s.block(b)
+		if err != nil {
+			return 0, 0, err
 		}
 		n := s.nRecs(b)
 		j := sort.Search(n, func(j int) bool {
 			return bytes.Compare(e.keyAt(j), key) >= 0
 		})
 		if j < n {
-			return b, j
+			return b, j, nil
 		}
 	}
-	return int(s.nBlock), 0
+	return int(s.nBlock), 0, nil
 }
 
 // get 精确点查，命中返回 lowerBound 那条（重复键取 run 的第一条）。
-func (s *shard) get(key []byte) ([]byte, bool) {
+func (s *shard) get(key []byte) ([]byte, bool, error) {
 	for b := s.blockFor(key); b < int(s.nBlock); b++ {
-		e := s.block(b)
-		if e == nil {
-			return nil, false
+		e, err := s.block(b)
+		if err != nil {
+			return nil, false, err
 		}
 		n := s.nRecs(b)
 		j := sort.Search(n, func(j int) bool {
@@ -434,64 +434,80 @@ func (s *shard) get(key []byte) ([]byte, bool) {
 			continue // 本块全 < key：下一块首键可能恰为 key（run 跨块）
 		}
 		if !bytes.Equal(e.keyAt(j), key) {
-			return nil, false
+			return nil, false, nil
 		}
 		vo, fl, raw, packed := e.valLoc(j)
-		v := s.value(b*int(s.recsBlk)+j, vo, fl, raw, packed)
-		if v == nil {
-			return nil, false
+		v, err := s.value(b*int(s.recsBlk)+j, vo, fl, raw, packed)
+		if err != nil {
+			return nil, false, err
 		}
-		return v, true
+		return v, true, nil
 	}
-	return nil, false
+	return nil, false, nil
 }
 
 // getPrefix 依序回调所有以 prefix 开头的键值对，fn 返回 false 提前停止。
-func (s *shard) getPrefix(prefix []byte, fn func(k, v []byte) bool) {
-	for b, j := s.seek(prefix); b < int(s.nBlock); b, j = b+1, 0 {
-		e := s.block(b)
-		if e == nil {
-			return
+func (s *shard) getPrefix(prefix []byte, fn func(k, v []byte) bool) error {
+	b, j, err := s.seek(prefix)
+	if err != nil {
+		return err
+	}
+	for ; b < int(s.nBlock); b, j = b+1, 0 {
+		e, err := s.block(b)
+		if err != nil {
+			return err
 		}
 		n := s.nRecs(b)
 		for ; j < n; j++ {
 			k := e.keyAt(j)
 			if !bytes.HasPrefix(k, prefix) {
-				return
+				return nil
 			}
 			vo, fl, raw, packed := e.valLoc(j)
-			v := s.value(b*int(s.recsBlk)+j, vo, fl, raw, packed)
-			if v == nil || !fn(k, v) {
-				return
+			v, err := s.value(b*int(s.recsBlk)+j, vo, fl, raw, packed)
+			if err != nil {
+				return err
+			}
+			if !fn(k, v) {
+				return nil
 			}
 		}
 	}
+	return nil
 }
 
 // scan 依序回调键在 [lo, hi) 内的记录；lo 为 nil 从头开始，hi 为 nil 到结尾。
-func (s *shard) scan(lo, hi []byte, fn func(k, v []byte) bool) {
+func (s *shard) scan(lo, hi []byte, fn func(k, v []byte) bool) error {
 	b, j := 0, 0
 	if lo != nil {
-		b, j = s.seek(lo)
+		var err error
+		b, j, err = s.seek(lo)
+		if err != nil {
+			return err
+		}
 	}
 	for ; b < int(s.nBlock); b, j = b+1, 0 {
-		e := s.block(b)
-		if e == nil {
-			return
+		e, err := s.block(b)
+		if err != nil {
+			return err
 		}
 		n := s.nRecs(b)
 		for ; j < n; j++ {
 			k := e.keyAt(j)
 			if hi != nil && bytes.Compare(k, hi) >= 0 {
-				return
+				return nil
 			}
 			vo, fl, raw, packed := e.valLoc(j)
-			v := s.value(b*int(s.recsBlk)+j, vo, fl, raw, packed)
-			if v == nil || !fn(k, v) {
-				return
+			v, err := s.value(b*int(s.recsBlk)+j, vo, fl, raw, packed)
+			if err != nil {
+				return err
+			}
+			if !fn(k, v) {
+				return nil
 			}
 		}
 	}
+	return nil
 }
 
 // packEnt 是一个已解压的打包帧：组头 [firstRec u32][n u32][lens u32×n][values]，
@@ -538,36 +554,36 @@ func decodePack(dec frameDecoder, frame, dst []byte) (*packEnt, error) {
 // value 取一条记录的值：帧按 valOff 查 LRU（键取负值，与组窗口的正值键隔离；
 // 零长裸存帧不入缓存——它与后一帧共享 valOff，会顶掉别人的缓存位）。打包帧
 // 缓存解压后的 packEnt，单值帧缓存解压值。返回切片指向缓存里的缓冲，生命周期
-// 到它被逐出为止（契约口径：到下一次查询前）。失败返回 nil（未命中口径）。
-func (s *shard) value(rec int, valOff uint64, frameLen uint32, raw, packed bool) []byte {
+// 到它被逐出为止（契约口径：到下一次查询前）。读取或解压失败返回错误。
+func (s *shard) value(rec int, valOff uint64, frameLen uint32, raw, packed bool) ([]byte, error) {
 	if raw && frameLen == 0 {
-		return []byte{} // 零长值不入缓存，直接给空切片
+		return emptyValue, nil // 零长值不入缓存，直接给空切片
 	}
 	ck := -int64(valOff)
 	if s.cache != nil {
 		if v, ok := s.cache.get(ck); ok {
 			if packed {
-				return v.(*packEnt).value(uint32(rec) - v.(*packEnt).first)
+				return v.(*packEnt).value(uint32(rec) - v.(*packEnt).first), nil
 			}
-			return v.([]byte)
+			return v.([]byte), nil
 		}
 	}
 	frame := make([]byte, frameLen)
 	if _, err := s.vf.ReadAt(frame, int64(valOff)); err != nil {
-		return nil
+		return nil, fmt.Errorf("immkv: 读值帧 (off=%d len=%d): %w", valOff, frameLen, err)
 	}
 	if packed {
 		p, err := decodePack(s.dec, frame, nil) // 解出进 LRU 缓存，缓冲由缓存持有
 		if err != nil {
-			return nil
+			return nil, fmt.Errorf("immkv: 解压打包帧 (off=%d): %w", valOff, err)
 		}
 		if uint32(rec) < p.first || uint32(rec) >= p.first+p.n {
-			return nil // 数据不一致：记录号不在该帧覆盖的 run 内
+			return nil, fmt.Errorf("immkv: 打包帧记录号 %d 不在 [%d, %d) 内", rec, p.first, p.first+p.n)
 		}
 		if s.cache != nil {
 			s.cache.add(ck, p, len(p.buf)+len(p.pfx)*4+64)
 		}
-		return p.value(uint32(rec) - p.first)
+		return p.value(uint32(rec) - p.first), nil
 	}
 	var v []byte
 	if raw {
@@ -575,13 +591,13 @@ func (s *shard) value(rec int, valOff uint64, frameLen uint32, raw, packed bool)
 	} else {
 		var err error
 		if v, err = s.dec.decode(frame, nil); err != nil {
-			return nil
+			return nil, fmt.Errorf("immkv: 解压值帧 (off=%d): %w", valOff, err)
 		}
 	}
 	if s.cache != nil {
 		s.cache.add(ck, v, len(v)+64)
 	}
-	return v
+	return v, nil
 }
 
 // ---- 分染色体集合与 OpenEager ----
@@ -592,8 +608,8 @@ type shardSet struct {
 	shards  [25]*shard
 }
 
-// openShardSet 打开 dir 下全部成对存在的 chr*.keys/chr*.vals；目录为空 panic。
-// cacheMB > 0 时按染色体数均分建 LRU，0 表示不缓存。
+// openShardSet 打开 dir 下全部成对存在的 chr*.keys/chr*.vals；一个都没有
+// 返回错误。cacheMB > 0 时按染色体数均分建 LRU，0 表示不缓存。
 func openShardSet(dir string, cacheMB int) (*shardSet, error) {
 	ss := &shardSet{}
 	for id := uint8(0); id <= 24; id++ {
@@ -604,7 +620,7 @@ func openShardSet(dir string, cacheMB int) (*shardSet, error) {
 		}
 	}
 	if len(ss.chroms) == 0 {
-		panic(fmt.Sprintf("immkv: %s 里没有任何 chr*.keys/chr*.vals", dir))
+		return nil, fmt.Errorf("immkv: %s 里没有任何 chr*.keys/chr*.vals", dir)
 	}
 	for _, id := range ss.chroms {
 		base := filepath.Join(dir, "chr"+ChromName(id))
@@ -657,34 +673,38 @@ func OpenEager(dir string, cacheMB int) (*DB, error) {
 // Close 关闭全部 shard。调用方保证不与查询并发。
 func (d *DB) Close() error { return d.close() }
 
-// Get 精确点查；未命中 ok=false。空键不命中。
-func (d *DB) Get(key []byte) ([]byte, bool) {
+// Get 精确点查。未命中返回 (nil, false, nil)；读取或解压失败返回
+// (nil, false, err)。空键不命中。
+func (d *DB) Get(key []byte) ([]byte, bool, error) {
 	if len(key) == 0 || key[0] > 24 || !d.present[key[0]] {
-		return nil, false
+		return nil, false, nil
 	}
 	return d.shards[key[0]].get(key)
 }
 
-// GetPrefix 前缀查询：按 prefix[0] 路由。前缀为空直接返回。
-func (d *DB) GetPrefix(prefix []byte, fn func(k, v []byte) bool) {
+// GetPrefix 前缀查询：按 prefix[0] 路由。前缀为空直接返回 nil。
+// 回调返回 false 表示提前停止，不是错误；读取或解压失败返回 error。
+func (d *DB) GetPrefix(prefix []byte, fn func(k, v []byte) bool) error {
 	if len(prefix) == 0 {
-		return
+		return nil
 	}
 	if prefix[0] <= 24 && d.present[prefix[0]] {
-		d.shards[prefix[0]].getPrefix(prefix, fn)
+		return d.shards[prefix[0]].getPrefix(prefix, fn)
 	}
+	return nil
 }
 
 // Scan 区间扫描：跨染色体按 chromID 序拼接；lo/hi 可为 nil（nil = 全库扫描），
-// hi 为独占上界。lo/hi 原样传给内层文件——只有命中首尾染色体的那一侧才需要设界。
-func (d *DB) Scan(lo, hi []byte, fn func(k, v []byte) bool) {
+// hi 为独占上界。回调返回 false 表示提前停止，不是错误；读取或解压失败返回
+// error。lo/hi 原样传给内层文件——只有命中首尾染色体的那一侧才需要设界。
+func (d *DB) Scan(lo, hi []byte, fn func(k, v []byte) bool) error {
 	cLo, cHi := 0, 25
 	if len(lo) > 0 {
 		cLo = int(lo[0])
 	}
 	if len(hi) > 0 {
 		if int(hi[0]) < cLo {
-			return
+			return nil
 		}
 		cHi = int(hi[0])
 	}
@@ -701,15 +721,18 @@ func (d *DB) Scan(lo, hi []byte, fn func(k, v []byte) bool) {
 			h = hi
 		}
 		stop := false
-		s.scan(l, h, func(k, v []byte) bool {
+		if err := s.scan(l, h, func(k, v []byte) bool {
 			if !fn(k, v) {
 				stop = true
 				return false
 			}
 			return true
-		})
+		}); err != nil {
+			return err
+		}
 		if stop {
-			return
+			return nil
 		}
 	}
+	return nil
 }

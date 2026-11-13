@@ -1,5 +1,5 @@
 // ingest.go 是 VCF/TSV 的建库入口：把输入格式解析、键编码、组序与落盘
-// 收进库里，调用方只给路径、字段、前缀和 Options。设计见
+// 收进库里，调用方只给路径、字段、前缀和 BuildOptions。设计见
 // docs/ingest-design.md。
 //
 // 两个入口的产出形态沿用库的既有约定：
@@ -38,8 +38,10 @@ const (
 // 字段到行尾原样是值（列间 \t 保留）。多个文件按参数顺序拼接后，第一列必须
 // 整体按字节序升序；内部走 AddSorted，内存有界。空行跳过，没有 \t 的行视为
 // 键加空值，CRLF 的 \r 去掉。输出 basePath.keys + basePath.vals，用
-// OpenSimpleKV 打开；basePath 的父目录不存在时创建。
-func BuildFromTSVs(basePath string, tsvs []string, opts Options) error {
+// OpenSimpleKV 打开；basePath 的父目录不存在时创建，目标文件已存在则报错。
+// 构建失败时删除本次创建的产物，调用方重建前无需手工清理（但已存在同名
+// 文件会在开始时就拒绝）。
+func BuildFromTSVs(basePath string, tsvs []string, opts BuildOptions) (err error) {
 	if basePath == "" {
 		return errors.New("immkv: BuildFromTSVs: empty basePath")
 	}
@@ -49,18 +51,30 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error {
 	if err := os.MkdirAll(filepath.Dir(basePath), 0o755); err != nil {
 		return err
 	}
-	// BuildFromTSVs 的值永远是原始字节，由 writer 包成单 String 字段 record；
-	// 调用方传进来的 Schema 不适用于这条入口。
-	opts.Schema = nil
-	w, err := Create(basePath, opts)
+	// 目标与本次构建会写的全部产物都不允许预先存在，保证失败清理只删自己的。
+	for _, ext := range []string{".keys", ".vals", ".col", ".manifest", ".keys.tmp", ".vals.tmp"} {
+		p := basePath + ext
+		if _, err := os.Lstat(p); err == nil {
+			return fmt.Errorf("immkv: %s already exists; delete it and rebuild", p)
+		} else if !os.IsNotExist(err) {
+			return err
+		}
+	}
+	w, err := Create(basePath, CreateOptions{
+		RawValueBelow: opts.RawValueBelow,
+		PackTarget:    opts.PackTarget,
+	})
 	if err != nil {
 		return err
 	}
-	finished := false
 	defer func() {
-		if !finished {
-			w.enc.Close()
-			w.abort()
+		if err != nil {
+			if aerr := w.Abort(); aerr != nil {
+				err = fmt.Errorf("%w; cleanup: %v", err, aerr)
+			}
+			if rerr := removeBaseArtifacts(basePath); rerr != nil {
+				err = fmt.Errorf("%w; cleanup: %v", err, rerr)
+			}
 		}
 	}()
 	for _, path := range tsvs {
@@ -71,12 +85,23 @@ func BuildFromTSVs(basePath string, tsvs []string, opts Options) error {
 	if err := w.Finish(); err != nil {
 		return err
 	}
-	finished = true
 	buildID, err := newBuildID()
 	if err != nil {
 		return err
 	}
 	return writeColumnar(basePath, simpleKVSchema(), buildID, SourceInfoOrder{}, 0, 0)
+}
+
+// removeBaseArtifacts 删除 basePath 及 .tmp 后缀的全部构建产物，忽略不存在的
+// 文件，返回首个删除错误。只用于本次构建创建的目标（Create 已保证开始时不存在）。
+func removeBaseArtifacts(basePath string) error {
+	var first error
+	for _, ext := range []string{".keys", ".vals", ".col", ".manifest", ".keys.tmp", ".vals.tmp"} {
+		if err := os.Remove(basePath + ext); err != nil && !os.IsNotExist(err) && first == nil {
+			first = err
+		}
+	}
+	return first
 }
 
 // addTSVFile 把一个 TSV 文件的记录按顺序喂给 w。行切片会被 AddSorted 拷贝，
@@ -131,8 +156,9 @@ func addTSVFile(w *Writer, path string) error {
 //
 // 构建成功后写 outdir/vcf.raw.header（第一个输入的完整头）与
 // outdir/vcf.immkv.header（加前缀、按 fields 过滤并按 ##INFO 顺序排列的
-// schema 头）。
-func BuildFromVCFs(outdir string, vcfs []string, fields []string, prefix string, opts Options) error {
+// schema 头）。outdir 必须不存在（父目录可以存在）；构建失败时删除本次
+// 创建的 outdir，调用方删除残留后即可重建。
+func BuildFromVCFs(outdir string, vcfs []string, fields []string, prefix string, opts BuildOptions) (err error) {
 	if outdir == "" {
 		return errors.New("immkv: BuildFromVCFs: empty outdir")
 	}
@@ -142,24 +168,27 @@ func BuildFromVCFs(outdir string, vcfs []string, fields []string, prefix string,
 	if err := validateVCFPrefix(prefix); err != nil {
 		return err
 	}
-	if err := os.MkdirAll(outdir, 0o755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(outdir), 0o755); err != nil {
 		return err
 	}
-	if err := checkVCFOutdir(outdir); err != nil {
-		return err
-	}
-	// 头文件是构建成功的标记：先删旧的，失败时就不留头。
-	for _, name := range []string{vcfRawHeaderName, vcfImmkvHeaderName} {
-		if err := os.Remove(filepath.Join(outdir, name)); err != nil && !os.IsNotExist(err) {
-			return err
+	if err := os.Mkdir(outdir, 0o755); err != nil {
+		if os.IsExist(err) {
+			return fmt.Errorf("immkv: BuildFromVCFs: %s already exists; use a new directory", outdir)
 		}
+		return err
 	}
+	defer func() {
+		if err != nil {
+			if rerr := os.RemoveAll(outdir); rerr != nil {
+				err = fmt.Errorf("%w; cleanup: %v", err, rerr)
+			}
+		}
+	}()
 	multi := len(vcfs) > 1
 	plan, err := prepareVCFInputs(vcfs, fields, prefix, multi)
 	if err != nil {
 		return err
 	}
-	opts.Schema = plan.schema
 	if multi {
 		if err := buildVCFShardsParallel(outdir, plan, opts); err != nil {
 			return err
@@ -183,22 +212,6 @@ func validateVCFPrefix(prefix string) error {
 	}
 	if strings.ContainsAny(prefix, ";= \t\r\n") {
 		return fmt.Errorf("immkv: BuildFromVCFs: invalid prefix %q", prefix)
-	}
-	return nil
-}
-
-// checkVCFOutdir 要求 outdir 里没有已存在的 chrN 库，避免新旧染色体混在一起。
-func checkVCFOutdir(outdir string) error {
-	for id := uint8(0); id <= 24; id++ {
-		base := filepath.Join(outdir, "chr"+ChromName(id))
-		for _, ext := range []string{".keys", ".vals", ".col", ".manifest"} {
-			p := base + ext
-			if _, err := os.Stat(p); err == nil {
-				return fmt.Errorf("immkv: BuildFromVCFs: %s already exists; use an empty outdir", p)
-			} else if !os.IsNotExist(err) {
-				return err
-			}
-		}
 	}
 	return nil
 }
@@ -640,7 +653,7 @@ func (s *buildState) firstErr() error {
 // vcfShardBuilder 管理一个输入文件的记录到分染色体 writer 的推进。
 type vcfShardBuilder struct {
 	outdir string
-	opts   Options
+	opts   BuildOptions
 
 	selectedFields []valueField
 	schema         Schema
@@ -667,7 +680,7 @@ type vcfShardBuilder struct {
 	lineNo  int
 }
 
-func newVCFShardBuilder(outdir string, plan *vcfPlan, opts Options, fixed int) *vcfShardBuilder {
+func newVCFShardBuilder(outdir string, plan *vcfPlan, opts BuildOptions, fixed int) *vcfShardBuilder {
 	b := &vcfShardBuilder{
 		outdir: outdir, opts: opts,
 		selectedFields: plan.selectedFields,
@@ -736,7 +749,11 @@ func (b *vcfShardBuilder) addLine(line []byte) error {
 		}
 		b.stats = SourceInfoOrder{}
 		b.nonFinite = 0
-		w, err := Create(filepath.Join(b.outdir, "chr"+ChromName(cid)), b.opts)
+		w, err := Create(filepath.Join(b.outdir, "chr"+ChromName(cid)), CreateOptions{
+			Schema:        b.schema,
+			RawValueBelow: b.opts.RawValueBelow,
+			PackTarget:    b.opts.PackTarget,
+		})
 		if err != nil {
 			return err
 		}
@@ -992,14 +1009,13 @@ func (b *vcfShardBuilder) finish() error {
 // abort 清理未完成的 writer：关编码器、删 .tmp。
 func (b *vcfShardBuilder) abort() {
 	if b.w != nil {
-		b.w.enc.Close()
-		b.w.abort()
+		b.w.Abort()
 		b.w = nil
 	}
 }
 
 // buildVCFShardsSingle 是单文件模式：顺序读，CHROM 块变化时切 writer。
-func buildVCFShardsSingle(outdir, path string, plan *vcfPlan, opts Options) error {
+func buildVCFShardsSingle(outdir, path string, plan *vcfPlan, opts BuildOptions) error {
 	r, err := openVCF(path, 0)
 	if err != nil {
 		return fmt.Errorf("%s: %w", path, err)
@@ -1029,7 +1045,7 @@ func buildVCFShardsSingle(outdir, path string, plan *vcfPlan, opts Options) erro
 // buildVCFShardsParallel 是多文件模式：一个文件一条染色体，按文件并行。
 // 每个文件内部是单线程 writer，文件级并发取 GOMAXPROCS/2：太少压不满 CPU，
 // 太多会把每文件摊薄到半核以下，最大染色体反而拖长总工期。
-func buildVCFShardsParallel(outdir string, plan *vcfPlan, opts Options) error {
+func buildVCFShardsParallel(outdir string, plan *vcfPlan, opts BuildOptions) error {
 	workers := runtime.GOMAXPROCS(0) / 2
 	if workers < 1 {
 		workers = 1
@@ -1058,7 +1074,7 @@ func buildVCFShardsParallel(outdir string, plan *vcfPlan, opts Options) error {
 }
 
 // buildOneVCFShard 建一个文件的染色体库。
-func buildOneVCFShard(outdir string, in vcfInput, plan *vcfPlan, opts Options, state *buildState) error {
+func buildOneVCFShard(outdir string, in vcfInput, plan *vcfPlan, opts BuildOptions, state *buildState) error {
 	r, err := openVCF(in.path, 1)
 	if err != nil {
 		return fmt.Errorf("%s: %w", in.path, err)

@@ -38,23 +38,29 @@ func main() {
 	// 后面是按 schema 顺序编码的字段值。
 	// 它不自描述，必须配 schema 才能读；解析方式见 examples/parse/main.go。
 	queryKey := immkv.VarKey(chromID, 1000, "A", "G")
-	if recordBytes, ok := eagerDB.Get(queryKey); ok {
+	recordBytes, ok, err := eagerDB.Get(queryKey)
+	if err != nil {
+		panic(err)
+	}
+	if ok {
 		fmt.Printf("Get: hit, %d bytes\n", len(recordBytes))
 	} else {
 		fmt.Println("Get: miss")
 	}
 
 	// 5. 区间扫描：[lo, hi)，hi 独占；回调返回 false 提前结束。
-	eagerDB.Scan(immkv.PosKey(chromID, 0), immkv.PosKey(chromID, 2001), func(key, recordBytes []byte) bool {
+	if err := eagerDB.Scan(immkv.PosKey(chromID, 0), immkv.PosKey(chromID, 2001), func(key, recordBytes []byte) bool {
 		fmt.Printf("Scan: key=%x bytes=%d\n", key, len(recordBytes))
 		return true
-	})
+	}); err != nil {
+		panic(err)
+	}
 
 	// 6. 打开批量句柄。Threads 决定并行解压的 goroutine 数；
 	//    io_uring 路径下在途读深由队列控制，与 Threads 无关；
 	//    只有 io_uring/O_DIRECT 不可用的兜底路径，Threads 才兼作 pread 读线程数。
 	//    机械盘上单磁头，Threads 不起作用。
-	streamDB, err := immkv.OpenStreaming(*libraryDir, immkv.Options{Threads: 4})
+	streamDB, err := immkv.OpenStreaming(*libraryDir, immkv.StreamOptions{Threads: 4})
 	if err != nil {
 		panic(err)
 	}

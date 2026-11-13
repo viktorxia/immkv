@@ -133,9 +133,9 @@ array := uvarint(count)
 ### 5.3 装配
 
 - 读侧只读选中列；装配出的 record 使用**库 schema 的完整位图**，未选中的字段位
-  为 0。调用方知道自己传了 `Options.Columns`，不会把“未选中”误判成“无值”。
-- 记录序路径与列存路径产出的 record 字节由同一个 codec 定义，渲染后必须逐字节
-  一致。
+  为 0。调用方知道自己传了 `StreamOptions.Columns`，不会把“未选中”误判成“无值”。
+- 记录序路径按同一列选择做投影；两条路径产出的 record 字节由同一个 codec 定义，
+  必须逐字节一致。
 
 ## 6. manifest 与配对
 
@@ -186,7 +186,7 @@ array := uvarint(count)
 
 ### 7.3 Create / AddSorted
 
-- `Options` 新增 `Schema []Field`。
+- `CreateOptions` 包含 `Schema []Field`。
 - 空 schema 等价于单 String 字段 `value`；`AddSorted` 收原始值字节，writer 负责
   包成 record。
 - 非空 schema：调用方用公开的 `EncodeRecord` 产出 record 字节再 `AddSorted`；
@@ -249,7 +249,7 @@ func (e *RecordEncoder) Encode() ([]byte, error)
 - record 位图长度不足、payload 越界、uvarint 截断、Float NaN/Inf、Integer 溢出、
   数组 count 或 len 越界。
 - 列目录偏移越界、zstd 解压失败、present_count 与位图不符、值流条数不符。
-- `Options.Columns` 越界/负数/重复；没有 col 的库传非空 Columns。
+- `StreamOptions.Columns` 越界/负数/重复；没有 col 的库传非空 Columns。
 - `GetBatch` 键不升序 → `ErrUnsorted`。
 
 ## 12. 体积与性能
