@@ -1,0 +1,68 @@
+2026-11-15T01:55:27+08:00
+go version go1.27.1 linux/amd64
+1
+linux
+amd64
+/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/cache/go-build
+/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/cache/mod
+-mod=readonly
+Linux tian-mini 7.0.0-42-generic #42~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Oct 19 14:43:01 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+CPU CORE SOCKET ONLINE
+  0    0      0    yes
+  1    1      0    yes
+  2    2      0    yes
+  3    3      0    yes
+  4    4      0    yes
+  5    5      0    yes
+  6    6      0    yes
+  7    7      0    yes
+  8    0      0    yes
+  9    1      0    yes
+ 10    2      0    yes
+ 11    3      0    yes
+ 12    4      0    yes
+ 13    5      0    yes
+ 14    6      0    yes
+ 15    7      0    yes
+SOURCE         FSTYPE TARGET
+/dev/nvme0n1p2 ext4   /
+NAME    ROTA MODEL                  SIZE
+loop0      0                          4K
+loop1      0                      162.4M
+loop2      0                      189.9M
+loop3      0                      227.1M
+loop4      0                       55.5M
+loop5      0                         74M
+loop6      0                      187.2M
+loop7      0                         74M
+loop8      0                       66.8M
+loop9      0                       60.6M
+loop10     0                       50.7M
+loop11     0                       60.7M
+loop12     0                       50.7M
+loop13     0                      262.3M
+loop14     0                      283.8M
+loop15     0                       12.7M
+loop16     0                       12.7M
+loop17     0                      164.8M
+loop18     0                      531.5M
+loop19     0                      615.3M
+loop20     0                        616M
+loop21     0                       91.7M
+loop22     0                        402M
+loop23     0                       11.7M
+loop24     0                       44.7M
+loop25     0                        828K
+loop26     0                       50.3M
+loop27     0                       11.6M
+loop28     0                      222.9M
+loop29     0                        128M
+loop30     0                      222.9M
+loop31     0                        148M
+sda        1 SEAGATE ST6000NM0034   5.5T
+nvme1n1    0 HS-SSD-E2000L 1024G  953.9G
+nvme0n1    0 KINGSTON SNV3S2000G    1.8T
+014dc5c07f967a71cfdcc650c57148aeaac34ceb12e7d9f3a513b9720a88a9c6  /home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz
+db2c8bc29926b5f4265e9077443a19571a55c8f99d2d30906e0a126c6c0db030  /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv
+fa1f21636fcd186308e3d070a65b0c087a8813f6763a78f8db70dc96c65f7643  /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_540_fields/fields540.tsv
+28e7720f959b1cf583af444f1290a9bad857e3d733ea8cd6d0b75442b78ebf86  /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_568_fields/fields568.tsv

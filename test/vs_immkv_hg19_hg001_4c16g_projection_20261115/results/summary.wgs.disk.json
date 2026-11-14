@@ -1,0 +1,3060 @@
+{
+  "annotation": {},
+  "annotation_summary": {
+    "full17": {
+      "after": {
+        "status": "pending"
+      },
+      "before": {
+        "status": "pending"
+      },
+      "old": {
+        "status": "pending"
+      }
+    },
+    "full540": {
+      "after": {
+        "status": "pending"
+      },
+      "before": {
+        "status": "pending"
+      },
+      "old": {
+        "status": "pending"
+      }
+    },
+    "full568": {
+      "after": {
+        "status": "pending"
+      },
+      "before": {
+        "status": "pending"
+      },
+      "old": {
+        "status": "pending"
+      }
+    },
+    "narrow17": {
+      "after": {
+        "status": "pending"
+      },
+      "before": {
+        "status": "pending"
+      },
+      "old": {
+        "status": "pending"
+      }
+    }
+  },
+  "digests": {
+    "comparisons": {
+      "full17": {
+        "exact_comparison_versions": [
+          "before",
+          "after"
+        ],
+        "exact_raw_records_equal": true,
+        "legacy_subset_comparison_excluded": false,
+        "records": {
+          "after": {
+            "batches": 961,
+            "hits": 3875208,
+            "keys": 3933369,
+            "raw_sha256": "af252c93e292d120c4b54bd3c1f54490395175647b9b67938fd56e30996d418c",
+            "returned_bytes": 602832417,
+            "source": "results/digest.wgs.full17.after/stdout"
+          },
+          "before": {
+            "batches": 961,
+            "hits": 3875208,
+            "keys": 3933369,
+            "raw_sha256": "af252c93e292d120c4b54bd3c1f54490395175647b9b67938fd56e30996d418c",
+            "returned_bytes": 602832417,
+            "source": "results/digest.wgs.full17.before/stdout"
+          }
+        }
+      },
+      "full540": {
+        "exact_comparison_versions": [
+          "before",
+          "after"
+        ],
+        "exact_raw_records_equal": true,
+        "legacy_subset_comparison_excluded": false,
+        "records": {
+          "after": {
+            "batches": 961,
+            "hits": 3875208,
+            "keys": 3933369,
+            "raw_sha256": "0ad06226227b99f357c6e80bf22f511a844c61a23a2b9a0b5b9b8d5be39afca8",
+            "returned_bytes": 8257530517,
+            "source": "results/digest.wgs.full540.after/stdout"
+          },
+          "before": {
+            "batches": 961,
+            "hits": 3875208,
+            "keys": 3933369,
+            "raw_sha256": "0ad06226227b99f357c6e80bf22f511a844c61a23a2b9a0b5b9b8d5be39afca8",
+            "returned_bytes": 8257530517,
+            "source": "results/digest.wgs.full540.before/stdout"
+          }
+        }
+      },
+      "full568": {
+        "exact_comparison_versions": [
+          "before",
+          "after"
+        ],
+        "exact_raw_records_equal": true,
+        "legacy_subset_comparison_excluded": false,
+        "records": {
+          "after": {
+            "batches": 961,
+            "hits": 3875208,
+            "keys": 3933369,
+            "raw_sha256": "4fb928c9a882c768f4a7bf6dfdb230ff969f023b54c6e0ac3c1bc79af56d2c84",
+            "returned_bytes": 13558458377,
+            "source": "results/digest.wgs.full568.after/stdout"
+          },
+          "before": {
+            "batches": 961,
+            "hits": 3875208,
+            "keys": 3933369,
+            "raw_sha256": "4fb928c9a882c768f4a7bf6dfdb230ff969f023b54c6e0ac3c1bc79af56d2c84",
+            "returned_bytes": 13558458377,
+            "source": "results/digest.wgs.full568.before/stdout"
+          }
+        }
+      },
+      "full568_default": {
+        "exact_comparison_versions": [
+          "before",
+          "after"
+        ],
+        "exact_raw_records_equal": true,
+        "legacy_subset_comparison_excluded": false,
+        "records": {
+          "after": {
+            "batches": 961,
+            "hits": 3875208,
+            "keys": 3933369,
+            "raw_sha256": "4fb928c9a882c768f4a7bf6dfdb230ff969f023b54c6e0ac3c1bc79af56d2c84",
+            "returned_bytes": 13558458377,
+            "source": "results/digest.wgs.full568_default.after/stdout"
+          },
+          "before": {
+            "batches": 961,
+            "hits": 3875208,
+            "keys": 3933369,
+            "raw_sha256": "4fb928c9a882c768f4a7bf6dfdb230ff969f023b54c6e0ac3c1bc79af56d2c84",
+            "returned_bytes": 13558458377,
+            "source": "results/digest.wgs.full568_default.before/stdout"
+          }
+        }
+      },
+      "narrow17": {
+        "exact_comparison_versions": [
+          "before",
+          "after"
+        ],
+        "exact_raw_records_equal": true,
+        "legacy_subset_comparison_excluded": false,
+        "records": {
+          "after": {
+            "batches": 961,
+            "hits": 3875208,
+            "keys": 3933369,
+            "raw_sha256": "c68f8f47c89a08b754d286c0bf46b7c1a5d63ee1952c0b546fadb6f23cb3e66a",
+            "returned_bytes": 354819105,
+            "source": "results/digest.wgs.narrow17.after/stdout"
+          },
+          "before": {
+            "batches": 961,
+            "hits": 3875208,
+            "keys": 3933369,
+            "raw_sha256": "c68f8f47c89a08b754d286c0bf46b7c1a5d63ee1952c0b546fadb6f23cb3e66a",
+            "returned_bytes": 354819105,
+            "source": "results/digest.wgs.narrow17.before/stdout"
+          }
+        }
+      }
+    },
+    "source": "results/digest.wgs.check/comparison.json",
+    "status": "complete"
+  },
+  "interpretation_limits": [
+    "Lookup time excludes setup; GNU time CPU/RSS include the complete process.",
+    "Profile and digest invocations are diagnostic and excluded from timing medians.",
+    "CPU and memory limits do not fix NVMe service time or OS cache state.",
+    "A wall-time ratio alone does not identify the CPU contribution to an optimization."
+  ],
+  "profiles": {
+    "after": {
+      "cpu_profile_retained": true,
+      "cumulative_profile": {
+        "functions": [
+          {
+            "cumulative_percent": 65.24,
+            "cumulative_seconds": 27.14,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.(*StreamDB).GetBatch.func5"
+          },
+          {
+            "cumulative_percent": 65.19,
+            "cumulative_seconds": 27.12,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.decodeChunk"
+          },
+          {
+            "cumulative_percent": 65.17,
+            "cumulative_seconds": 27.11,
+            "flat_percent": 0.38,
+            "flat_seconds": 0.16,
+            "function": "github.com/viktorxia/immkv.decodeExtent"
+          },
+          {
+            "cumulative_percent": 46.23,
+            "cumulative_seconds": 19.23,
+            "flat_percent": 0.024,
+            "flat_seconds": 0.01,
+            "function": "github.com/viktorxia/immkv.(*cgoDecoder).decode"
+          },
+          {
+            "cumulative_percent": 46.2,
+            "cumulative_seconds": 19.22,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/valyala/gozstd.DecompressDict (inline)"
+          },
+          {
+            "cumulative_percent": 46.2,
+            "cumulative_seconds": 19.22,
+            "flat_percent": 0.048,
+            "flat_seconds": 0.02,
+            "function": "github.com/valyala/gozstd.decompressDict"
+          },
+          {
+            "cumulative_percent": 46.01,
+            "cumulative_seconds": 19.14,
+            "flat_percent": 0.024,
+            "flat_seconds": 0.01,
+            "function": "github.com/valyala/gozstd.decompress"
+          },
+          {
+            "cumulative_percent": 45.99,
+            "cumulative_seconds": 19.13,
+            "flat_percent": 0.14,
+            "flat_seconds": 0.06,
+            "function": "github.com/valyala/gozstd.decompressInternal"
+          },
+          {
+            "cumulative_percent": 45.84,
+            "cumulative_seconds": 19.07,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/valyala/gozstd._Cfunc_ZSTD_decompress_usingDDict_wrapper"
+          },
+          {
+            "cumulative_percent": 45.84,
+            "cumulative_seconds": 19.07,
+            "flat_percent": 45.72,
+            "flat_seconds": 19.02,
+            "function": "runtime.cgocall"
+          },
+          {
+            "cumulative_percent": 24.59,
+            "cumulative_seconds": 10.23,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.(*StreamDB).GetBatch.func3"
+          },
+          {
+            "cumulative_percent": 24.59,
+            "cumulative_seconds": 10.23,
+            "flat_percent": 0.024,
+            "flat_seconds": 0.01,
+            "function": "github.com/viktorxia/immkv.driveDirect"
+          },
+          {
+            "cumulative_percent": 24.52,
+            "cumulative_seconds": 10.2,
+            "flat_percent": 0.024,
+            "flat_seconds": 0.01,
+            "function": "syscall.RawSyscall6"
+          },
+          {
+            "cumulative_percent": 24.5,
+            "cumulative_seconds": 10.19,
+            "flat_percent": 24.5,
+            "flat_seconds": 10.19,
+            "function": "internal/runtime/syscall/linux.Syscall6"
+          },
+          {
+            "cumulative_percent": 24.5,
+            "cumulative_seconds": 10.19,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "syscall.Syscall6"
+          },
+          {
+            "cumulative_percent": 23.68,
+            "cumulative_seconds": 9.85,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.(*ioUring).submitWait"
+          },
+          {
+            "cumulative_percent": 18.17,
+            "cumulative_seconds": 7.56,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.decodeExtent.func2 (inline)"
+          },
+          {
+            "cumulative_percent": 16.66,
+            "cumulative_seconds": 6.93,
+            "flat_percent": 14.33,
+            "flat_seconds": 5.96,
+            "function": "github.com/viktorxia/immkv.(*recordProjection).appendRecord"
+          },
+          {
+            "cumulative_percent": 7.04,
+            "cumulative_seconds": 2.93,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.systemstack"
+          },
+          {
+            "cumulative_percent": 6.49,
+            "cumulative_seconds": 2.7,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.gcBgMarkWorker"
+          },
+          {
+            "cumulative_percent": 6.42,
+            "cumulative_seconds": 2.67,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.gcBgMarkWorker.func2"
+          },
+          {
+            "cumulative_percent": 6.42,
+            "cumulative_seconds": 2.67,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.gcDrain"
+          },
+          {
+            "cumulative_percent": 6.42,
+            "cumulative_seconds": 2.67,
+            "flat_percent": 0.96,
+            "flat_seconds": 0.4,
+            "function": "runtime.scanObject"
+          },
+          {
+            "cumulative_percent": 3.89,
+            "cumulative_seconds": 1.62,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.gcDrainMarkWorkerIdle (inline)"
+          },
+          {
+            "cumulative_percent": 3.29,
+            "cumulative_seconds": 1.37,
+            "flat_percent": 0.048,
+            "flat_seconds": 0.02,
+            "function": "main.lookupPass"
+          },
+          {
+            "cumulative_percent": 3.29,
+            "cumulative_seconds": 1.37,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "main.main"
+          },
+          {
+            "cumulative_percent": 3.29,
+            "cumulative_seconds": 1.37,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "main.run"
+          },
+          {
+            "cumulative_percent": 3.29,
+            "cumulative_seconds": 1.37,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.main"
+          },
+          {
+            "cumulative_percent": 3.25,
+            "cumulative_seconds": 1.35,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.(*StreamDB).GetBatch"
+          },
+          {
+            "cumulative_percent": 2.55,
+            "cumulative_seconds": 1.06,
+            "flat_percent": 0.096,
+            "flat_seconds": 0.04,
+            "function": "github.com/viktorxia/immkv.mergeJoin"
+          },
+          {
+            "cumulative_percent": 2.52,
+            "cumulative_seconds": 1.05,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.gcDrainMarkWorkerDedicated (inline)"
+          },
+          {
+            "cumulative_percent": 2.36,
+            "cumulative_seconds": 0.98,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.mallocgc"
+          },
+          {
+            "cumulative_percent": 2.24,
+            "cumulative_seconds": 0.93,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.mallocgcLarge"
+          },
+          {
+            "cumulative_percent": 2.09,
+            "cumulative_seconds": 0.87,
+            "flat_percent": 1.63,
+            "flat_seconds": 0.68,
+            "function": "runtime.findObject"
+          },
+          {
+            "cumulative_percent": 2.02,
+            "cumulative_seconds": 0.84,
+            "flat_percent": 2.02,
+            "flat_seconds": 0.84,
+            "function": "runtime.memclrNoHeapPointers"
+          },
+          {
+            "cumulative_percent": 1.97,
+            "cumulative_seconds": 0.82,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.makeslice"
+          },
+          {
+            "cumulative_percent": 1.9,
+            "cumulative_seconds": 0.79,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.memclrNoHeapPointersChunked"
+          },
+          {
+            "cumulative_percent": 1.68,
+            "cumulative_seconds": 0.7,
+            "flat_percent": 0.22,
+            "flat_seconds": 0.09,
+            "function": "github.com/viktorxia/immkv.mergeJoin.func1 (inline)"
+          },
+          {
+            "cumulative_percent": 1.59,
+            "cumulative_seconds": 0.66,
+            "flat_percent": 1.47,
+            "flat_seconds": 0.61,
+            "function": "runtime.tryDeferToSpanScan"
+          },
+          {
+            "cumulative_percent": 1.44,
+            "cumulative_seconds": 0.6,
+            "flat_percent": 1.44,
+            "flat_seconds": 0.6,
+            "function": "encoding/binary.Uvarint (inline)"
+          },
+          {
+            "cumulative_percent": 1.01,
+            "cumulative_seconds": 0.42,
+            "flat_percent": 0.84,
+            "flat_seconds": 0.35,
+            "function": "runtime.typePointers.next"
+          },
+          {
+            "cumulative_percent": 0.89,
+            "cumulative_seconds": 0.37,
+            "flat_percent": 0.55,
+            "flat_seconds": 0.23,
+            "function": "runtime.greyobject"
+          },
+          {
+            "cumulative_percent": 0.82,
+            "cumulative_seconds": 0.34,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "internal/poll.(*FD).Pread"
+          },
+          {
+            "cumulative_percent": 0.82,
+            "cumulative_seconds": 0.34,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "internal/poll.(*FD).Pread.func1 (inline)"
+          },
+          {
+            "cumulative_percent": 0.82,
+            "cumulative_seconds": 0.34,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "internal/poll.ignoringEINTR2[go.shape.int] (inline)"
+          },
+          {
+            "cumulative_percent": 0.82,
+            "cumulative_seconds": 0.34,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "os.(*File).ReadAt"
+          },
+          {
+            "cumulative_percent": 0.82,
+            "cumulative_seconds": 0.34,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "os.(*File).pread (inline)"
+          },
+          {
+            "cumulative_percent": 0.82,
+            "cumulative_seconds": 0.34,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "syscall.Pread (inline)"
+          },
+          {
+            "cumulative_percent": 0.82,
+            "cumulative_seconds": 0.34,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "syscall.pread"
+          },
+          {
+            "cumulative_percent": 0.58,
+            "cumulative_seconds": 0.24,
+            "flat_percent": 0.58,
+            "flat_seconds": 0.24,
+            "function": "runtime.memmove"
+          },
+          {
+            "cumulative_percent": 0.55,
+            "cumulative_seconds": 0.23,
+            "flat_percent": 0.024,
+            "flat_seconds": 0.01,
+            "function": "github.com/viktorxia/immkv.driveDirect.func2"
+          },
+          {
+            "cumulative_percent": 0.5,
+            "cumulative_seconds": 0.21,
+            "flat_percent": 0.072,
+            "flat_seconds": 0.03,
+            "function": "github.com/viktorxia/immkv.buildExtents"
+          },
+          {
+            "cumulative_percent": 0.5,
+            "cumulative_seconds": 0.21,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.growslice"
+          },
+          {
+            "cumulative_percent": 0.5,
+            "cumulative_seconds": 0.21,
+            "flat_percent": 0.072,
+            "flat_seconds": 0.03,
+            "function": "sort.Search (inline)"
+          }
+        ],
+        "profile_duration_seconds": 14.84,
+        "sampled_cpu_percent_of_elapsed": 280.27,
+        "sampled_cpu_seconds": 41.6,
+        "source": "results/analysis.wgs.full540.after/cumulative.txt",
+        "status": "recorded"
+      },
+      "flat_profile": {
+        "functions": [
+          {
+            "cumulative_percent": 45.84,
+            "cumulative_seconds": 19.07,
+            "flat_percent": 45.72,
+            "flat_seconds": 19.02,
+            "function": "runtime.cgocall"
+          },
+          {
+            "cumulative_percent": 24.5,
+            "cumulative_seconds": 10.19,
+            "flat_percent": 24.5,
+            "flat_seconds": 10.19,
+            "function": "internal/runtime/syscall/linux.Syscall6"
+          },
+          {
+            "cumulative_percent": 16.66,
+            "cumulative_seconds": 6.93,
+            "flat_percent": 14.33,
+            "flat_seconds": 5.96,
+            "function": "github.com/viktorxia/immkv.(*recordProjection).appendRecord"
+          },
+          {
+            "cumulative_percent": 2.02,
+            "cumulative_seconds": 0.84,
+            "flat_percent": 2.02,
+            "flat_seconds": 0.84,
+            "function": "runtime.memclrNoHeapPointers"
+          },
+          {
+            "cumulative_percent": 2.09,
+            "cumulative_seconds": 0.87,
+            "flat_percent": 1.63,
+            "flat_seconds": 0.68,
+            "function": "runtime.findObject"
+          },
+          {
+            "cumulative_percent": 1.59,
+            "cumulative_seconds": 0.66,
+            "flat_percent": 1.47,
+            "flat_seconds": 0.61,
+            "function": "runtime.tryDeferToSpanScan"
+          },
+          {
+            "cumulative_percent": 1.44,
+            "cumulative_seconds": 0.6,
+            "flat_percent": 1.44,
+            "flat_seconds": 0.6,
+            "function": "encoding/binary.Uvarint (inline)"
+          },
+          {
+            "cumulative_percent": 6.42,
+            "cumulative_seconds": 2.67,
+            "flat_percent": 0.96,
+            "flat_seconds": 0.4,
+            "function": "runtime.scanObject"
+          },
+          {
+            "cumulative_percent": 1.01,
+            "cumulative_seconds": 0.42,
+            "flat_percent": 0.84,
+            "flat_seconds": 0.35,
+            "function": "runtime.typePointers.next"
+          },
+          {
+            "cumulative_percent": 0.58,
+            "cumulative_seconds": 0.24,
+            "flat_percent": 0.58,
+            "flat_seconds": 0.24,
+            "function": "runtime.memmove"
+          },
+          {
+            "cumulative_percent": 0.89,
+            "cumulative_seconds": 0.37,
+            "flat_percent": 0.55,
+            "flat_seconds": 0.23,
+            "function": "runtime.greyobject"
+          },
+          {
+            "cumulative_percent": 65.17,
+            "cumulative_seconds": 27.11,
+            "flat_percent": 0.38,
+            "flat_seconds": 0.16,
+            "function": "github.com/viktorxia/immkv.decodeExtent"
+          },
+          {
+            "cumulative_percent": 1.68,
+            "cumulative_seconds": 0.7,
+            "flat_percent": 0.22,
+            "flat_seconds": 0.09,
+            "function": "github.com/viktorxia/immkv.mergeJoin.func1 (inline)"
+          },
+          {
+            "cumulative_percent": 45.99,
+            "cumulative_seconds": 19.13,
+            "flat_percent": 0.14,
+            "flat_seconds": 0.06,
+            "function": "github.com/valyala/gozstd.decompressInternal"
+          },
+          {
+            "cumulative_percent": 2.55,
+            "cumulative_seconds": 1.06,
+            "flat_percent": 0.096,
+            "flat_seconds": 0.04,
+            "function": "github.com/viktorxia/immkv.mergeJoin"
+          },
+          {
+            "cumulative_percent": 0.5,
+            "cumulative_seconds": 0.21,
+            "flat_percent": 0.072,
+            "flat_seconds": 0.03,
+            "function": "github.com/viktorxia/immkv.buildExtents"
+          },
+          {
+            "cumulative_percent": 0.5,
+            "cumulative_seconds": 0.21,
+            "flat_percent": 0.072,
+            "flat_seconds": 0.03,
+            "function": "sort.Search (inline)"
+          },
+          {
+            "cumulative_percent": 46.2,
+            "cumulative_seconds": 19.22,
+            "flat_percent": 0.048,
+            "flat_seconds": 0.02,
+            "function": "github.com/valyala/gozstd.decompressDict"
+          },
+          {
+            "cumulative_percent": 3.29,
+            "cumulative_seconds": 1.37,
+            "flat_percent": 0.048,
+            "flat_seconds": 0.02,
+            "function": "main.lookupPass"
+          },
+          {
+            "cumulative_percent": 46.01,
+            "cumulative_seconds": 19.14,
+            "flat_percent": 0.024,
+            "flat_seconds": 0.01,
+            "function": "github.com/valyala/gozstd.decompress"
+          },
+          {
+            "cumulative_percent": 46.23,
+            "cumulative_seconds": 19.23,
+            "flat_percent": 0.024,
+            "flat_seconds": 0.01,
+            "function": "github.com/viktorxia/immkv.(*cgoDecoder).decode"
+          },
+          {
+            "cumulative_percent": 24.59,
+            "cumulative_seconds": 10.23,
+            "flat_percent": 0.024,
+            "flat_seconds": 0.01,
+            "function": "github.com/viktorxia/immkv.driveDirect"
+          },
+          {
+            "cumulative_percent": 0.55,
+            "cumulative_seconds": 0.23,
+            "flat_percent": 0.024,
+            "flat_seconds": 0.01,
+            "function": "github.com/viktorxia/immkv.driveDirect.func2"
+          },
+          {
+            "cumulative_percent": 24.52,
+            "cumulative_seconds": 10.2,
+            "flat_percent": 0.024,
+            "flat_seconds": 0.01,
+            "function": "syscall.RawSyscall6"
+          },
+          {
+            "cumulative_percent": 46.2,
+            "cumulative_seconds": 19.22,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/valyala/gozstd.DecompressDict (inline)"
+          },
+          {
+            "cumulative_percent": 45.84,
+            "cumulative_seconds": 19.07,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/valyala/gozstd._Cfunc_ZSTD_decompress_usingDDict_wrapper"
+          },
+          {
+            "cumulative_percent": 3.25,
+            "cumulative_seconds": 1.35,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.(*StreamDB).GetBatch"
+          },
+          {
+            "cumulative_percent": 24.59,
+            "cumulative_seconds": 10.23,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.(*StreamDB).GetBatch.func3"
+          },
+          {
+            "cumulative_percent": 65.24,
+            "cumulative_seconds": 27.14,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.(*StreamDB).GetBatch.func5"
+          },
+          {
+            "cumulative_percent": 23.68,
+            "cumulative_seconds": 9.85,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.(*ioUring).submitWait"
+          },
+          {
+            "cumulative_percent": 65.19,
+            "cumulative_seconds": 27.12,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.decodeChunk"
+          },
+          {
+            "cumulative_percent": 18.17,
+            "cumulative_seconds": 7.56,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.decodeExtent.func2 (inline)"
+          },
+          {
+            "cumulative_percent": 0.82,
+            "cumulative_seconds": 0.34,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "internal/poll.(*FD).Pread"
+          },
+          {
+            "cumulative_percent": 0.82,
+            "cumulative_seconds": 0.34,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "internal/poll.(*FD).Pread.func1 (inline)"
+          },
+          {
+            "cumulative_percent": 0.82,
+            "cumulative_seconds": 0.34,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "internal/poll.ignoringEINTR2[go.shape.int] (inline)"
+          },
+          {
+            "cumulative_percent": 3.29,
+            "cumulative_seconds": 1.37,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "main.main"
+          },
+          {
+            "cumulative_percent": 3.29,
+            "cumulative_seconds": 1.37,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "main.run"
+          },
+          {
+            "cumulative_percent": 0.82,
+            "cumulative_seconds": 0.34,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "os.(*File).ReadAt"
+          },
+          {
+            "cumulative_percent": 0.82,
+            "cumulative_seconds": 0.34,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "os.(*File).pread (inline)"
+          },
+          {
+            "cumulative_percent": 6.49,
+            "cumulative_seconds": 2.7,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.gcBgMarkWorker"
+          },
+          {
+            "cumulative_percent": 6.42,
+            "cumulative_seconds": 2.67,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.gcBgMarkWorker.func2"
+          },
+          {
+            "cumulative_percent": 6.42,
+            "cumulative_seconds": 2.67,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.gcDrain"
+          },
+          {
+            "cumulative_percent": 2.52,
+            "cumulative_seconds": 1.05,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.gcDrainMarkWorkerDedicated (inline)"
+          },
+          {
+            "cumulative_percent": 3.89,
+            "cumulative_seconds": 1.62,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.gcDrainMarkWorkerIdle (inline)"
+          },
+          {
+            "cumulative_percent": 0.5,
+            "cumulative_seconds": 0.21,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.growslice"
+          },
+          {
+            "cumulative_percent": 3.29,
+            "cumulative_seconds": 1.37,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.main"
+          },
+          {
+            "cumulative_percent": 1.97,
+            "cumulative_seconds": 0.82,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.makeslice"
+          },
+          {
+            "cumulative_percent": 2.36,
+            "cumulative_seconds": 0.98,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.mallocgc"
+          },
+          {
+            "cumulative_percent": 2.24,
+            "cumulative_seconds": 0.93,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.mallocgcLarge"
+          },
+          {
+            "cumulative_percent": 1.9,
+            "cumulative_seconds": 0.79,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.memclrNoHeapPointersChunked"
+          },
+          {
+            "cumulative_percent": 7.04,
+            "cumulative_seconds": 2.93,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.systemstack"
+          },
+          {
+            "cumulative_percent": 0.82,
+            "cumulative_seconds": 0.34,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "syscall.Pread (inline)"
+          },
+          {
+            "cumulative_percent": 24.5,
+            "cumulative_seconds": 10.19,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "syscall.Syscall6"
+          },
+          {
+            "cumulative_percent": 0.82,
+            "cumulative_seconds": 0.34,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "syscall.pread"
+          }
+        ],
+        "profile_duration_seconds": 14.84,
+        "sampled_cpu_percent_of_elapsed": 280.27,
+        "sampled_cpu_seconds": 41.6,
+        "source": "results/analysis.wgs.full540.after/top.txt",
+        "status": "recorded"
+      },
+      "performance_sample": false,
+      "projection_listing": "results/analysis.wgs.full540.after/projection.ascii.txt",
+      "source": "results/profile.wgs.full540.after",
+      "statistics": {
+        "batch": 4096,
+        "batches": 961,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 3875208,
+        "keys": 3933369,
+        "keys_per_second": 265004.0898311077,
+        "lookup_seconds": 14.842672815,
+        "passes": [
+          {
+            "batches": 961,
+            "hits": 3875208,
+            "lookup_seconds": 14.842672815,
+            "returned_bytes": 8257530517
+          }
+        ],
+        "profiled": true,
+        "repeat": 1,
+        "returned_bytes": 8257530517,
+        "schema_fields": 568,
+        "selected_fields": 540,
+        "setup_seconds": 2.86501335,
+        "threads": 4,
+        "total_keys": 3933369
+      },
+      "status": "complete"
+    },
+    "before": {
+      "cpu_profile_retained": true,
+      "cumulative_profile": {
+        "functions": [
+          {
+            "cumulative_percent": 43.17,
+            "cumulative_seconds": 45.72,
+            "flat_percent": 0.019,
+            "flat_seconds": 0.02,
+            "function": "main.lookupPass"
+          },
+          {
+            "cumulative_percent": 43.17,
+            "cumulative_seconds": 45.72,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "main.main"
+          },
+          {
+            "cumulative_percent": 43.17,
+            "cumulative_seconds": 45.72,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "main.run"
+          },
+          {
+            "cumulative_percent": 43.17,
+            "cumulative_seconds": 45.72,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.main"
+          },
+          {
+            "cumulative_percent": 43.15,
+            "cumulative_seconds": 45.7,
+            "flat_percent": 0.085,
+            "flat_seconds": 0.09,
+            "function": "github.com/viktorxia/immkv.(*StreamDB).GetBatch"
+          },
+          {
+            "cumulative_percent": 41.47,
+            "cumulative_seconds": 43.92,
+            "flat_percent": 0.0094,
+            "flat_seconds": 0.01,
+            "function": "github.com/viktorxia/immkv.projectRecord"
+          },
+          {
+            "cumulative_percent": 40.1,
+            "cumulative_seconds": 42.47,
+            "flat_percent": 2.76,
+            "flat_seconds": 2.92,
+            "function": "github.com/viktorxia/immkv.walkRecord"
+          },
+          {
+            "cumulative_percent": 26.07,
+            "cumulative_seconds": 27.61,
+            "flat_percent": 2.81,
+            "flat_seconds": 2.98,
+            "function": "github.com/viktorxia/immkv.skipValue (inline)"
+          },
+          {
+            "cumulative_percent": 23.77,
+            "cumulative_seconds": 25.17,
+            "flat_percent": 0.0094,
+            "flat_seconds": 0.01,
+            "function": "github.com/viktorxia/immkv.(*StreamDB).GetBatch.func5"
+          },
+          {
+            "cumulative_percent": 23.73,
+            "cumulative_seconds": 25.13,
+            "flat_percent": 0.019,
+            "flat_seconds": 0.02,
+            "function": "github.com/viktorxia/immkv.decodeChunk"
+          },
+          {
+            "cumulative_percent": 23.64,
+            "cumulative_seconds": 25.03,
+            "flat_percent": 0.1,
+            "flat_seconds": 0.11,
+            "function": "github.com/viktorxia/immkv.decodeExtent"
+          },
+          {
+            "cumulative_percent": 23.53,
+            "cumulative_seconds": 24.92,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/valyala/gozstd.DecompressDict (inline)"
+          },
+          {
+            "cumulative_percent": 23.53,
+            "cumulative_seconds": 24.92,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/valyala/gozstd.decompressDict"
+          },
+          {
+            "cumulative_percent": 23.53,
+            "cumulative_seconds": 24.92,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.(*cgoDecoder).decode"
+          },
+          {
+            "cumulative_percent": 23.47,
+            "cumulative_seconds": 24.86,
+            "flat_percent": 0.019,
+            "flat_seconds": 0.02,
+            "function": "github.com/valyala/gozstd.decompress"
+          },
+          {
+            "cumulative_percent": 23.26,
+            "cumulative_seconds": 24.63,
+            "flat_percent": 15.92,
+            "flat_seconds": 16.86,
+            "function": "github.com/viktorxia/immkv.decodeValue"
+          },
+          {
+            "cumulative_percent": 21.56,
+            "cumulative_seconds": 22.83,
+            "flat_percent": 21.36,
+            "flat_seconds": 22.62,
+            "function": "runtime.cgocall"
+          },
+          {
+            "cumulative_percent": 21.21,
+            "cumulative_seconds": 22.46,
+            "flat_percent": 0.085,
+            "flat_seconds": 0.09,
+            "function": "github.com/valyala/gozstd.decompressInternal"
+          },
+          {
+            "cumulative_percent": 21.12,
+            "cumulative_seconds": 22.37,
+            "flat_percent": 0.047,
+            "flat_seconds": 0.05,
+            "function": "github.com/valyala/gozstd._Cfunc_ZSTD_decompress_usingDDict_wrapper"
+          },
+          {
+            "cumulative_percent": 20.16,
+            "cumulative_seconds": 21.35,
+            "flat_percent": 0.028,
+            "flat_seconds": 0.03,
+            "function": "runtime.systemstack"
+          },
+          {
+            "cumulative_percent": 16.55,
+            "cumulative_seconds": 17.53,
+            "flat_percent": 3.2,
+            "flat_seconds": 3.39,
+            "function": "runtime.scanObject"
+          },
+          {
+            "cumulative_percent": 16.53,
+            "cumulative_seconds": 17.5,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.gcBgMarkWorker"
+          },
+          {
+            "cumulative_percent": 16.49,
+            "cumulative_seconds": 17.46,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.gcBgMarkWorker.func2"
+          },
+          {
+            "cumulative_percent": 16.49,
+            "cumulative_seconds": 17.46,
+            "flat_percent": 0.0094,
+            "flat_seconds": 0.01,
+            "function": "runtime.gcDrain"
+          },
+          {
+            "cumulative_percent": 14.18,
+            "cumulative_seconds": 15.02,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.(*StreamDB).GetBatch.func3"
+          },
+          {
+            "cumulative_percent": 14.17,
+            "cumulative_seconds": 15.01,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.driveDirect"
+          },
+          {
+            "cumulative_percent": 11.37,
+            "cumulative_seconds": 12.04,
+            "flat_percent": 0.019,
+            "flat_seconds": 0.02,
+            "function": "syscall.RawSyscall6"
+          },
+          {
+            "cumulative_percent": 11.36,
+            "cumulative_seconds": 12.03,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "syscall.Syscall6"
+          },
+          {
+            "cumulative_percent": 11.35,
+            "cumulative_seconds": 12.02,
+            "flat_percent": 11.35,
+            "flat_seconds": 12.02,
+            "function": "internal/runtime/syscall/linux.Syscall6"
+          },
+          {
+            "cumulative_percent": 10.93,
+            "cumulative_seconds": 11.57,
+            "flat_percent": 0.0094,
+            "flat_seconds": 0.01,
+            "function": "github.com/viktorxia/immkv.(*ioUring).submitWait"
+          },
+          {
+            "cumulative_percent": 10.59,
+            "cumulative_seconds": 11.21,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.gcDrainMarkWorkerIdle (inline)"
+          },
+          {
+            "cumulative_percent": 9.07,
+            "cumulative_seconds": 9.61,
+            "flat_percent": 2.92,
+            "flat_seconds": 3.09,
+            "function": "github.com/viktorxia/immkv.projectRecord.func1"
+          },
+          {
+            "cumulative_percent": 6.48,
+            "cumulative_seconds": 6.86,
+            "flat_percent": 0.11,
+            "flat_seconds": 0.12,
+            "function": "runtime.mallocgc"
+          },
+          {
+            "cumulative_percent": 5.9,
+            "cumulative_seconds": 6.25,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.gcDrainMarkWorkerDedicated (inline)"
+          },
+          {
+            "cumulative_percent": 5.68,
+            "cumulative_seconds": 6.01,
+            "flat_percent": 4.69,
+            "flat_seconds": 4.97,
+            "function": "runtime.findObject"
+          },
+          {
+            "cumulative_percent": 5.65,
+            "cumulative_seconds": 5.98,
+            "flat_percent": 0.21,
+            "flat_seconds": 0.22,
+            "function": "runtime.mallocgcSmallNoscan"
+          },
+          {
+            "cumulative_percent": 5.32,
+            "cumulative_seconds": 5.63,
+            "flat_percent": 3.83,
+            "flat_seconds": 4.06,
+            "function": "github.com/viktorxia/immkv.decodeScalar"
+          },
+          {
+            "cumulative_percent": 4.76,
+            "cumulative_seconds": 5.04,
+            "flat_percent": 4.76,
+            "flat_seconds": 5.04,
+            "function": "runtime.memclrNoHeapPointers"
+          },
+          {
+            "cumulative_percent": 4.5,
+            "cumulative_seconds": 4.77,
+            "flat_percent": 0.11,
+            "flat_seconds": 0.12,
+            "function": "runtime.growslice"
+          },
+          {
+            "cumulative_percent": 4.39,
+            "cumulative_seconds": 4.65,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.makeslice"
+          },
+          {
+            "cumulative_percent": 4.13,
+            "cumulative_seconds": 4.37,
+            "flat_percent": 3.72,
+            "flat_seconds": 3.94,
+            "function": "runtime.tryDeferToSpanScan"
+          },
+          {
+            "cumulative_percent": 3.46,
+            "cumulative_seconds": 3.66,
+            "flat_percent": 3.46,
+            "flat_seconds": 3.66,
+            "function": "runtime.memmove"
+          },
+          {
+            "cumulative_percent": 3.14,
+            "cumulative_seconds": 3.32,
+            "flat_percent": 0.057,
+            "flat_seconds": 0.06,
+            "function": "github.com/viktorxia/immkv.driveDirect.func2"
+          },
+          {
+            "cumulative_percent": 2.94,
+            "cumulative_seconds": 3.11,
+            "flat_percent": 0.0094,
+            "flat_seconds": 0.01,
+            "function": "github.com/viktorxia/immkv.getDirectBuf"
+          },
+          {
+            "cumulative_percent": 2.27,
+            "cumulative_seconds": 2.4,
+            "flat_percent": 0.047,
+            "flat_seconds": 0.05,
+            "function": "runtime.(*mcache).nextFree"
+          },
+          {
+            "cumulative_percent": 2.27,
+            "cumulative_seconds": 2.4,
+            "flat_percent": 1.78,
+            "flat_seconds": 1.88,
+            "function": "runtime.typePointers.next"
+          },
+          {
+            "cumulative_percent": 2.21,
+            "cumulative_seconds": 2.34,
+            "flat_percent": 0.066,
+            "flat_seconds": 0.07,
+            "function": "runtime.(*mcache).refill"
+          },
+          {
+            "cumulative_percent": 2.2,
+            "cumulative_seconds": 2.33,
+            "flat_percent": 2.15,
+            "flat_seconds": 2.28,
+            "function": "github.com/viktorxia/immkv.bitAt (inline)"
+          },
+          {
+            "cumulative_percent": 1.96,
+            "cumulative_seconds": 2.08,
+            "flat_percent": 1.96,
+            "flat_seconds": 2.08,
+            "function": "github.com/viktorxia/immkv.Field.isArray (inline)"
+          },
+          {
+            "cumulative_percent": 1.92,
+            "cumulative_seconds": 2.03,
+            "flat_percent": 0.038,
+            "flat_seconds": 0.04,
+            "function": "runtime.(*mcentral).cacheSpan"
+          },
+          {
+            "cumulative_percent": 1.81,
+            "cumulative_seconds": 1.92,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.(*mcentral).grow"
+          },
+          {
+            "cumulative_percent": 1.81,
+            "cumulative_seconds": 1.92,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.(*mheap).alloc"
+          },
+          {
+            "cumulative_percent": 1.81,
+            "cumulative_seconds": 1.92,
+            "flat_percent": 0.11,
+            "flat_seconds": 0.12,
+            "function": "runtime.(*mheap).allocSpan"
+          },
+          {
+            "cumulative_percent": 1.8,
+            "cumulative_seconds": 1.91,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "runtime.(*mheap).alloc.func1"
+          },
+          {
+            "cumulative_percent": 1.79,
+            "cumulative_seconds": 1.9,
+            "flat_percent": 0.8,
+            "flat_seconds": 0.85,
+            "function": "runtime.greyobject"
+          },
+          {
+            "cumulative_percent": 1.46,
+            "cumulative_seconds": 1.55,
+            "flat_percent": 0.019,
+            "flat_seconds": 0.02,
+            "function": "runtime.bgsweep"
+          },
+          {
+            "cumulative_percent": 1.44,
+            "cumulative_seconds": 1.53,
+            "flat_percent": 0.57,
+            "flat_seconds": 0.6,
+            "function": "runtime.sweepone"
+          },
+          {
+            "cumulative_percent": 1.17,
+            "cumulative_seconds": 1.24,
+            "flat_percent": 0.085,
+            "flat_seconds": 0.09,
+            "function": "github.com/viktorxia/immkv.mergeJoin"
+          },
+          {
+            "cumulative_percent": 0.96,
+            "cumulative_seconds": 1.02,
+            "flat_percent": 0.96,
+            "flat_seconds": 1.02,
+            "function": "encoding/binary.Uvarint (inline)"
+          },
+          {
+            "cumulative_percent": 0.86,
+            "cumulative_seconds": 0.91,
+            "flat_percent": 0.56,
+            "flat_seconds": 0.59,
+            "function": "runtime.spanOf (inline)"
+          }
+        ],
+        "profile_duration_seconds": 154.69,
+        "sampled_cpu_percent_of_elapsed": 68.46,
+        "sampled_cpu_seconds": 105.9,
+        "source": "results/analysis.wgs.full540.before/cumulative.txt",
+        "status": "recorded"
+      },
+      "flat_profile": {
+        "functions": [
+          {
+            "cumulative_percent": 21.56,
+            "cumulative_seconds": 22.83,
+            "flat_percent": 21.36,
+            "flat_seconds": 22.62,
+            "function": "runtime.cgocall"
+          },
+          {
+            "cumulative_percent": 23.26,
+            "cumulative_seconds": 24.63,
+            "flat_percent": 15.92,
+            "flat_seconds": 16.86,
+            "function": "github.com/viktorxia/immkv.decodeValue"
+          },
+          {
+            "cumulative_percent": 11.35,
+            "cumulative_seconds": 12.02,
+            "flat_percent": 11.35,
+            "flat_seconds": 12.02,
+            "function": "internal/runtime/syscall/linux.Syscall6"
+          },
+          {
+            "cumulative_percent": 4.76,
+            "cumulative_seconds": 5.04,
+            "flat_percent": 4.76,
+            "flat_seconds": 5.04,
+            "function": "runtime.memclrNoHeapPointers"
+          },
+          {
+            "cumulative_percent": 5.68,
+            "cumulative_seconds": 6.01,
+            "flat_percent": 4.69,
+            "flat_seconds": 4.97,
+            "function": "runtime.findObject"
+          },
+          {
+            "cumulative_percent": 5.32,
+            "cumulative_seconds": 5.63,
+            "flat_percent": 3.83,
+            "flat_seconds": 4.06,
+            "function": "github.com/viktorxia/immkv.decodeScalar"
+          },
+          {
+            "cumulative_percent": 4.13,
+            "cumulative_seconds": 4.37,
+            "flat_percent": 3.72,
+            "flat_seconds": 3.94,
+            "function": "runtime.tryDeferToSpanScan"
+          },
+          {
+            "cumulative_percent": 3.46,
+            "cumulative_seconds": 3.66,
+            "flat_percent": 3.46,
+            "flat_seconds": 3.66,
+            "function": "runtime.memmove"
+          },
+          {
+            "cumulative_percent": 16.55,
+            "cumulative_seconds": 17.53,
+            "flat_percent": 3.2,
+            "flat_seconds": 3.39,
+            "function": "runtime.scanObject"
+          },
+          {
+            "cumulative_percent": 9.07,
+            "cumulative_seconds": 9.61,
+            "flat_percent": 2.92,
+            "flat_seconds": 3.09,
+            "function": "github.com/viktorxia/immkv.projectRecord.func1"
+          },
+          {
+            "cumulative_percent": 26.07,
+            "cumulative_seconds": 27.61,
+            "flat_percent": 2.81,
+            "flat_seconds": 2.98,
+            "function": "github.com/viktorxia/immkv.skipValue (inline)"
+          },
+          {
+            "cumulative_percent": 40.1,
+            "cumulative_seconds": 42.47,
+            "flat_percent": 2.76,
+            "flat_seconds": 2.92,
+            "function": "github.com/viktorxia/immkv.walkRecord"
+          },
+          {
+            "cumulative_percent": 2.2,
+            "cumulative_seconds": 2.33,
+            "flat_percent": 2.15,
+            "flat_seconds": 2.28,
+            "function": "github.com/viktorxia/immkv.bitAt (inline)"
+          },
+          {
+            "cumulative_percent": 1.96,
+            "cumulative_seconds": 2.08,
+            "flat_percent": 1.96,
+            "flat_seconds": 2.08,
+            "function": "github.com/viktorxia/immkv.Field.isArray (inline)"
+          },
+          {
+            "cumulative_percent": 2.27,
+            "cumulative_seconds": 2.4,
+            "flat_percent": 1.78,
+            "flat_seconds": 1.88,
+            "function": "runtime.typePointers.next"
+          },
+          {
+            "cumulative_percent": 0.96,
+            "cumulative_seconds": 1.02,
+            "flat_percent": 0.96,
+            "flat_seconds": 1.02,
+            "function": "encoding/binary.Uvarint (inline)"
+          },
+          {
+            "cumulative_percent": 1.79,
+            "cumulative_seconds": 1.9,
+            "flat_percent": 0.8,
+            "flat_seconds": 0.85,
+            "function": "runtime.greyobject"
+          },
+          {
+            "cumulative_percent": 0.6,
+            "cumulative_seconds": 0.64,
+            "flat_percent": 0.6,
+            "flat_seconds": 0.64,
+            "function": "runtime.(*fixalloc).alloc"
+          },
+          {
+            "cumulative_percent": 0.59,
+            "cumulative_seconds": 0.62,
+            "flat_percent": 0.59,
+            "flat_seconds": 0.62,
+            "function": "runtime.markBits.isMarked (inline)"
+          },
+          {
+            "cumulative_percent": 1.44,
+            "cumulative_seconds": 1.53,
+            "flat_percent": 0.57,
+            "flat_seconds": 0.6,
+            "function": "runtime.sweepone"
+          },
+          {
+            "cumulative_percent": 0.86,
+            "cumulative_seconds": 0.91,
+            "flat_percent": 0.56,
+            "flat_seconds": 0.59,
+            "function": "runtime.spanOf (inline)"
+          },
+          {
+            "cumulative_percent": 0.51,
+            "cumulative_seconds": 0.54,
+            "flat_percent": 0.5,
+            "flat_seconds": 0.53,
+            "function": "runtime.(*mspan).markBitsForIndex (inline)"
+          },
+          {
+            "cumulative_percent": 5.65,
+            "cumulative_seconds": 5.98,
+            "flat_percent": 0.21,
+            "flat_seconds": 0.22,
+            "function": "runtime.mallocgcSmallNoscan"
+          },
+          {
+            "cumulative_percent": 1.81,
+            "cumulative_seconds": 1.92,
+            "flat_percent": 0.11,
+            "flat_seconds": 0.12,
+            "function": "runtime.(*mheap).allocSpan"
+          },
+          {
+            "cumulative_percent": 4.5,
+            "cumulative_seconds": 4.77,
+            "flat_percent": 0.11,
+            "flat_seconds": 0.12,
+            "function": "runtime.growslice"
+          },
+          {
+            "cumulative_percent": 6.48,
+            "cumulative_seconds": 6.86,
+            "flat_percent": 0.11,
+            "flat_seconds": 0.12,
+            "function": "runtime.mallocgc"
+          },
+          {
+            "cumulative_percent": 23.64,
+            "cumulative_seconds": 25.03,
+            "flat_percent": 0.1,
+            "flat_seconds": 0.11,
+            "function": "github.com/viktorxia/immkv.decodeExtent"
+          },
+          {
+            "cumulative_percent": 21.21,
+            "cumulative_seconds": 22.46,
+            "flat_percent": 0.085,
+            "flat_seconds": 0.09,
+            "function": "github.com/valyala/gozstd.decompressInternal"
+          },
+          {
+            "cumulative_percent": 43.15,
+            "cumulative_seconds": 45.7,
+            "flat_percent": 0.085,
+            "flat_seconds": 0.09,
+            "function": "github.com/viktorxia/immkv.(*StreamDB).GetBatch"
+          },
+          {
+            "cumulative_percent": 1.17,
+            "cumulative_seconds": 1.24,
+            "flat_percent": 0.085,
+            "flat_seconds": 0.09,
+            "function": "github.com/viktorxia/immkv.mergeJoin"
+          },
+          {
+            "cumulative_percent": 0.72,
+            "cumulative_seconds": 0.76,
+            "flat_percent": 0.076,
+            "flat_seconds": 0.08,
+            "function": "runtime.wbBufFlush1"
+          },
+          {
+            "cumulative_percent": 0.72,
+            "cumulative_seconds": 0.76,
+            "flat_percent": 0.066,
+            "flat_seconds": 0.07,
+            "function": "github.com/viktorxia/immkv.mergeJoin.func1 (inline)"
+          },
+          {
+            "cumulative_percent": 2.21,
+            "cumulative_seconds": 2.34,
+            "flat_percent": 0.066,
+            "flat_seconds": 0.07,
+            "function": "runtime.(*mcache).refill"
+          },
+          {
+            "cumulative_percent": 0.72,
+            "cumulative_seconds": 0.76,
+            "flat_percent": 0.066,
+            "flat_seconds": 0.07,
+            "function": "runtime.(*sweepLocked).sweep"
+          },
+          {
+            "cumulative_percent": 3.14,
+            "cumulative_seconds": 3.32,
+            "flat_percent": 0.057,
+            "flat_seconds": 0.06,
+            "function": "github.com/viktorxia/immkv.driveDirect.func2"
+          },
+          {
+            "cumulative_percent": 0.53,
+            "cumulative_seconds": 0.56,
+            "flat_percent": 0.057,
+            "flat_seconds": 0.06,
+            "function": "runtime.(*mheap).initSpan"
+          },
+          {
+            "cumulative_percent": 0.73,
+            "cumulative_seconds": 0.77,
+            "flat_percent": 0.047,
+            "flat_seconds": 0.05,
+            "function": "gcWriteBarrier"
+          },
+          {
+            "cumulative_percent": 21.12,
+            "cumulative_seconds": 22.37,
+            "flat_percent": 0.047,
+            "flat_seconds": 0.05,
+            "function": "github.com/valyala/gozstd._Cfunc_ZSTD_decompress_usingDDict_wrapper"
+          },
+          {
+            "cumulative_percent": 2.27,
+            "cumulative_seconds": 2.4,
+            "flat_percent": 0.047,
+            "flat_seconds": 0.05,
+            "function": "runtime.(*mcache).nextFree"
+          },
+          {
+            "cumulative_percent": 1.92,
+            "cumulative_seconds": 2.03,
+            "flat_percent": 0.038,
+            "flat_seconds": 0.04,
+            "function": "runtime.(*mcentral).cacheSpan"
+          },
+          {
+            "cumulative_percent": 0.64,
+            "cumulative_seconds": 0.68,
+            "flat_percent": 0.038,
+            "flat_seconds": 0.04,
+            "function": "runtime.(*mheap).allocMSpanLocked"
+          },
+          {
+            "cumulative_percent": 20.16,
+            "cumulative_seconds": 21.35,
+            "flat_percent": 0.028,
+            "flat_seconds": 0.03,
+            "function": "runtime.systemstack"
+          },
+          {
+            "cumulative_percent": 23.47,
+            "cumulative_seconds": 24.86,
+            "flat_percent": 0.019,
+            "flat_seconds": 0.02,
+            "function": "github.com/valyala/gozstd.decompress"
+          },
+          {
+            "cumulative_percent": 23.73,
+            "cumulative_seconds": 25.13,
+            "flat_percent": 0.019,
+            "flat_seconds": 0.02,
+            "function": "github.com/viktorxia/immkv.decodeChunk"
+          },
+          {
+            "cumulative_percent": 43.17,
+            "cumulative_seconds": 45.72,
+            "flat_percent": 0.019,
+            "flat_seconds": 0.02,
+            "function": "main.lookupPass"
+          },
+          {
+            "cumulative_percent": 1.46,
+            "cumulative_seconds": 1.55,
+            "flat_percent": 0.019,
+            "flat_seconds": 0.02,
+            "function": "runtime.bgsweep"
+          },
+          {
+            "cumulative_percent": 11.37,
+            "cumulative_seconds": 12.04,
+            "flat_percent": 0.019,
+            "flat_seconds": 0.02,
+            "function": "syscall.RawSyscall6"
+          },
+          {
+            "cumulative_percent": 0.5,
+            "cumulative_seconds": 0.53,
+            "flat_percent": 0.0094,
+            "flat_seconds": 0.01,
+            "function": "github.com/valyala/gozstd._Cfunc_ZSTD_findDecompressedSize_wrapper"
+          },
+          {
+            "cumulative_percent": 23.77,
+            "cumulative_seconds": 25.17,
+            "flat_percent": 0.0094,
+            "flat_seconds": 0.01,
+            "function": "github.com/viktorxia/immkv.(*StreamDB).GetBatch.func5"
+          },
+          {
+            "cumulative_percent": 10.93,
+            "cumulative_seconds": 11.57,
+            "flat_percent": 0.0094,
+            "flat_seconds": 0.01,
+            "function": "github.com/viktorxia/immkv.(*ioUring).submitWait"
+          },
+          {
+            "cumulative_percent": 2.94,
+            "cumulative_seconds": 3.11,
+            "flat_percent": 0.0094,
+            "flat_seconds": 0.01,
+            "function": "github.com/viktorxia/immkv.getDirectBuf"
+          },
+          {
+            "cumulative_percent": 41.47,
+            "cumulative_seconds": 43.92,
+            "flat_percent": 0.0094,
+            "flat_seconds": 0.01,
+            "function": "github.com/viktorxia/immkv.projectRecord"
+          },
+          {
+            "cumulative_percent": 16.49,
+            "cumulative_seconds": 17.46,
+            "flat_percent": 0.0094,
+            "flat_seconds": 0.01,
+            "function": "runtime.gcDrain"
+          },
+          {
+            "cumulative_percent": 23.53,
+            "cumulative_seconds": 24.92,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/valyala/gozstd.DecompressDict (inline)"
+          },
+          {
+            "cumulative_percent": 23.53,
+            "cumulative_seconds": 24.92,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/valyala/gozstd.decompressDict"
+          },
+          {
+            "cumulative_percent": 14.18,
+            "cumulative_seconds": 15.02,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.(*StreamDB).GetBatch.func3"
+          },
+          {
+            "cumulative_percent": 23.53,
+            "cumulative_seconds": 24.92,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.(*cgoDecoder).decode"
+          },
+          {
+            "cumulative_percent": 14.17,
+            "cumulative_seconds": 15.01,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "github.com/viktorxia/immkv.driveDirect"
+          },
+          {
+            "cumulative_percent": 43.17,
+            "cumulative_seconds": 45.72,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "main.main"
+          },
+          {
+            "cumulative_percent": 43.17,
+            "cumulative_seconds": 45.72,
+            "flat_percent": 0.0,
+            "flat_seconds": 0.0,
+            "function": "main.run"
+          }
+        ],
+        "profile_duration_seconds": 154.69,
+        "sampled_cpu_percent_of_elapsed": 68.46,
+        "sampled_cpu_seconds": 105.9,
+        "source": "results/analysis.wgs.full540.before/top.txt",
+        "status": "recorded"
+      },
+      "performance_sample": false,
+      "projection_listing": "results/analysis.wgs.full540.before/projection.ascii.txt",
+      "source": "results/profile.wgs.full540.before",
+      "statistics": {
+        "batch": 4096,
+        "batches": 961,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 3875208,
+        "keys": 3933369,
+        "keys_per_second": 25427.876256144726,
+        "lookup_seconds": 154.68727944,
+        "passes": [
+          {
+            "batches": 961,
+            "hits": 3875208,
+            "lookup_seconds": 154.68727944,
+            "returned_bytes": 8257530517
+          }
+        ],
+        "profiled": true,
+        "repeat": 1,
+        "returned_bytes": 8257530517,
+        "schema_fields": 568,
+        "selected_fields": 540,
+        "setup_seconds": 2.806958874,
+        "threads": 4,
+        "total_keys": 3933369
+      },
+      "status": "complete"
+    }
+  },
+  "query_only": {
+    "full17": {
+      "comparisons": {
+        "before-after": {
+          "status": "pending_complete_three_pairs"
+        },
+        "old-after": {
+          "status": "pending_complete_three_pairs"
+        },
+        "old-before": {
+          "status": "pending_complete_three_pairs"
+        }
+      },
+      "versions": {
+        "after": {
+          "runs": [
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 240819.81949720805,
+              "lookup_seconds": 16.333244532,
+              "lookup_seconds_per_pass": 16.333244532,
+              "lookup_source": "results/null.wgs.full17.after.r1/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 16.333244533,
+                  "returned_bytes": 602832417
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 602832417,
+              "round": 1,
+              "rss_kib": 608884,
+              "schema_fields": 568,
+              "selected_fields": 17,
+              "setup_seconds": 2.85572436,
+              "source": "results/null.wgs.full17.after.r1",
+              "status": "complete",
+              "system_seconds": 10.89,
+              "threads": 4,
+              "time_source": "results/null.wgs.full17.after.r1/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 32.88,
+              "wall_seconds": 19.23
+            },
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 240126.60282437378,
+              "lookup_seconds": 16.380396648,
+              "lookup_seconds_per_pass": 16.380396648,
+              "lookup_source": "results/null.wgs.full17.after.r2/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 16.380396648,
+                  "returned_bytes": 602832417
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 602832417,
+              "round": 2,
+              "rss_kib": 614656,
+              "schema_fields": 568,
+              "selected_fields": 17,
+              "setup_seconds": 2.817828634,
+              "source": "results/null.wgs.full17.after.r2",
+              "status": "complete",
+              "system_seconds": 10.84,
+              "threads": 4,
+              "time_source": "results/null.wgs.full17.after.r2/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 32.9,
+              "wall_seconds": 19.24
+            },
+            {
+              "round": 3,
+              "source": "results/null.wgs.full17.after.r3",
+              "status": "pending"
+            }
+          ],
+          "status": "incomplete"
+        },
+        "before": {
+          "runs": [
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 59099.105104315066,
+              "lookup_seconds": 66.555474792,
+              "lookup_seconds_per_pass": 66.555474792,
+              "lookup_source": "results/null.wgs.full17.before.r1/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 66.555474792,
+                  "returned_bytes": 602832417
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 602832417,
+              "round": 1,
+              "rss_kib": 652788,
+              "schema_fields": 568,
+              "selected_fields": 17,
+              "setup_seconds": 2.812040221,
+              "source": "results/null.wgs.full17.before.r1",
+              "status": "complete",
+              "system_seconds": 13.41,
+              "threads": 4,
+              "time_source": "results/null.wgs.full17.before.r1/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 80.28,
+              "wall_seconds": 69.41
+            },
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 57574.06222577319,
+              "lookup_seconds": 68.318420621,
+              "lookup_seconds_per_pass": 68.318420621,
+              "lookup_source": "results/null.wgs.full17.before.r2/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 68.318420621,
+                  "returned_bytes": 602832417
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 602832417,
+              "round": 2,
+              "rss_kib": 658744,
+              "schema_fields": 568,
+              "selected_fields": 17,
+              "setup_seconds": 2.799010636,
+              "source": "results/null.wgs.full17.before.r2",
+              "status": "complete",
+              "system_seconds": 13.56,
+              "threads": 4,
+              "time_source": "results/null.wgs.full17.before.r2/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 80.19,
+              "wall_seconds": 71.16
+            },
+            {
+              "round": 3,
+              "source": "results/null.wgs.full17.before.r3",
+              "status": "incomplete_or_failed"
+            }
+          ],
+          "status": "incomplete"
+        },
+        "old": {
+          "median": {
+            "keys_per_second": 74963.52312853327,
+            "lookup_seconds_per_pass": 52.470439433,
+            "rss_kib": 688668,
+            "system_seconds": 12.7,
+            "user_seconds": 42.21,
+            "wall_seconds": 55.34
+          },
+          "runs": [
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 179980.43325930703,
+              "lookup_seconds": 21.854425666,
+              "lookup_seconds_per_pass": 21.854425666,
+              "lookup_source": "results/null.wgs.full17.old.r1/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 21.854425666,
+                  "returned_bytes": 13529610007
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 13529610007,
+              "round": 1,
+              "rss_kib": 676388,
+              "schema_fields": 568,
+              "selected_fields": 17,
+              "setup_seconds": 2.79483639,
+              "source": "results/null.wgs.full17.old.r1",
+              "status": "complete",
+              "system_seconds": 12.11,
+              "threads": 4,
+              "time_source": "results/null.wgs.full17.old.r1/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 41.94,
+              "wall_seconds": 24.7
+            },
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 74963.52312853327,
+              "lookup_seconds": 52.470439433,
+              "lookup_seconds_per_pass": 52.470439433,
+              "lookup_source": "results/null.wgs.full17.old.r2/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 52.470439433,
+                  "returned_bytes": 13529610007
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 13529610007,
+              "round": 2,
+              "rss_kib": 688668,
+              "schema_fields": 568,
+              "selected_fields": 17,
+              "setup_seconds": 2.812739592,
+              "source": "results/null.wgs.full17.old.r2",
+              "status": "complete",
+              "system_seconds": 12.7,
+              "threads": 4,
+              "time_source": "results/null.wgs.full17.old.r2/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 42.21,
+              "wall_seconds": 55.34
+            },
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 30198.475448328252,
+              "lookup_seconds": 130.250581912,
+              "lookup_seconds_per_pass": 130.250581912,
+              "lookup_source": "results/null.wgs.full17.old.r3/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 130.250581912,
+                  "returned_bytes": 13529610007
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 13529610007,
+              "round": 3,
+              "rss_kib": 695196,
+              "schema_fields": 568,
+              "selected_fields": 17,
+              "setup_seconds": 2.811074422,
+              "source": "results/null.wgs.full17.old.r3",
+              "status": "complete",
+              "system_seconds": 13.79,
+              "threads": 4,
+              "time_source": "results/null.wgs.full17.old.r3/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 43.58,
+              "wall_seconds": 133.11
+            }
+          ],
+          "status": "complete"
+        }
+      }
+    },
+    "full540": {
+      "comparisons": {
+        "before-after": {
+          "status": "pending_complete_three_pairs"
+        },
+        "old-after": {
+          "status": "pending_complete_three_pairs"
+        },
+        "old-before": {
+          "status": "pending_complete_three_pairs"
+        }
+      },
+      "versions": {
+        "after": {
+          "runs": [
+            {
+              "round": 1,
+              "source": "results/null.wgs.full540.after.r1",
+              "status": "pending"
+            },
+            {
+              "round": 2,
+              "source": "results/null.wgs.full540.after.r2",
+              "status": "pending"
+            },
+            {
+              "round": 3,
+              "source": "results/null.wgs.full540.after.r3",
+              "status": "pending"
+            }
+          ],
+          "status": "pending"
+        },
+        "before": {
+          "runs": [
+            {
+              "round": 1,
+              "source": "results/null.wgs.full540.before.r1",
+              "status": "pending"
+            },
+            {
+              "round": 2,
+              "source": "results/null.wgs.full540.before.r2",
+              "status": "pending"
+            },
+            {
+              "round": 3,
+              "source": "results/null.wgs.full540.before.r3",
+              "status": "pending"
+            }
+          ],
+          "status": "pending"
+        },
+        "old": {
+          "runs": [
+            {
+              "round": 1,
+              "source": "results/null.wgs.full540.old.r1",
+              "status": "pending"
+            },
+            {
+              "round": 2,
+              "source": "results/null.wgs.full540.old.r2",
+              "status": "pending"
+            },
+            {
+              "round": 3,
+              "source": "results/null.wgs.full540.old.r3",
+              "status": "pending"
+            }
+          ],
+          "status": "pending"
+        }
+      }
+    },
+    "full568": {
+      "comparisons": {
+        "before-after": {
+          "status": "pending_complete_three_pairs"
+        },
+        "old-after": {
+          "status": "pending_complete_three_pairs"
+        },
+        "old-before": {
+          "status": "pending_complete_three_pairs"
+        }
+      },
+      "versions": {
+        "after": {
+          "runs": [
+            {
+              "round": 1,
+              "source": "results/null.wgs.full568.after.r1",
+              "status": "pending"
+            },
+            {
+              "round": 2,
+              "source": "results/null.wgs.full568.after.r2",
+              "status": "pending"
+            },
+            {
+              "round": 3,
+              "source": "results/null.wgs.full568.after.r3",
+              "status": "pending"
+            }
+          ],
+          "status": "pending"
+        },
+        "before": {
+          "runs": [
+            {
+              "round": 1,
+              "source": "results/null.wgs.full568.before.r1",
+              "status": "pending"
+            },
+            {
+              "round": 2,
+              "source": "results/null.wgs.full568.before.r2",
+              "status": "pending"
+            },
+            {
+              "round": 3,
+              "source": "results/null.wgs.full568.before.r3",
+              "status": "pending"
+            }
+          ],
+          "status": "pending"
+        },
+        "old": {
+          "runs": [
+            {
+              "round": 1,
+              "source": "results/null.wgs.full568.old.r1",
+              "status": "pending"
+            },
+            {
+              "round": 2,
+              "source": "results/null.wgs.full568.old.r2",
+              "status": "pending"
+            },
+            {
+              "round": 3,
+              "source": "results/null.wgs.full568.old.r3",
+              "status": "pending"
+            }
+          ],
+          "status": "pending"
+        }
+      }
+    },
+    "full568_default": {
+      "comparisons": {
+        "before-after": {
+          "status": "pending_complete_three_pairs"
+        },
+        "old-after": {
+          "status": "pending_complete_three_pairs"
+        },
+        "old-before": {
+          "status": "pending_complete_three_pairs"
+        }
+      },
+      "versions": {
+        "after": {
+          "runs": [
+            {
+              "round": 1,
+              "source": "results/null.wgs.full568_default.after.r1",
+              "status": "pending"
+            },
+            {
+              "round": 2,
+              "source": "results/null.wgs.full568_default.after.r2",
+              "status": "pending"
+            },
+            {
+              "round": 3,
+              "source": "results/null.wgs.full568_default.after.r3",
+              "status": "pending"
+            }
+          ],
+          "status": "pending"
+        },
+        "before": {
+          "runs": [
+            {
+              "round": 1,
+              "source": "results/null.wgs.full568_default.before.r1",
+              "status": "pending"
+            },
+            {
+              "round": 2,
+              "source": "results/null.wgs.full568_default.before.r2",
+              "status": "pending"
+            },
+            {
+              "round": 3,
+              "source": "results/null.wgs.full568_default.before.r3",
+              "status": "pending"
+            }
+          ],
+          "status": "pending"
+        },
+        "old": {
+          "runs": [
+            {
+              "round": 1,
+              "source": "results/null.wgs.full568_default.old.r1",
+              "status": "pending"
+            },
+            {
+              "round": 2,
+              "source": "results/null.wgs.full568_default.old.r2",
+              "status": "pending"
+            },
+            {
+              "round": 3,
+              "source": "results/null.wgs.full568_default.old.r3",
+              "status": "pending"
+            }
+          ],
+          "status": "pending"
+        }
+      }
+    },
+    "narrow17": {
+      "comparisons": {
+        "before-after": {
+          "input_hash_source": "results/null.wgs.matrix/inputs.sha256",
+          "median_paired_lookup_change_percent": -41.40148586221636,
+          "order_source": "results/null.wgs.matrix/order.txt",
+          "paired_lookup_change_percent": [
+            -41.40148586221636,
+            -45.73890196652697,
+            -41.179230139880694
+          ],
+          "sources": [
+            "results/null.wgs.narrow17.before.r1/stdout",
+            "results/null.wgs.narrow17.before.r2/stdout",
+            "results/null.wgs.narrow17.before.r3/stdout",
+            "results/null.wgs.narrow17.after.r1/stdout",
+            "results/null.wgs.narrow17.after.r2/stdout",
+            "results/null.wgs.narrow17.after.r3/stdout"
+          ],
+          "status": "complete"
+        },
+        "old-after": {
+          "input_hash_source": "results/null.wgs.matrix/inputs.sha256",
+          "median_paired_lookup_change_percent": -19.51923377850264,
+          "order_source": "results/null.wgs.matrix/order.txt",
+          "paired_lookup_change_percent": [
+            -19.51923377850264,
+            -20.614314935786528,
+            -15.963041116804966
+          ],
+          "sources": [
+            "results/null.wgs.narrow17.old.r1/stdout",
+            "results/null.wgs.narrow17.old.r2/stdout",
+            "results/null.wgs.narrow17.old.r3/stdout",
+            "results/null.wgs.narrow17.after.r1/stdout",
+            "results/null.wgs.narrow17.after.r2/stdout",
+            "results/null.wgs.narrow17.after.r3/stdout"
+          ],
+          "status": "complete"
+        },
+        "old-before": {
+          "input_hash_source": "results/null.wgs.matrix/inputs.sha256",
+          "median_paired_lookup_change_percent": 42.869532450938586,
+          "order_source": "results/null.wgs.matrix/order.txt",
+          "paired_lookup_change_percent": [
+            37.34267396654738,
+            46.303130495518886,
+            42.869532450938586
+          ],
+          "sources": [
+            "results/null.wgs.narrow17.old.r1/stdout",
+            "results/null.wgs.narrow17.old.r2/stdout",
+            "results/null.wgs.narrow17.old.r3/stdout",
+            "results/null.wgs.narrow17.before.r1/stdout",
+            "results/null.wgs.narrow17.before.r2/stdout",
+            "results/null.wgs.narrow17.before.r3/stdout"
+          ],
+          "status": "complete"
+        }
+      },
+      "versions": {
+        "after": {
+          "median": {
+            "keys_per_second": 986655.6661644556,
+            "lookup_seconds_per_pass": 3.986567082,
+            "rss_kib": 522620,
+            "system_seconds": 2.28,
+            "user_seconds": 6.6,
+            "wall_seconds": 6.85
+          },
+          "runs": [
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 986655.6661644556,
+              "lookup_seconds": 3.986567082,
+              "lookup_seconds_per_pass": 3.986567082,
+              "lookup_source": "results/null.wgs.narrow17.after.r1/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 3.986567082,
+                  "returned_bytes": 354819105
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 354819105,
+              "round": 1,
+              "rss_kib": 525964,
+              "schema_fields": 17,
+              "selected_fields": 17,
+              "setup_seconds": 2.830637711,
+              "source": "results/null.wgs.narrow17.after.r1",
+              "status": "complete",
+              "system_seconds": 2.31,
+              "threads": 4,
+              "time_source": "results/null.wgs.narrow17.after.r1/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 6.62,
+              "wall_seconds": 6.85
+            },
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 1023904.1979056116,
+              "lookup_seconds": 3.841540066,
+              "lookup_seconds_per_pass": 3.841540066,
+              "lookup_source": "results/null.wgs.narrow17.after.r2/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 3.841540066,
+                  "returned_bytes": 354819105
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 354819105,
+              "round": 2,
+              "rss_kib": 522576,
+              "schema_fields": 17,
+              "selected_fields": 17,
+              "setup_seconds": 2.784933339,
+              "source": "results/null.wgs.narrow17.after.r2",
+              "status": "complete",
+              "system_seconds": 2.27,
+              "threads": 4,
+              "time_source": "results/null.wgs.narrow17.after.r2/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 6.6,
+              "wall_seconds": 6.67
+            },
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 966294.4940849665,
+              "lookup_seconds": 4.070569608,
+              "lookup_seconds_per_pass": 4.070569608,
+              "lookup_source": "results/null.wgs.narrow17.after.r3/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 4.070569609,
+                  "returned_bytes": 354819105
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 354819105,
+              "round": 3,
+              "rss_kib": 522620,
+              "schema_fields": 17,
+              "selected_fields": 17,
+              "setup_seconds": 2.792317532,
+              "source": "results/null.wgs.narrow17.after.r3",
+              "status": "complete",
+              "system_seconds": 2.28,
+              "threads": 4,
+              "time_source": "results/null.wgs.narrow17.after.r3/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 6.59,
+              "wall_seconds": 6.9
+            }
+          ],
+          "status": "complete"
+        },
+        "before": {
+          "median": {
+            "keys_per_second": 568381.8605367222,
+            "lookup_seconds_per_pass": 6.920292981,
+            "rss_kib": 515148,
+            "system_seconds": 2.41,
+            "user_seconds": 11.75,
+            "wall_seconds": 9.79
+          },
+          "runs": [
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 578165.5600286218,
+              "lookup_seconds": 6.8031880000000005,
+              "lookup_seconds_per_pass": 6.8031880000000005,
+              "lookup_source": "results/null.wgs.narrow17.before.r1/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 6.8031880000000005,
+                  "returned_bytes": 354819105
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 354819105,
+              "round": 1,
+              "rss_kib": 527960,
+              "schema_fields": 17,
+              "selected_fields": 17,
+              "setup_seconds": 2.818399254,
+              "source": "results/null.wgs.narrow17.before.r1",
+              "status": "complete",
+              "system_seconds": 2.4,
+              "threads": 4,
+              "time_source": "results/null.wgs.narrow17.before.r1/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 11.58,
+              "wall_seconds": 9.66
+            },
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 555581.6605944096,
+              "lookup_seconds": 7.07973153,
+              "lookup_seconds_per_pass": 7.07973153,
+              "lookup_source": "results/null.wgs.narrow17.before.r2/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 7.07973153,
+                  "returned_bytes": 354819105
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 354819105,
+              "round": 2,
+              "rss_kib": 515148,
+              "schema_fields": 17,
+              "selected_fields": 17,
+              "setup_seconds": 2.853112958,
+              "source": "results/null.wgs.narrow17.before.r2",
+              "status": "complete",
+              "system_seconds": 2.47,
+              "threads": 4,
+              "time_source": "results/null.wgs.narrow17.before.r2/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 11.75,
+              "wall_seconds": 9.97
+            },
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 568381.8605367222,
+              "lookup_seconds": 6.920292981,
+              "lookup_seconds_per_pass": 6.920292981,
+              "lookup_source": "results/null.wgs.narrow17.before.r3/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 6.920292981,
+                  "returned_bytes": 354819105
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 354819105,
+              "round": 3,
+              "rss_kib": 508872,
+              "schema_fields": 17,
+              "selected_fields": 17,
+              "setup_seconds": 2.8293431030000002,
+              "source": "results/null.wgs.narrow17.before.r3",
+              "status": "complete",
+              "system_seconds": 2.41,
+              "threads": 4,
+              "time_source": "results/null.wgs.narrow17.before.r3/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 11.78,
+              "wall_seconds": 9.79
+            }
+          ],
+          "status": "complete"
+        },
+        "old": {
+          "median": {
+            "keys_per_second": 812044.5066847608,
+            "lookup_seconds_per_pass": 4.843784999,
+            "rss_kib": 534548,
+            "system_seconds": 2.41,
+            "user_seconds": 9.32,
+            "wall_seconds": 7.71
+          },
+          "runs": [
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 794068.040096973,
+              "lookup_seconds": 4.953440765,
+              "lookup_seconds_per_pass": 4.953440765,
+              "lookup_source": "results/null.wgs.narrow17.old.r1/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 4.953440765,
+                  "returned_bytes": 354819105
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 354819105,
+              "round": 1,
+              "rss_kib": 539808,
+              "schema_fields": 17,
+              "selected_fields": 17,
+              "setup_seconds": 2.7877170959999997,
+              "source": "results/null.wgs.narrow17.old.r1",
+              "status": "complete",
+              "system_seconds": 2.37,
+              "threads": 4,
+              "time_source": "results/null.wgs.narrow17.old.r1/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 9.31,
+              "wall_seconds": 7.78
+            },
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 812833.3619086099,
+              "lookup_seconds": 4.839084103,
+              "lookup_seconds_per_pass": 4.839084103,
+              "lookup_source": "results/null.wgs.narrow17.old.r2/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 4.839084103,
+                  "returned_bytes": 354819105
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 354819105,
+              "round": 2,
+              "rss_kib": 534548,
+              "schema_fields": 17,
+              "selected_fields": 17,
+              "setup_seconds": 2.812482287,
+              "source": "results/null.wgs.narrow17.old.r2",
+              "status": "complete",
+              "system_seconds": 2.42,
+              "threads": 4,
+              "time_source": "results/null.wgs.narrow17.old.r2/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 9.32,
+              "wall_seconds": 7.69
+            },
+            {
+              "batch": 4096,
+              "batches": 961,
+              "digest_enabled": false,
+              "exit_status": 0,
+              "explicit_columns": true,
+              "gomaxprocs": 4,
+              "hits": 3875208,
+              "hits_per_pass": 3875208,
+              "keys": 3933369,
+              "keys_per_second": 812044.5066847608,
+              "lookup_seconds": 4.843784999,
+              "lookup_seconds_per_pass": 4.843784999,
+              "lookup_source": "results/null.wgs.narrow17.old.r3/stdout",
+              "passes": [
+                {
+                  "batches": 961,
+                  "hits": 3875208,
+                  "lookup_seconds": 4.843784999,
+                  "returned_bytes": 354819105
+                }
+              ],
+              "profiled": false,
+              "repeat": 1,
+              "returned_bytes": 354819105,
+              "round": 3,
+              "rss_kib": 533672,
+              "schema_fields": 17,
+              "selected_fields": 17,
+              "setup_seconds": 2.826157803,
+              "source": "results/null.wgs.narrow17.old.r3",
+              "status": "complete",
+              "system_seconds": 2.41,
+              "threads": 4,
+              "time_source": "results/null.wgs.narrow17.old.r3/time.txt",
+              "total_keys": 3933369,
+              "user_seconds": 9.36,
+              "wall_seconds": 7.71
+            }
+          ],
+          "status": "complete"
+        }
+      }
+    }
+  },
+  "tag": "wgs",
+  "verification": {
+    "verify.wgs.full17.old-after": {
+      "evidence": {
+        "exact_stream_sha256_equal": true,
+        "expected_rows": 3933714,
+        "field_comparisons": 66873138,
+        "field_count": 17,
+        "fields": "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv",
+        "hit_disagreements": 0,
+        "library": "/home/tian/immkv_test_nvme/gnomad/immkv",
+        "query": "/home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz",
+        "status": "passed",
+        "streams": {
+          "after": {
+            "bytes": 3418353359,
+            "producer_exit_status": 0,
+            "producer_hits": 3875208,
+            "producer_rows": 3933714,
+            "rows": 3933714,
+            "sha256": "1c24ce749e2b3b9a21c3b9bc64e0c94ae46824a26ff553f88e70a380e2133111"
+          },
+          "old": {
+            "bytes": 3418353359,
+            "producer_exit_status": 0,
+            "producer_hits": 3875208,
+            "producer_rows": 3933714,
+            "rows": 3933714,
+            "sha256": "1c24ce749e2b3b9a21c3b9bc64e0c94ae46824a26ff553f88e70a380e2133111"
+          }
+        },
+        "tolerance": 0,
+        "value_mismatches": 0,
+        "verifier_exit_status": 0
+      },
+      "source": "results/verify.wgs.full17.old-after",
+      "status": "complete"
+    },
+    "verify.wgs.full540.old-after": {
+      "evidence": {
+        "exact_stream_sha256_equal": true,
+        "expected_rows": 3933714,
+        "field_comparisons": 2124205560,
+        "field_count": 540,
+        "fields": "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_540_fields/fields540.tsv",
+        "hit_disagreements": 0,
+        "library": "/home/tian/immkv_test_nvme/gnomad/immkv",
+        "query": "/home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz",
+        "status": "passed",
+        "streams": {
+          "after": {
+            "bytes": 67477278692,
+            "producer_exit_status": 0,
+            "producer_hits": 3875208,
+            "producer_rows": 3933714,
+            "rows": 3933714,
+            "sha256": "48e2e4ea5e5553e217bc63c2e181063773e199def17f5fc18d2ef2ed0301ec00"
+          },
+          "old": {
+            "bytes": 67477278692,
+            "producer_exit_status": 0,
+            "producer_hits": 3875208,
+            "producer_rows": 3933714,
+            "rows": 3933714,
+            "sha256": "48e2e4ea5e5553e217bc63c2e181063773e199def17f5fc18d2ef2ed0301ec00"
+          }
+        },
+        "tolerance": 0,
+        "value_mismatches": 0,
+        "verifier_exit_status": 0
+      },
+      "source": "results/verify.wgs.full540.old-after",
+      "status": "complete"
+    },
+    "verify.wgs.full568.old-after": {
+      "evidence": {
+        "exact_stream_sha256_equal": true,
+        "expected_rows": 3933714,
+        "field_comparisons": 2234349552,
+        "field_count": 568,
+        "fields": "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_568_fields/fields568.tsv",
+        "hit_disagreements": 0,
+        "library": "/home/tian/immkv_test_nvme/gnomad/immkv",
+        "query": "/home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz",
+        "status": "passed",
+        "streams": {
+          "after": {
+            "bytes": 74419094211,
+            "producer_exit_status": 0,
+            "producer_hits": 3875208,
+            "producer_rows": 3933714,
+            "rows": 3933714,
+            "sha256": "d4fff4591cde1e83022fe329aadf47d4c142b87d1d63f2bbd863f21e0ea3db37"
+          },
+          "old": {
+            "bytes": 74419094211,
+            "producer_exit_status": 0,
+            "producer_hits": 3875208,
+            "producer_rows": 3933714,
+            "rows": 3933714,
+            "sha256": "d4fff4591cde1e83022fe329aadf47d4c142b87d1d63f2bbd863f21e0ea3db37"
+          }
+        },
+        "tolerance": 0,
+        "value_mismatches": 0,
+        "verifier_exit_status": 0
+      },
+      "source": "results/verify.wgs.full568.old-after",
+      "status": "complete"
+    },
+    "verify.wgs.narrow17.old-after": {
+      "evidence": {
+        "exact_stream_sha256_equal": true,
+        "expected_rows": 3933714,
+        "field_comparisons": 66873138,
+        "field_count": 17,
+        "fields": "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv",
+        "hit_disagreements": 0,
+        "library": "/home/tian/immkv_test_nvme/test/17_fields/lib17",
+        "query": "/home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz",
+        "status": "passed",
+        "streams": {
+          "after": {
+            "bytes": 3418353359,
+            "producer_exit_status": 0,
+            "producer_hits": 3875208,
+            "producer_rows": 3933714,
+            "rows": 3933714,
+            "sha256": "1c24ce749e2b3b9a21c3b9bc64e0c94ae46824a26ff553f88e70a380e2133111"
+          },
+          "old": {
+            "bytes": 3418353359,
+            "producer_exit_status": 0,
+            "producer_hits": 3875208,
+            "producer_rows": 3933714,
+            "rows": 3933714,
+            "sha256": "1c24ce749e2b3b9a21c3b9bc64e0c94ae46824a26ff553f88e70a380e2133111"
+          }
+        },
+        "tolerance": 0,
+        "value_mismatches": 0,
+        "verifier_exit_status": 0
+      },
+      "source": "results/verify.wgs.narrow17.old-after",
+      "status": "complete"
+    }
+  },
+  "versions": {
+    "after": {
+      "source": "results/build.after/source-facts.json",
+      "source_digest": "cffc74c7403d8b89072d2a1b3e61e7fa3606fd37719e70d49c585c761efc9172",
+      "status": "built"
+    },
+    "before": {
+      "frozen_manifest_digest": "da913ce83951b2e00998343af092321fab16fcd433c7328b58cd91b60376c620",
+      "source": "results/build.before/source-facts.json",
+      "source_digest": "9dca137d42ccfc9b9a2e863602e60b59de468ee4680f000ce0f7393974493069",
+      "status": "built"
+    },
+    "old": {
+      "frozen_manifest_digest": "441ef9aa81606f2e9610a6c4d47fa73442d6c52280693d5cbab52ba10eb343c7",
+      "source": "results/build.old/source-facts.json",
+      "source_digest": "9d518082ac96ce66cc3d8828f313977ef3a1c58bd8bb350b4c7ad3f5c63996b4",
+      "status": "built"
+    }
+  }
+}

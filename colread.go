@@ -362,19 +362,21 @@ type colPart struct {
 type colCursor struct {
 	lastBit     int
 	lastRidx    int
-	lastPayload []byte
+	lastStart   int
+	lastEnd     int
 	lastPresent bool
 	pos         int
 }
 
-// colSegs 是一列在一个装配分块里对每条命中的输出段（present=false = 缺失）。
+// colSegs 是一列在一个装配分块里对每条命中的值流区间；重复命中各存起止
+// 偏移，present=false = 缺失（Flag 有值时区间仍为空）。
 type colSegs struct {
-	buf     []byte
-	off     []int32
+	start   []int
+	end     []int
 	present []bool
 }
 
-// asmChunk 是单次装配的命中数上限，控制段缓冲与偏移数组的内存。
+// asmChunk 是单次装配的命中数上限，控制偏移数组的内存。
 const asmChunk = 8192
 
 // binLoad 是一个 bin 选中列的压缩数据：列定位 + 合并读段里的位图/值流视图。
@@ -474,7 +476,7 @@ func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads 
 		}
 		return nil
 	}
-	bmLen := int((meta.count + 7) / 8)
+	bmLen := int((uint64(meta.count) + 7) / 8)
 	bits := make([][]byte, len(parts))
 	decoded := make([][]byte, len(parts))
 	workers := threads
@@ -499,6 +501,10 @@ func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads 
 				}
 				if len(b) != bmLen {
 					errs <- fmt.Errorf("immkv: %s: bin %d 列 %d 位图长度 %d ≠ %d", c.base, g.bin, parts[i].col, len(b), bmLen)
+					continue
+				}
+				if n := meta.count & 7; n != 0 && b[len(b)-1]>>n != 0 {
+					errs <- fmt.Errorf("immkv: %s: bin %d 列 %d 位图尾部填充位非零", c.base, g.bin, parts[i].col)
 					continue
 				}
 				if pc := popcountBytes(b); pc != parts[i].present {
@@ -537,8 +543,8 @@ func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads 
 			return fmt.Errorf("immkv: %s: bin %d 列 %d 值流解码失败", c.base, g.bin, parts[i].col)
 		}
 	}
-	// 按列并行扫描：每列在自己的位图/值流上顺扫，产出「本分块每条命中的
-	// payload 段」；最后按 schema 顺序合并成 record。
+	// 按列并行扫描：每列在自己的位图/值流上顺扫，记录本分块每条命中的
+	// payload 起止偏移；最后从值流直接拼成 record，不复制中间 payload。
 	cursors := make([]colCursor, len(parts))
 	for i := range cursors {
 		cursors[i].lastBit = -1
@@ -557,7 +563,8 @@ func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads 
 			cur := &cursors[pi]
 			stream := decoded[pi]
 			seg := colSegs{
-				off:     make([]int32, len(hs)+1),
+				start:   make([]int, len(hs)),
+				end:     make([]int, len(hs)),
 				present: make([]bool, len(hs)),
 			}
 			for hi, h := range hs {
@@ -569,29 +576,46 @@ func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads 
 					for cur.lastBit < ridx {
 						cur.lastBit++
 						present := bitSet(bits[pi], cur.lastBit)
-						var payload []byte
+						payloadStart := cur.pos
 						if present && !p.flag {
 							rest, err := skipValue(*field, stream[cur.pos:])
 							if err != nil {
 								return fmt.Errorf("immkv: %s: bin %d 列 %d 记录 %d: %w",
 									c.base, g.bin, p.col, meta.first+uint64(cur.lastBit), err)
 							}
-							payload = stream[cur.pos : len(stream)-len(rest)]
-							cur.pos += len(payload)
+							cur.pos = len(stream) - len(rest)
 						}
 						if cur.lastBit == ridx {
-							cur.lastPayload, cur.lastPresent = payload, present
+							cur.lastStart, cur.lastEnd, cur.lastPresent = payloadStart, cur.pos, present
 						}
 					}
 					cur.lastRidx = ridx
 				}
 				if cur.lastPresent {
 					seg.present[hi] = true
-					if !p.flag {
-						seg.buf = append(seg.buf, cur.lastPayload...)
+					seg.start[hi], seg.end[hi] = cur.lastStart, cur.lastEnd
+				}
+			}
+			// 最后一次装配前校验剩余记录，不能让最后命中之后的坏值或多余
+			// payload 被遗漏；位图计数与填充位已校验，恰好消费全部有值记录。
+			if end == len(g.hits) {
+				if !p.flag {
+					for ridx := cur.lastBit + 1; ridx < int(meta.count); ridx++ {
+						if !bitSet(bits[pi], ridx) {
+							continue
+						}
+						rest, err := skipValue(*field, stream[cur.pos:])
+						if err != nil {
+							return fmt.Errorf("immkv: %s: bin %d 列 %d 记录 %d: %w",
+								c.base, g.bin, p.col, meta.first+uint64(ridx), err)
+						}
+						cur.pos = len(stream) - len(rest)
 					}
 				}
-				seg.off[hi+1] = int32(len(seg.buf))
+				if cur.pos != len(stream) {
+					return fmt.Errorf("immkv: %s: bin %d 列 %d 值流尾部有 %d 字节多余数据",
+						c.base, g.bin, p.col, len(stream)-cur.pos)
+				}
 			}
 			segs[pi] = seg
 			return nil
@@ -603,7 +627,7 @@ func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads 
 			total := bitmapLen
 			for pi := range segs {
 				if segs[pi].present[hi] {
-					total += int(segs[pi].off[hi+1] - segs[pi].off[hi])
+					total += segs[pi].end[hi] - segs[pi].start[hi]
 				}
 			}
 			rec := make([]byte, bitmapLen, total)
@@ -613,9 +637,9 @@ func (c *colShard) processBin(ld *binLoad, g hitBinGroup, out [][]byte, threads 
 				}
 				col := parts[pi].col
 				rec[col>>3] |= 1 << (col & 7)
-				rec = append(rec, segs[pi].buf[int(segs[pi].off[hi]):int(segs[pi].off[hi+1])]...)
+				rec = append(rec, decoded[pi][segs[pi].start[hi]:segs[pi].end[hi]]...)
 			}
-			out[h.dst] = rec
+			out[h.dst] = rec[:len(rec):len(rec)]
 		}
 	}
 	return nil

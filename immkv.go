@@ -24,9 +24,10 @@
 //
 // 生命周期契约：
 //   - Create 的目标文件必须不存在；已有库不会被覆盖，重建前先删除旧文件。
-//   - Finish 走临时文件 + fsync + rename；失败时返回错误并清掉本次的 .tmp。
+//   - Finish 走临时文件 + fsync + rename；失败时返回错误并清理本次创建的文件。
+//   - 构建期间调用方独占目标，Finish 成功后才能打开库。
 //   - 同一份数据文件可被任意多进程同时打开（无锁）。
-//   - 查询返回的切片只保证到下一次查询前有效，要保留就拷贝。
+//   - 查询结果只读；GetBatch 由本次调用持有，其他查询只保证到下次查询前有效。
 //
 // 平台：纯 Go 可构建（CGO_ENABLED=0）；CGO 可用时每值压缩与解压走 libzstd
 // 加速（帧格式与纯 Go 后端标准互通），文件格式本身零地址与内存布局依赖，
@@ -132,6 +133,7 @@ type Writer struct {
 	valsTmp       string
 	kf, vf        *os.File
 	kw, vw        *bufio.Writer
+	files         buildFiles
 	opts          CreateOptions
 	rawBelow      int
 	packTarget    int // <0：每值独立成帧模式（配合训练字典）
@@ -145,7 +147,7 @@ type Writer struct {
 
 	mode     int8  // 0 未定，1 任意序（Add），2 组升序（AddSorted）；两种模式不可混用
 	finished bool  // Finish 已被调用（无论成败）
-	closed   bool  // 资源已释放，Abort/Finish 成功后再调用无操作
+	closed   bool  // Finish/Abort 已结束，包括清理失败；不再重复清理
 	err      error // 首个构建错误；一旦置位，后续 Add/AddSorted/Finish 都返回它
 
 	recs   []kvRec // Add 全量驻存；AddSorted 是当前攒集缓冲
@@ -178,7 +180,7 @@ type Writer struct {
 // 删除残留再重建。Finish 前磁盘上只有两个 .tmp 文件。CreateOptions.Schema
 // 决定 Add/AddSorted 收到的是原始值还是已编码 record：空 schema 由 writer
 // 包 record，非空 schema 要求调用方自己编码。
-func Create(basePath string, opts CreateOptions) (*Writer, error) {
+func Create(basePath string, opts CreateOptions) (_ *Writer, err error) {
 	if len(opts.Schema) > 0 {
 		if err := Schema(opts.Schema).Validate(); err != nil {
 			return nil, err
@@ -186,40 +188,37 @@ func Create(basePath string, opts CreateOptions) (*Writer, error) {
 	}
 	kp, vp := basePath+".keys", basePath+".vals"
 	kt, vt := kp+".tmp", vp+".tmp"
-	// .col/.manifest 一并检查：避免与 BuildFromTSVs 等入口的残留混建。
-	for _, p := range []string{kp, vp, kt, vt, basePath + ".col", basePath + ".manifest"} {
+	for _, p := range []string{kp, vp, kt, vt, basePath + ".col", basePath + ".manifest", basePath + ".col.tmp", basePath + ".manifest.tmp"} {
 		if _, err := os.Lstat(p); err == nil {
 			return nil, fmt.Errorf("immkv: %s already exists; delete it and rebuild", p)
 		} else if !os.IsNotExist(err) {
 			return nil, err
 		}
 	}
-	kf, err := os.OpenFile(kt, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
-	if err != nil {
-		return nil, err
-	}
-	vf, err := os.OpenFile(vt, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
-	if err != nil {
-		kf.Close()
-		os.Remove(kt)
-		return nil, err
-	}
-	enc, err := zstd.NewWriter(nil)
-	if err != nil {
-		kf.Close()
-		vf.Close()
-		os.Remove(kt)
-		os.Remove(vt)
-		return nil, err
-	}
 	w := &Writer{
 		base: basePath, keysPath: kp, valsPath: vp, keysTmp: kt, valsTmp: vt,
-		kf: kf, vf: vf,
-		kw:   bufio.NewWriterSize(kf, 1<<20),
-		vw:   bufio.NewWriterSize(vf, 1<<20),
-		opts: opts, enc: enc,
-		wrapRawValues: len(opts.Schema) == 0,
+		opts: opts, wrapRawValues: len(opts.Schema) == 0,
 	}
+	defer func() {
+		if err != nil {
+			w.closeEnc()
+			err = errors.Join(err, w.abort())
+		}
+	}()
+	w.kf, err = w.files.create(kt)
+	if err != nil {
+		return nil, err
+	}
+	w.vf, err = w.files.create(vt)
+	if err != nil {
+		return nil, err
+	}
+	w.enc, err = zstd.NewWriter(nil)
+	if err != nil {
+		return nil, err
+	}
+	w.kw = bufio.NewWriterSize(w.kf, 1<<20)
+	w.vw = bufio.NewWriterSize(w.vf, 1<<20)
 	if w.opts.RawValueBelow <= 0 {
 		w.rawBelow = defaultRawValueBelow
 	} else {
@@ -235,11 +234,9 @@ func Create(basePath string, opts CreateOptions) (*Writer, error) {
 	}
 	// 两个文件各预留 64B 头，Finish 时回填
 	if _, err := w.kw.Write(make([]byte, headerSize)); err != nil {
-		w.abort()
 		return nil, err
 	}
 	if _, err := w.vw.Write(make([]byte, headerSize)); err != nil {
-		w.abort()
 		return nil, err
 	}
 	w.keysAt, w.valsAt = headerSize, headerSize
@@ -647,52 +644,35 @@ func (w *Writer) blkLensToBytes() []byte {
 	return out
 }
 
-// Finish 排序（Add 模式）、落盘锚点、回填两个文件头、fsync、rename，然后
-// 关闭构建器。再次调用返回错误。构建期间出现过错误时，Finish 返回该错误且
-// 不发布任何文件。任何一步失败都会清掉本次构建的全部产物（.tmp 与已
-// rename 出去的正式文件）。
+// Finish 排序（Add 模式）、落盘锚点、回填两个文件头、fsync，再发布两个文件。
+// 再次调用返回错误。构建期间出现过错误时，Finish 返回该错误且不发布任何文件。
+// 失败时只清理本次创建或发布的文件，目标文件已存在时绝不覆盖。
 func (w *Writer) Finish() error {
 	if w.finished {
 		return errors.New("immkv: Writer already finished")
 	}
 	w.finished = true
-	if w.err != nil {
-		w.closeEnc()
-		cerr := w.abort()
-		w.closed = true // 资源已释放；后续 Abort 不再执行清理，避免误删同路径新 writer 的文件
-		if cerr != nil {
-			return fmt.Errorf("%w; cleanup: %v", w.err, cerr)
-		}
-		return w.err
+	err := w.err
+	if err == nil {
+		err = w.finish()
 	}
-	err := w.finish()
 	w.closeEnc()
 	if err != nil {
-		cerr := w.abort()
-		w.closed = true
-		if cerr != nil {
-			return fmt.Errorf("%w; cleanup: %v", err, cerr)
-		}
-		return err
+		err = errors.Join(err, w.abort())
 	}
 	w.closed = true
-	return nil
+	return err
 }
 
-// Abort 放弃构建：关闭文件与编码器、删除本次构建的产物。幂等；Finish
-// （无论成败）之后调用是无操作并返回 nil——清理只做一次，重试删除只会
-// 误删同路径新 writer 的文件。
+// Abort 放弃构建：关闭文件与编码器，只删除本次创建的文件。幂等；第一次调用
+// 即使清理报错也会结束，残留由调用方处理。Finish 之后调用不再执行清理。
 func (w *Writer) Abort() error {
 	if w.closed {
 		return nil
 	}
-	w.finished = true
+	w.finished, w.closed = true, true
 	w.closeEnc()
-	if err := w.abort(); err != nil {
-		return err
-	}
-	w.closed = true
-	return nil
+	return w.abort()
 }
 
 func (w *Writer) closeEnc() {
@@ -747,19 +727,21 @@ func (w *Writer) finish() error {
 	if err := w.vf.Sync(); err != nil {
 		return err
 	}
-	if err := w.kf.Close(); err != nil {
-		return err
-	}
+	err := w.kf.Close()
 	w.kf = nil
-	if err := w.vf.Close(); err != nil {
+	if err != nil {
 		return err
 	}
+	err = w.vf.Close()
 	w.vf = nil
-	// vals 先换、keys 后换：keys 文件的 rename 是构建可见性的分界
-	if err := os.Rename(w.valsTmp, w.valsPath); err != nil {
+	if err != nil {
 		return err
 	}
-	return os.Rename(w.keysTmp, w.keysPath)
+	// 值文件先发布；任一目标已经存在就报错，不覆盖其他文件。
+	if err := w.files.publish(w.valsTmp, w.valsPath); err != nil {
+		return err
+	}
+	return w.files.publish(w.keysTmp, w.keysPath)
 }
 
 func (w *Writer) writeKeysHeader(indexOff uint64) error {
@@ -786,27 +768,16 @@ func (w *Writer) writeValsHeader() error {
 	return err
 }
 
-// abort 清理失败路径：关闭文件、删除本次构建的产物，返回首个清理错误。
-// 正式路径若存在必为本次 rename 出去的文件（Create 的独占检查保证），
-// 删除它们不会碰到别人的库。
+// abort 关闭尚未释放的文件，清理本次创建或发布的路径；清单只消耗一次。
 func (w *Writer) abort() error {
-	var first error
+	var err error
 	if w.kf != nil {
-		if err := w.kf.Close(); err != nil {
-			first = err
-		}
+		err = errors.Join(err, w.kf.Close())
 		w.kf = nil
 	}
 	if w.vf != nil {
-		if err := w.vf.Close(); err != nil && first == nil {
-			first = err
-		}
+		err = errors.Join(err, w.vf.Close())
 		w.vf = nil
 	}
-	for _, p := range []string{w.keysTmp, w.valsTmp, w.keysPath, w.valsPath} {
-		if err := os.Remove(p); err != nil && !os.IsNotExist(err) && first == nil {
-			first = err
-		}
-	}
-	return first
+	return errors.Join(err, w.files.cleanup())
 }

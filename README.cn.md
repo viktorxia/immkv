@@ -100,12 +100,17 @@ err := immkv.BuildFromTSVs(basePath, tsvs, immkv.BuildOptions{})
 （格式契约见 [docs/v003-format.md](docs/v003-format.md) §5–§6）。`OpenStreaming`
 按估算的 I/O 成本决定走记录序还是列存（按目录所在盘是机械盘/SSD 分档）；
 `StreamOptions.Columns` 只选字段（列号来自 manifest，nil/空 = 全部列），
-不决定路径；两条路径返回相同的字段投影。`OpenEager` 与所有点查/前缀/区间
+不决定路径；两条路径返回相同的字段投影。全选与 nil/空选择走同一路径；
+部分字段在解压线程内直接投影，payload 只复制一次到本次调用的输出缓冲。
+未投影的原始 typed record 需要类型化访问时由 `NewRecord` 校验。
+`OpenEager` 与所有点查/前缀/区间
 查询仍走记录序。直接用 `Create` 建、没有
-`base.col`/`manifest` 的库照常按记录序服务；给这种库传非空 `Columns` 会报错。
+`base.col`/`manifest` 的库照常按记录序服务，调用方保留构建时的 schema；
+给这种库传非空 `Columns` 会报错。
 
-`GetBatch` 的契约：输入必须升序（VCF 按染色体自然序 + 位置排序即天然
-满足），返回切片只保证到下一次查询前有效；批次大小就是预取窗口（几千到
+`GetBatch` 的契约：输入必须按完整编码键升序（染色体自然序、位置、REF/ALT
+字节序）；返回值只读，由本次调用持有，并发或后续调用不会覆盖这些字节；
+批次大小就是预取窗口（几千到
 几十万均可）；`Threads` 是唯一并发旋钮，定解压并行度；io_uring 路径在途读
 深度与它无关，回退路径才兼作 pread 读者数。典型
 注释循环是「攒一批键 → 对每个库各 GetBatch 一次 → 用完即弃」：
@@ -136,14 +141,14 @@ for vcf.Scan() {
    chr19, chr2, …），字典序下 chr10 排在 chr2 前，键却是 9 对 1，喂进
    来就是降序；
 2. 同一染色体内按位置从小到大（VCF 的 POS 列天然如此）；
-3. 同一位置多条记录（多等位基因拆出的键）顺序随意——等值键允许。
+3. 同一位置多条记录也必须按完整编码键的字节序排列（先 REF 后 ALT），等值键允许。
 
 排序不对**不会静默出错**：引擎逐对检查相邻键，降序立刻返回 `ErrUnsorted`，
 不会拿乱序输入算出错误的未命中。拿不准直接喂，报错即说明源头要重排。
 
 **怎么把 VCF 排成自然序**：`bcftools sort` 按头部 `##contig` 声明顺序 +
 位置排序，主流项目的头部本身就是自然序（gnomAD、1000G、dbSNP 等），
-直接排完即用：
+按该顺序排完后，查询端仍需把每批键按完整编码键排序再传给 `GetBatch`：
 
 ```bash
 bcftools view -h in.vcf.gz | grep contig   # 先看头部顺序对不对
@@ -188,13 +193,15 @@ bcftools sort -O z -o sorted.vcf.gz in.vcf.gz
 
 - **生命周期**：构建目标必须不存在——`immkv.Create` 与
   `immkv.BuildFromVCFs` 拒绝覆盖已有库或目录。`Finish` 走临时文件 + fsync +
-  rename；构建失败返回错误并清理本次创建的产物；提前结束用
-  `immkv.Writer.Abort`，残留删除后重建。同一份数据文件可被任意多进程
+  rename；构建失败返回错误并清理本次创建的产物；构建期间调用方独占目标，
+  成功返回后才能打开。提前结束用 `immkv.Writer.Abort`，即使清理报错也只清理
+  一次，残留由调用方删除后重建。同一份数据文件可被任意多进程
   同时打开（无锁），每个句柄内多 goroutine 并发安全。
 - **查询错误**：`immkv.DB.Get`、`immkv.DB.GetPrefix`、`immkv.DB.Scan`、
   `immkv.SimpleKVDB.Get` 在读取、解析或解压失败时返回 error；未命中是
   `(nil, false, nil)`。回调返回 `false` 表示提前停止，不是错误。
-- **返回切片**：只保证到下一次查询前有效，要保留自己拷。
+- **返回切片**：只读；`GetBatch` 结果由本次调用持有，仍被引用时保持有效；
+  点查/前缀/区间结果只保证到下一次查询前有效，要保留自己拷。
 - **重复键**：允许；`Get` 返回排序后的第一条，`GetPrefix`/`Scan` 看到全部。
 - **普通 KV**：`OpenSimpleKV` 打开一对 `basePath.keys`/`basePath.vals`；
   键是任意字节串，按 `bytes.Compare` 排序；句柄只有 `Get`，没有前缀/

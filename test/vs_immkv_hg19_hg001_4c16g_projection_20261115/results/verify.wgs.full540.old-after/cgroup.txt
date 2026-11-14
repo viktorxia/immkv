@@ -1,0 +1,18 @@
+cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/run-r5e3d1b17c1bf4c949f06a93415b2c74e.scope
+memory.max=17179869184
+memory.swap.max=0
+cpus=0,1,2,3
+GOMAXPROCS=4
+mode=untimed
+timeout_seconds=1800
+command=python3 -I /home/tian/projects/immkv/test/vs_immkv_hg19_hg001_4c16g_projection_20261115/verify_stream.py --query /home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz --library /home/tian/immkv_test_nvme/gnomad/immkv --fields /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_540_fields/fields540.tsv --binaries /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin --reference old --candidate after --record /home/tian/projects/immkv/test/vs_immkv_hg19_hg001_4c16g_projection_20261115/results/verify.wgs.full540.old-after --work /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/verify.wgs.full540.old-after.fifos 
+memory.peak
+5037068288
+memory.events
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+sock_throttled 0

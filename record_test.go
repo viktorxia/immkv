@@ -512,9 +512,8 @@ func TestProjectRecordWideSchema(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		selected := make([]bool, len(schema))
-		selected[col] = true
-		got, err := projectRecord(schema, raw, selected)
+		projection := newRecordProjection(schema, []int{col})
+		got, err := projection.appendRecord(nil, raw)
 		if err != nil {
 			t.Fatal(err)
 		}

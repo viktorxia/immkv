@@ -119,14 +119,20 @@ columnar scan copy (format contract: [docs/v003-format.md](docs/v003-format.md)
 §5–§6). `OpenStreaming` uses it when its estimated I/O cost beats the
 record-order path (media-aware: rotational disk vs SSD); `StreamOptions.Columns`
 only selects fields (column numbers from the manifest, nil/empty = all),
-never the path; both paths return the same projected record shape. `OpenEager` and every point/prefix/range query stay on the
+never the path; both paths return the same projected record shape. Selecting all
+fields takes the same path as nil/empty selection. Subsets are projected inside
+the decompression workers, with each result's payload copied once into output
+storage owned by that call. Raw typed records returned without projection are
+validated by `NewRecord` when a typed view is needed. `OpenEager` and every point/prefix/range query stay on the
 record order. Libraries built through `Create` alone have no columnar copy
-and stay on record order; passing a non-empty `Columns` to such a library is
+or manifest; applications retain the schema supplied at construction. These
+libraries stay on record order; passing a non-empty `Columns` to such a library is
 an error.
 
-The `GetBatch` contract: input must be ascending (VCF sorted by chromosome
-natural order + position satisfies this naturally); the returned slice is
-only guaranteed valid until the next query; the batch size is the prefetch
+The `GetBatch` contract: input must be ascending by the complete encoded key
+(chromosome natural order, position, then REF/ALT bytes); returned values are
+read-only and owned by that call, so concurrent or later calls do not overwrite
+them. The batch size is the prefetch
 window (a few thousand to a few hundred thousand all work); `Threads` is
 the only concurrency knob — it sets the decompression parallelism;
 in-flight read depth is independent of it on the io_uring path, and it
@@ -164,8 +170,8 @@ for variant keys this amounts to three rules:
    while the keys compare 9 vs 1 — feeding that in is a descent;
 2. within one chromosome, positions ascending (VCF's POS column is
    naturally so);
-3. multiple records at the same position (keys split from multi-allelic
-   variants) may come in any order — equal keys are allowed.
+3. multiple records at the same position must also follow the byte order of
+   the complete encoded keys (REF then ALT); equal keys are allowed.
 
 Wrong ordering **never fails silently**: the engine checks adjacent keys
 pairwise and returns `ErrUnsorted` immediately on a descent; it never
@@ -175,7 +181,8 @@ keys in — an error means the source needs re-sorting.
 **How to sort a VCF into natural order**: `bcftools sort` sorts by the
 header's `##contig` declaration order + position, and mainstream projects'
 headers are themselves in natural order (gnomAD, 1000G, dbSNP, etc.) —
-sort and use directly:
+sort with the header's contig order, then sort each query batch by the complete
+encoded key before calling `GetBatch`:
 
 ```bash
 bcftools view -h in.vcf.gz | grep contig   # check the header order first
@@ -227,16 +234,19 @@ field dose series); highlights:
 - **Lifecycle**: build targets must not already exist — `immkv.Create` and
   `immkv.BuildFromVCFs` refuse to overwrite an existing library or directory.
   `Finish` writes through temp files + fsync + rename; a failed build returns
-  an error and cleans up the artifacts it created. Call `immkv.Writer.Abort`
-  to stop early; delete leftovers and rebuild. The same data files can be
+  an error and cleans up the artifacts it created. The caller must exclusively
+  own the build target until the build returns, and open it only after success.
+  Call `immkv.Writer.Abort` to stop early; cleanup runs once even if it reports
+  an error, so delete any leftovers before rebuilding. The same data files can be
   opened by any number of processes at once (no locks), and within one
   handle, concurrent use by multiple goroutines is safe.
 - **Query errors**: `immkv.DB.Get`, `immkv.DB.GetPrefix`, `immkv.DB.Scan`,
   and `immkv.SimpleKVDB.Get` return an error for read, parse, or
   decompression failures; a miss is `(nil, false, nil)`. A callback returning
   `false` stops iteration and is not an error.
-- **Returned slices**: guaranteed valid only until the next query; copy
-  anything you want to keep.
+- **Returned slices**: read-only; `GetBatch` results are owned by their call
+  and remain valid while referenced. Point/prefix/range results are guaranteed
+  only until the next query; copy anything you want to keep.
 - **Duplicate keys**: allowed; `Get` returns the first one in sorted order,
   `GetPrefix`/`Scan` see all of them.
 - **Plain KV**: `OpenSimpleKV` opens one `basePath.keys`/`basePath.vals`

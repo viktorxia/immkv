@@ -1,0 +1,4001 @@
+{
+  "annotation_output": "/dev/null",
+  "annotation_rounds": 3,
+  "disk_benchmark": false,
+  "kind": "memfd-resident-chr22",
+  "preload_in_timed_interval": false,
+  "query_repeat": 10,
+  "query_rounds": 3,
+  "results": {
+    "annotation.full17.after.r1": {
+      "stderr": "annotation.full17.after.r1/stderr",
+      "stdout": "annotation.full17.after.r1/stdout",
+      "time": "annotation.full17.after.r1/time.txt"
+    },
+    "annotation.full17.after.r2": {
+      "stderr": "annotation.full17.after.r2/stderr",
+      "stdout": "annotation.full17.after.r2/stdout",
+      "time": "annotation.full17.after.r2/time.txt"
+    },
+    "annotation.full17.after.r3": {
+      "stderr": "annotation.full17.after.r3/stderr",
+      "stdout": "annotation.full17.after.r3/stdout",
+      "time": "annotation.full17.after.r3/time.txt"
+    },
+    "annotation.full17.old.r1": {
+      "stderr": "annotation.full17.old.r1/stderr",
+      "stdout": "annotation.full17.old.r1/stdout",
+      "time": "annotation.full17.old.r1/time.txt"
+    },
+    "annotation.full17.old.r2": {
+      "stderr": "annotation.full17.old.r2/stderr",
+      "stdout": "annotation.full17.old.r2/stdout",
+      "time": "annotation.full17.old.r2/time.txt"
+    },
+    "annotation.full17.old.r3": {
+      "stderr": "annotation.full17.old.r3/stderr",
+      "stdout": "annotation.full17.old.r3/stdout",
+      "time": "annotation.full17.old.r3/time.txt"
+    },
+    "annotation.full540.after.r1": {
+      "stderr": "annotation.full540.after.r1/stderr",
+      "stdout": "annotation.full540.after.r1/stdout",
+      "time": "annotation.full540.after.r1/time.txt"
+    },
+    "annotation.full540.after.r2": {
+      "stderr": "annotation.full540.after.r2/stderr",
+      "stdout": "annotation.full540.after.r2/stdout",
+      "time": "annotation.full540.after.r2/time.txt"
+    },
+    "annotation.full540.after.r3": {
+      "stderr": "annotation.full540.after.r3/stderr",
+      "stdout": "annotation.full540.after.r3/stdout",
+      "time": "annotation.full540.after.r3/time.txt"
+    },
+    "annotation.full540.old.r1": {
+      "stderr": "annotation.full540.old.r1/stderr",
+      "stdout": "annotation.full540.old.r1/stdout",
+      "time": "annotation.full540.old.r1/time.txt"
+    },
+    "annotation.full540.old.r2": {
+      "stderr": "annotation.full540.old.r2/stderr",
+      "stdout": "annotation.full540.old.r2/stdout",
+      "time": "annotation.full540.old.r2/time.txt"
+    },
+    "annotation.full540.old.r3": {
+      "stderr": "annotation.full540.old.r3/stderr",
+      "stdout": "annotation.full540.old.r3/stdout",
+      "time": "annotation.full540.old.r3/time.txt"
+    },
+    "annotation.full568.after.r1": {
+      "stderr": "annotation.full568.after.r1/stderr",
+      "stdout": "annotation.full568.after.r1/stdout",
+      "time": "annotation.full568.after.r1/time.txt"
+    },
+    "annotation.full568.after.r2": {
+      "stderr": "annotation.full568.after.r2/stderr",
+      "stdout": "annotation.full568.after.r2/stdout",
+      "time": "annotation.full568.after.r2/time.txt"
+    },
+    "annotation.full568.after.r3": {
+      "stderr": "annotation.full568.after.r3/stderr",
+      "stdout": "annotation.full568.after.r3/stdout",
+      "time": "annotation.full568.after.r3/time.txt"
+    },
+    "annotation.full568.old.r1": {
+      "stderr": "annotation.full568.old.r1/stderr",
+      "stdout": "annotation.full568.old.r1/stdout",
+      "time": "annotation.full568.old.r1/time.txt"
+    },
+    "annotation.full568.old.r2": {
+      "stderr": "annotation.full568.old.r2/stderr",
+      "stdout": "annotation.full568.old.r2/stdout",
+      "time": "annotation.full568.old.r2/time.txt"
+    },
+    "annotation.full568.old.r3": {
+      "stderr": "annotation.full568.old.r3/stderr",
+      "stdout": "annotation.full568.old.r3/stdout",
+      "time": "annotation.full568.old.r3/time.txt"
+    },
+    "annotation.narrow17.after.r1": {
+      "stderr": "annotation.narrow17.after.r1/stderr",
+      "stdout": "annotation.narrow17.after.r1/stdout",
+      "time": "annotation.narrow17.after.r1/time.txt"
+    },
+    "annotation.narrow17.after.r2": {
+      "stderr": "annotation.narrow17.after.r2/stderr",
+      "stdout": "annotation.narrow17.after.r2/stdout",
+      "time": "annotation.narrow17.after.r2/time.txt"
+    },
+    "annotation.narrow17.after.r3": {
+      "stderr": "annotation.narrow17.after.r3/stderr",
+      "stdout": "annotation.narrow17.after.r3/stdout",
+      "time": "annotation.narrow17.after.r3/time.txt"
+    },
+    "annotation.narrow17.old.r1": {
+      "stderr": "annotation.narrow17.old.r1/stderr",
+      "stdout": "annotation.narrow17.old.r1/stdout",
+      "time": "annotation.narrow17.old.r1/time.txt"
+    },
+    "annotation.narrow17.old.r2": {
+      "stderr": "annotation.narrow17.old.r2/stderr",
+      "stdout": "annotation.narrow17.old.r2/stdout",
+      "time": "annotation.narrow17.old.r2/time.txt"
+    },
+    "annotation.narrow17.old.r3": {
+      "stderr": "annotation.narrow17.old.r3/stderr",
+      "stdout": "annotation.narrow17.old.r3/stdout",
+      "time": "annotation.narrow17.old.r3/time.txt"
+    },
+    "query.full17.after.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 333090.6430174462,
+        "lookup_seconds": 1.48716276,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.158823703,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.156673074,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.13970074,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.143810823,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.159817336,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.143054312,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.148317776,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.144273828,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.145803378,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.14688779,
+            "returned_bytes": 7571546
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 75715460,
+        "schema_fields": 568,
+        "selected_fields": 17,
+        "setup_seconds": 0.016186899,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full17.after.r1/stderr",
+      "stdout": "query.full17.after.r1/stdout",
+      "time": "query.full17.after.r1/time.txt"
+    },
+    "query.full17.after.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 338233.8187487762,
+        "lookup_seconds": 1.464548997,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.153710561,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.14711827,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.147222243,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.144299346,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.148080345,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.14223735,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.1455678,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.147387192,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.146517841,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.142408049,
+            "returned_bytes": 7571546
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 75715460,
+        "schema_fields": 568,
+        "selected_fields": 17,
+        "setup_seconds": 0.017546543,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full17.after.r2/stderr",
+      "stdout": "query.full17.after.r2/stdout",
+      "time": "query.full17.after.r2/time.txt"
+    },
+    "query.full17.after.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 335001.27621176187,
+        "lookup_seconds": 1.478680934,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.153339213,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.1464194,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.145562442,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.143214935,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.144210261,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.148518995,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.149859995,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.149211667,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.153204511,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.145139515,
+            "returned_bytes": 7571546
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 75715460,
+        "schema_fields": 568,
+        "selected_fields": 17,
+        "setup_seconds": 0.016054173,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full17.after.r3/stderr",
+      "stdout": "query.full17.after.r3/stdout",
+      "time": "query.full17.after.r3/time.txt"
+    },
+    "query.full17.before.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 80481.51984140757,
+        "lookup_seconds": 6.154953348,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.643805971,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.603745945,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.601837911,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.618102425,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.598658667,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.612383317,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.620691148,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.60957241,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.625385213,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.620770341,
+            "returned_bytes": 7571546
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 75715460,
+        "schema_fields": 568,
+        "selected_fields": 17,
+        "setup_seconds": 0.015741198,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full17.before.r1/stderr",
+      "stdout": "query.full17.before.r1/stdout",
+      "time": "query.full17.before.r1/time.txt"
+    },
+    "query.full17.before.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 78718.04820979311,
+        "lookup_seconds": 6.292838952,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.629476234,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.640486925,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.62648447,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.64178541,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.618794096,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.648078877,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.637474648,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.614486801,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.614923456,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.620848035,
+            "returned_bytes": 7571546
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 75715460,
+        "schema_fields": 568,
+        "selected_fields": 17,
+        "setup_seconds": 0.015437052,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full17.before.r2/stderr",
+      "stdout": "query.full17.before.r2/stdout",
+      "time": "query.full17.before.r2/time.txt"
+    },
+    "query.full17.before.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 79765.49861894411,
+        "lookup_seconds": 6.210203767,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.627989322,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.608397236,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.611328491,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.627594121,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.618585175,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.6286428,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.625298876,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.621056559,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.617130209,
+            "returned_bytes": 7571546
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.624180978,
+            "returned_bytes": 7571546
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 75715460,
+        "schema_fields": 568,
+        "selected_fields": 17,
+        "setup_seconds": 0.015552417,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full17.before.r3/stderr",
+      "stdout": "query.full17.before.r3/stdout",
+      "time": "query.full17.before.r3/time.txt"
+    },
+    "query.full17.old.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 299003.9983418751,
+        "lookup_seconds": 1.656700254,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.177838417,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.156946367,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.176330426,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.166132032,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.163205527,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.166216009,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.163212119,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.158617955,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.166841015,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.161360387,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 17,
+        "setup_seconds": 0.01714241,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full17.old.r1/stderr",
+      "stdout": "query.full17.old.r1/stdout",
+      "time": "query.full17.old.r1/time.txt"
+    },
+    "query.full17.old.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 291373.22117482254,
+        "lookup_seconds": 1.700087599,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.174188868,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.158188456,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.177770115,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.170094445,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.172008443,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.164976753,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.167435968,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.159621659,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.18556547,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.170237422,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 17,
+        "setup_seconds": 0.016855667,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full17.old.r2/stderr",
+      "stdout": "query.full17.old.r2/stdout",
+      "time": "query.full17.old.r2/time.txt"
+    },
+    "query.full17.old.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 298095.6104516892,
+        "lookup_seconds": 1.661748723,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.184773985,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.159752042,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.174055161,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.159908715,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.169789347,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.16139634,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.169774761,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.162407384,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.159286585,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.160604403,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 17,
+        "setup_seconds": 0.016133922,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full17.old.r3/stderr",
+      "stdout": "query.full17.old.r3/stdout",
+      "time": "query.full17.old.r3/time.txt"
+    },
+    "query.full540.after.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 320473.37955130596,
+        "lookup_seconds": 1.545713409,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.156956214,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.147383836,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.152581888,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.151791825,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.150224202,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.154664382,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.15959234,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.155293424,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.15874453,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.158480768,
+            "returned_bytes": 103541620
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1035416200,
+        "schema_fields": 568,
+        "selected_fields": 540,
+        "setup_seconds": 0.016910019,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full540.after.r1/stderr",
+      "stdout": "query.full540.after.r1/stdout",
+      "time": "query.full540.after.r1/time.txt"
+    },
+    "query.full540.after.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 322691.1331514633,
+        "lookup_seconds": 1.535090212,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.162508719,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.156684739,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.150366558,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.152701863,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.154446096,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.159821669,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.146889896,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.155859381,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.153444748,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.142366543,
+            "returned_bytes": 103541620
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1035416200,
+        "schema_fields": 568,
+        "selected_fields": 540,
+        "setup_seconds": 0.017003294,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full540.after.r2/stderr",
+      "stdout": "query.full540.after.r2/stdout",
+      "time": "query.full540.after.r2/time.txt"
+    },
+    "query.full540.after.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 320475.7705033181,
+        "lookup_seconds": 1.545701877,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.161446513,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.154536077,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.155108736,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.159547884,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.157161233,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.144752595,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.153208613,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.150891372,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.154994854,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.154054,
+            "returned_bytes": 103541620
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1035416200,
+        "schema_fields": 568,
+        "selected_fields": 540,
+        "setup_seconds": 0.017342608,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full540.after.r3/stderr",
+      "stdout": "query.full540.after.r3/stdout",
+      "time": "query.full540.after.r3/time.txt"
+    },
+    "query.full540.before.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 62353.92046486056,
+        "lookup_seconds": 7.94432806,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.7783812,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.787751844,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.780917463,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.808381855,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.787788771,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.817757672,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.804458208,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.80375506,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.774254167,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.80088182,
+            "returned_bytes": 103541620
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1035416200,
+        "schema_fields": 568,
+        "selected_fields": 540,
+        "setup_seconds": 0.01677114,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full540.before.r1/stderr",
+      "stdout": "query.full540.before.r1/stdout",
+      "time": "query.full540.before.r1/time.txt"
+    },
+    "query.full540.before.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 62173.76761833686,
+        "lookup_seconds": 7.967347307,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.805619228,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.801125251,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.789984301,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.797809905,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.789449159,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.815313228,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.790409005,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.798207928,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.774347822,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.80508148,
+            "returned_bytes": 103541620
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1035416200,
+        "schema_fields": 568,
+        "selected_fields": 540,
+        "setup_seconds": 0.016602927,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full540.before.r2/stderr",
+      "stdout": "query.full540.before.r2/stdout",
+      "time": "query.full540.before.r2/time.txt"
+    },
+    "query.full540.before.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 62122.769355936165,
+        "lookup_seconds": 7.973887918,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.8057158,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.800121812,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.805773242,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.799370487,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.788243993,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.808607046,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.792869293,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.78144908,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.800308911,
+            "returned_bytes": 103541620
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.791428254,
+            "returned_bytes": 103541620
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1035416200,
+        "schema_fields": 568,
+        "selected_fields": 540,
+        "setup_seconds": 0.016633115,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full540.before.r3/stderr",
+      "stdout": "query.full540.before.r3/stdout",
+      "time": "query.full540.before.r3/time.txt"
+    },
+    "query.full540.old.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 298253.5084123574,
+        "lookup_seconds": 1.660868979,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.182140513,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.167407675,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.165085665,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.163599814,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.164356906,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.165467056,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.157141553,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.165539522,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.166829307,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.163300968,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 540,
+        "setup_seconds": 0.016094128,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full540.old.r1/stderr",
+      "stdout": "query.full540.old.r1/stdout",
+      "time": "query.full540.old.r1/time.txt"
+    },
+    "query.full540.old.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 298093.6626836876,
+        "lookup_seconds": 1.661759581,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.183007809,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.167178945,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.164176094,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.160431823,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.164335582,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.1618082,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.160937677,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.168424518,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.162985555,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.168473378,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 540,
+        "setup_seconds": 0.015560284,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full540.old.r2/stderr",
+      "stdout": "query.full540.old.r2/stdout",
+      "time": "query.full540.old.r2/time.txt"
+    },
+    "query.full540.old.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 288560.4985702811,
+        "lookup_seconds": 1.71665908,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.178276547,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.169551218,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.167884631,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.170610865,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.172555551,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.166867334,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.174275318,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.175259343,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.170591279,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.170786994,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 540,
+        "setup_seconds": 0.017364988,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full540.old.r3/stderr",
+      "stdout": "query.full540.old.r3/stdout",
+      "time": "query.full540.old.r3/time.txt"
+    },
+    "query.full568.after.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 364681.1138296772,
+        "lookup_seconds": 1.358337411,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.147762554,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.136640565,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.134816934,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.137320985,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.130869946,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.139006738,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.137219636,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.130540361,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.133990153,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.13016954,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.015636337,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568.after.r1/stderr",
+      "stdout": "query.full568.after.r1/stdout",
+      "time": "query.full568.after.r1/time.txt"
+    },
+    "query.full568.after.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 351812.5370759765,
+        "lookup_seconds": 1.408022591,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.14130801,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.156327988,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.136829229,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.135885378,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.143674192,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.141607348,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.138305291,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.135109122,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.138690369,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.140285664,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.015506536,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568.after.r2/stderr",
+      "stdout": "query.full568.after.r2/stdout",
+      "time": "query.full568.after.r2/time.txt"
+    },
+    "query.full568.after.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 351800.87986113084,
+        "lookup_seconds": 1.408069247,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.148463217,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.137284149,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.139774964,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.138233399,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.139467771,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.143527192,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.137188722,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.133807096,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.140017517,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.150305221,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.016175044,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568.after.r3/stderr",
+      "stdout": "query.full568.after.r3/stdout",
+      "time": "query.full568.after.r3/time.txt"
+    },
+    "query.full568.before.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 58723.1845509578,
+        "lookup_seconds": 8.435509821,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.856996302,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.829832685,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.84456589,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.868147725,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.835333711,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.831543887,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.843127971,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.853215975,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.848879643,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.823866032,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.016380575,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568.before.r1/stderr",
+      "stdout": "query.full568.before.r1/stdout",
+      "time": "query.full568.before.r1/time.txt"
+    },
+    "query.full568.before.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 58445.3296869693,
+        "lookup_seconds": 8.475613067,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.841004215,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.846952809,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.827896687,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.849908167,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.836198634,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.860335167,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.854837007,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.866705481,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.832302501,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.859472399,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.015778272,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568.before.r2/stderr",
+      "stdout": "query.full568.before.r2/stdout",
+      "time": "query.full568.before.r2/time.txt"
+    },
+    "query.full568.before.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 58154.21379589098,
+        "lookup_seconds": 8.518041388,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.847055432,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.841259907,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.832527475,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.862977922,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.84341841,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.875974534,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.848210353,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.879943131,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.831212881,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.855461343,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.016201882,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568.before.r3/stderr",
+      "stdout": "query.full568.before.r3/stdout",
+      "time": "query.full568.before.r3/time.txt"
+    },
+    "query.full568.old.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 295031.19176715316,
+        "lookup_seconds": 1.679008911,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.175997578,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.162144856,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.163337561,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.170553527,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.178107803,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.15974377,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.178267229,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.163002657,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.167558412,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.160295518,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.017208017,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568.old.r1/stderr",
+      "stdout": "query.full568.old.r1/stdout",
+      "time": "query.full568.old.r1/time.txt"
+    },
+    "query.full568.old.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 293666.6714854259,
+        "lookup_seconds": 1.686810415,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.175290986,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.172422497,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.162286735,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.172113341,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.166517987,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.174045595,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.169138974,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.168841791,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.164199834,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.161952675,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.018042525,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568.old.r2/stderr",
+      "stdout": "query.full568.old.r2/stdout",
+      "time": "query.full568.old.r2/time.txt"
+    },
+    "query.full568.old.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 297787.2946809625,
+        "lookup_seconds": 1.663469224,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.186806622,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.159418629,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.161646685,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.160493764,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.163715102,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.165523523,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.159717758,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.165454836,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.169492546,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.171199759,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.016896277,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568.old.r3/stderr",
+      "stdout": "query.full568.old.r3/stdout",
+      "time": "query.full568.old.r3/time.txt"
+    },
+    "query.full568_default.after.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": false,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 359660.7466028093,
+        "lookup_seconds": 1.377297925,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.141310381,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.136216481,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.13640856,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.138845994,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.135437038,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.129647822,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.138422756,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.128548933,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.14683872,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.14562124,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.015600982,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568_default.after.r1/stderr",
+      "stdout": "query.full568_default.after.r1/stdout",
+      "time": "query.full568_default.after.r1/time.txt"
+    },
+    "query.full568_default.after.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": false,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 355658.793357483,
+        "lookup_seconds": 1.392795593,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.145273662,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.134048189,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.137184327,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.137351369,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.126868109,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.141259026,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.148005206,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.14481174,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.142176337,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.135817628,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.016176316,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568_default.after.r2/stderr",
+      "stdout": "query.full568_default.after.r2/stdout",
+      "time": "query.full568_default.after.r2/time.txt"
+    },
+    "query.full568_default.after.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": false,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 348267.9803235144,
+        "lookup_seconds": 1.422352981,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.148502107,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.13761259,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.146901423,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.156576275,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.13399799,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.138038415,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.138580325,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.147453152,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.134630379,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.140060325,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.015628095,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568_default.after.r3/stderr",
+      "stdout": "query.full568_default.after.r3/stdout",
+      "time": "query.full568_default.after.r3/time.txt"
+    },
+    "query.full568_default.before.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": false,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 294724.6499170667,
+        "lookup_seconds": 1.680755241,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.175789357,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.166241551,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.168308196,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.158565408,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.167046443,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.165858277,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.178994865,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.165028971,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.169955678,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.164966495,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.01524547,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568_default.before.r1/stderr",
+      "stdout": "query.full568_default.before.r1/stdout",
+      "time": "query.full568_default.before.r1/time.txt"
+    },
+    "query.full568_default.before.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": false,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 288463.30443518906,
+        "lookup_seconds": 1.717237487,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.186333143,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.172759099,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.168286939,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.168448049,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.16572356,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.169822863,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.16883947,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.177518907,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.163327381,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.176178076,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.016372983,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568_default.before.r2/stderr",
+      "stdout": "query.full568_default.before.r2/stdout",
+      "time": "query.full568_default.before.r2/time.txt"
+    },
+    "query.full568_default.before.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": false,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 291201.1395897,
+        "lookup_seconds": 1.701092244,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.175282618,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.181900019,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.161805275,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.174298615,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.165165833,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.15803814,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.1678511,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.173488043,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.175728191,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.16753441,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.016466738,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568_default.before.r3/stderr",
+      "stdout": "query.full568_default.before.r3/stdout",
+      "time": "query.full568_default.before.r3/time.txt"
+    },
+    "query.full568_default.old.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": false,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 295706.5189973005,
+        "lookup_seconds": 1.675174432,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.181199143,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.167344317,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.16245019,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.166587236,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.16433178,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.164996108,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.170135522,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.169546555,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.161523834,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.167059747,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.016367472,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568_default.old.r1/stderr",
+      "stdout": "query.full568_default.old.r1/stdout",
+      "time": "query.full568_default.old.r1/time.txt"
+    },
+    "query.full568_default.old.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": false,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 287000.21722294175,
+        "lookup_seconds": 1.725991725,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.187051915,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.173468844,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.168391115,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.177780314,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.175900248,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.169856007,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.162399913,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.169365903,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.175191667,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.166585799,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.017717511,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568_default.old.r2/stderr",
+      "stdout": "query.full568_default.old.r2/stdout",
+      "time": "query.full568_default.old.r2/time.txt"
+    },
+    "query.full568_default.old.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": false,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 299860.267512478,
+        "lookup_seconds": 1.6519694459999998,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.175029014,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.168266795,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.170707195,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.163348573,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.166815588,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.160716654,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.161768897,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.156624453,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.163617144,
+            "returned_bytes": 187155907
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.165075133,
+            "returned_bytes": 187155907
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 1871559070,
+        "schema_fields": 568,
+        "selected_fields": 568,
+        "setup_seconds": 0.015562092,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.full568_default.old.r3/stderr",
+      "stdout": "query.full568_default.old.r3/stdout",
+      "time": "query.full568_default.old.r3/time.txt"
+    },
+    "query.narrow17.after.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 1493752.6545350084,
+        "lookup_seconds": 0.331621168,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.042696231,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.031551894,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.033722481,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.031174941,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.03122764,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.032319805,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.031274837,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.032561968,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.033453038,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.031638336,
+            "returned_bytes": 4454170
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 44541700,
+        "schema_fields": 17,
+        "selected_fields": 17,
+        "setup_seconds": 0.015835132,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.narrow17.after.r1/stderr",
+      "stdout": "query.narrow17.after.r1/stdout",
+      "time": "query.narrow17.after.r1/time.txt"
+    },
+    "query.narrow17.after.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 1482453.5790637403,
+        "lookup_seconds": 0.334148743,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.042356588,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.032425292,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.032603575,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.033429054,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.032020508,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.032845806,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.03230594,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.032302352,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.031622506,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.032237122,
+            "returned_bytes": 4454170
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 44541700,
+        "schema_fields": 17,
+        "selected_fields": 17,
+        "setup_seconds": 0.015446628,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.narrow17.after.r2/stderr",
+      "stdout": "query.narrow17.after.r2/stdout",
+      "time": "query.narrow17.after.r2/time.txt"
+    },
+    "query.narrow17.after.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 1474075.193535009,
+        "lookup_seconds": 0.336047986,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.041697569,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.03282611,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.033692155,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.032358468,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.031996072,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.031875347,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.032026369,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.032819287,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.033271831,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.033484778,
+            "returned_bytes": 4454170
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 44541700,
+        "schema_fields": 17,
+        "selected_fields": 17,
+        "setup_seconds": 0.014791177,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.narrow17.after.r3/stderr",
+      "stdout": "query.narrow17.after.r3/stdout",
+      "time": "query.narrow17.after.r3/time.txt"
+    },
+    "query.narrow17.before.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 727307.1011611661,
+        "lookup_seconds": 0.681087809,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.070442941,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.067179866,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.068848818,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.066491354,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.070172737,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.068132683,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.069243114,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.068592771,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.064854512,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.067129013,
+            "returned_bytes": 4454170
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 44541700,
+        "schema_fields": 17,
+        "selected_fields": 17,
+        "setup_seconds": 0.016719331,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.narrow17.before.r1/stderr",
+      "stdout": "query.narrow17.before.r1/stdout",
+      "time": "query.narrow17.before.r1/time.txt"
+    },
+    "query.narrow17.before.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 728607.2888919472,
+        "lookup_seconds": 0.679872419,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.073876362,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.067605461,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.06910694,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.069093025,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.068254972,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.067377236,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.068644889,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.067369711,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.064011842,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.064531981,
+            "returned_bytes": 4454170
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 44541700,
+        "schema_fields": 17,
+        "selected_fields": 17,
+        "setup_seconds": 0.014689417,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.narrow17.before.r2/stderr",
+      "stdout": "query.narrow17.before.r2/stdout",
+      "time": "query.narrow17.before.r2/time.txt"
+    },
+    "query.narrow17.before.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 745565.7654454346,
+        "lookup_seconds": 0.664408189,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.070271281,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.072038767,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.063421381,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.06542161,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.062698443,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.066021068,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.066886431,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.06665531,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.065252174,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.065741727,
+            "returned_bytes": 4454170
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 44541700,
+        "schema_fields": 17,
+        "selected_fields": 17,
+        "setup_seconds": 0.014594299,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.narrow17.before.r3/stderr",
+      "stdout": "query.narrow17.before.r3/stdout",
+      "time": "query.narrow17.before.r3/time.txt"
+    },
+    "query.narrow17.old.r1": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 1196974.513533257,
+        "lookup_seconds": 0.413843398,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.048310678,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.040290144,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.042992703,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.040803803,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.040763347,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.038876219,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.041902811,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.038807452,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.039305879,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.041790362,
+            "returned_bytes": 4454170
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 44541700,
+        "schema_fields": 17,
+        "selected_fields": 17,
+        "setup_seconds": 0.014813287,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.narrow17.old.r1/stderr",
+      "stdout": "query.narrow17.old.r1/stdout",
+      "time": "query.narrow17.old.r1/time.txt"
+    },
+    "query.narrow17.old.r2": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 1167589.5112419063,
+        "lookup_seconds": 0.424258693,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.048301962,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.041703571,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.043146931,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.039040235,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.040810055,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.042526545,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.045395003,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.039529979,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.044061066,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.039743346,
+            "returned_bytes": 4454170
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 44541700,
+        "schema_fields": 17,
+        "selected_fields": 17,
+        "setup_seconds": 0.0160963,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.narrow17.old.r2/stderr",
+      "stdout": "query.narrow17.old.r2/stdout",
+      "time": "query.narrow17.old.r2/time.txt"
+    },
+    "query.narrow17.old.r3": {
+      "query": {
+        "batch": 4096,
+        "batches": 130,
+        "digest_enabled": false,
+        "explicit_columns": true,
+        "gomaxprocs": 4,
+        "hits": 487090,
+        "keys": 49536,
+        "keys_per_second": 1158751.5142033834,
+        "lookup_seconds": 0.427494587,
+        "passes": [
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.052149857,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.042689519,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.040712242,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.049993175,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.03942328,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.040880977,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.042993055,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.038820586,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.041682521,
+            "returned_bytes": 4454170
+          },
+          {
+            "batches": 13,
+            "hits": 48709,
+            "lookup_seconds": 0.038149375,
+            "returned_bytes": 4454170
+          }
+        ],
+        "profiled": false,
+        "repeat": 10,
+        "returned_bytes": 44541700,
+        "schema_fields": 17,
+        "selected_fields": 17,
+        "setup_seconds": 0.015435998,
+        "threads": 4,
+        "total_keys": 495360
+      },
+      "stderr": "query.narrow17.old.r3/stderr",
+      "stdout": "query.narrow17.old.r3/stdout",
+      "time": "query.narrow17.old.r3/time.txt"
+    }
+  }
+}

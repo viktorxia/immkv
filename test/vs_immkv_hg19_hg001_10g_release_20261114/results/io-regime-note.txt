@@ -1,0 +1,12 @@
+At the end of the explicit-column batch runs, the NVMe read regime changed:
+`null.full568.baseline.r3` took 110.272 s (lookup) whereas r1/r2 took
+20.621/30.303 s, with nearly equal user CPU time (~44 s) and identical filesystem
+input counts. The following candidate r3 took 341.422 s. A live diskstats sample
+showed ~8 MiB/s and /proc/pressure/io showed about 29% full I/O pressure. Preserve
+these runs as observed; do not silently drop them or report their wall-clock
+ratio as a stable code-only regression. The explicit-column CPU-time increase
+(r1/r2 baseline ~44 s versus candidate ~106-107 s) predates that large slowdown.
+
+Full-output files and synthetic build artifacts outside the repository have not
+been authorized. Streamed full-output correctness verification is available and
+writes only small logs/FIFO endpoints under the repository's ignored tmp tree.

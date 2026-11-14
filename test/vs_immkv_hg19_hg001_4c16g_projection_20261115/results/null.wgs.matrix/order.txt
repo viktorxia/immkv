@@ -1,0 +1,17 @@
+null.wgs.narrow17.old.r1
+null.wgs.narrow17.before.r1
+null.wgs.narrow17.after.r1
+null.wgs.narrow17.after.r2
+null.wgs.narrow17.before.r2
+null.wgs.narrow17.old.r2
+null.wgs.narrow17.old.r3
+null.wgs.narrow17.before.r3
+null.wgs.narrow17.after.r3
+null.wgs.full17.old.r1
+null.wgs.full17.before.r1
+null.wgs.full17.after.r1
+null.wgs.full17.after.r2
+null.wgs.full17.before.r2
+null.wgs.full17.old.r2
+null.wgs.full17.old.r3
+null.wgs.full17.before.r3

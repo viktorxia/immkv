@@ -1,0 +1,32 @@
+{
+  "exact_stream_sha256_equal": true,
+  "expected_rows": 3933714,
+  "field_comparisons": 2234349552,
+  "field_count": 568,
+  "fields": "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_568_fields/fields568.tsv",
+  "hit_disagreements": 0,
+  "library": "/home/tian/immkv_test_nvme/gnomad/immkv",
+  "query": "/home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz",
+  "status": "passed",
+  "streams": {
+    "after": {
+      "bytes": 74419094211,
+      "producer_exit_status": 0,
+      "producer_hits": 3875208,
+      "producer_rows": 3933714,
+      "rows": 3933714,
+      "sha256": "d4fff4591cde1e83022fe329aadf47d4c142b87d1d63f2bbd863f21e0ea3db37"
+    },
+    "old": {
+      "bytes": 74419094211,
+      "producer_exit_status": 0,
+      "producer_hits": 3875208,
+      "producer_rows": 3933714,
+      "rows": 3933714,
+      "sha256": "d4fff4591cde1e83022fe329aadf47d4c142b87d1d63f2bbd863f21e0ea3db37"
+    }
+  },
+  "tolerance": 0,
+  "value_mismatches": 0,
+  "verifier_exit_status": 0
+}

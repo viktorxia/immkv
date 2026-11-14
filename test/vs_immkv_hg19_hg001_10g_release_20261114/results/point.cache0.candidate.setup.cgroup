@@ -1,0 +1,14 @@
+cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/run-r01d25afc0b8a4078a0d4c98edeee2d2d.scope
+memory.max=10737418240
+memory.swap.max=0
+command=/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_10g_release_20261114/bin/candidate/pointlookup -lib /home/tian/immkv_test_nvme/gnomad/immkv -query /home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz -n 100000 -threads 4 -cache 0 -warmup 10000 -seed 1 
+memory.peak
+175902720
+memory.events
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+sock_throttled 0

@@ -230,7 +230,7 @@ func getDirectBuf(n int) []byte {
 	if n > directMaxBucket {
 		raw := make([]byte, n+directAlign)
 		off := int((-uintptr(unsafe.Pointer(&raw[0]))) & (directAlign - 1))
-		return raw[off : off+n : n]
+		return raw[off : off+n : off+n]
 	}
 	i := directBucket(n)
 	if v := directBufPools[i].Get(); v != nil {
@@ -239,16 +239,17 @@ func getDirectBuf(n int) []byte {
 	size := 8 << 10 << i
 	raw := make([]byte, size+directAlign)
 	off := int((-uintptr(unsafe.Pointer(&raw[0]))) & (directAlign - 1))
-	b := raw[off : off+size : size] // 4KB 对齐、cap == 桶大小
+	b := raw[off : off+size : off+size] // 4KB 对齐、cap == 桶大小
 	return b[:n]
 }
 
 // putDirectBuf 归还对齐缓冲（按容量分桶；超桶的不收）。
 func putDirectBuf(b []byte) {
-	if cap(b) > directMaxBucket {
+	n := cap(b)
+	if n < 8<<10 || n > directMaxBucket || n&(n-1) != 0 {
 		return
 	}
-	directBufPools[directBucket(cap(b))].Put(&b)
+	directBufPools[directBucket(n)].Put(&b)
 }
 
 // driveDirect 是 O_DIRECT + io_uring 路径的读驱动（独占 ring 的唯一 goroutine），

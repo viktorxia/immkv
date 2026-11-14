@@ -1,0 +1,18 @@
+cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/run-rfdbe236709c74e4094005ac34b8c7a31.scope
+memory.max=17179869184
+memory.swap.max=0
+cpus=0,1,2,3
+GOMAXPROCS=4
+mode=timed
+timeout_seconds=180
+command=/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/old/annotate -in /home/tian/projects/immkv/test/vs_immkv_hg19_hg001_4c16g_projection_20261115/results/memory.chr22/resident-inputs/query.vcf -lib /home/tian/projects/immkv/test/vs_immkv_hg19_hg001_4c16g_projection_20261115/results/memory.chr22/resident-inputs/full -fields /home/tian/projects/immkv/test/vs_immkv_hg19_hg001_4c16g_projection_20261115/results/memory.chr22/resident-inputs/fields540.tsv -threads 4 -batch 4096 -out /dev/null 
+memory.peak
+11532451840
+memory.events
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+sock_throttled 0

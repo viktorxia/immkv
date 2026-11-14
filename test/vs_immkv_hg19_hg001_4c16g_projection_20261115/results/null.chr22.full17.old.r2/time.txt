@@ -1,0 +1,23 @@
+	Command being timed: "timeout --signal=TERM --kill-after=15s 180 /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/old/query-only -query /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_10g_release_20261114/query-chr22.vcf -lib /home/tian/immkv_test_nvme/gnomad/immkv -fields /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv -threads 4 -batch 4096 -repeat 10"
+	User time (seconds): 4.75
+	System time (seconds): 2.52
+	Percent of CPU this job got: 11%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:03.21
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 288740
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 277259
+	Voluntary context switches: 57995
+	Involuntary context switches: 1722
+	Swaps: 0
+	File system inputs: 5674960
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

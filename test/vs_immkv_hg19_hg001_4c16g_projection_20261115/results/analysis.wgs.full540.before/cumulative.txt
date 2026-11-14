@@ -1,0 +1,69 @@
+File: query-only
+Build ID: a6a37903a0245ef043549f31f190985172f90492
+Type: cpu
+Time: 2026-11-15 01:57:42 CST
+Duration: 154.69s, Total samples = 105.90s (68.46%)
+Showing nodes accounting for 96.26s, 90.90% of 105.90s total
+Dropped 318 nodes (cum <= 0.53s)
+Showing top 60 nodes out of 72
+      flat  flat%   sum%        cum   cum%
+     0.02s 0.019% 0.019%     45.72s 43.17%  main.lookupPass
+         0     0% 0.019%     45.72s 43.17%  main.main
+         0     0% 0.019%     45.72s 43.17%  main.run
+         0     0% 0.019%     45.72s 43.17%  runtime.main
+     0.09s 0.085%   0.1%     45.70s 43.15%  github.com/viktorxia/immkv.(*StreamDB).GetBatch
+     0.01s 0.0094%  0.11%     43.92s 41.47%  github.com/viktorxia/immkv.projectRecord
+     2.92s  2.76%  2.87%     42.47s 40.10%  github.com/viktorxia/immkv.walkRecord
+     2.98s  2.81%  5.68%     27.61s 26.07%  github.com/viktorxia/immkv.skipValue (inline)
+     0.01s 0.0094%  5.69%     25.17s 23.77%  github.com/viktorxia/immkv.(*StreamDB).GetBatch.func5
+     0.02s 0.019%  5.71%     25.13s 23.73%  github.com/viktorxia/immkv.decodeChunk
+     0.11s   0.1%  5.82%     25.03s 23.64%  github.com/viktorxia/immkv.decodeExtent
+         0     0%  5.82%     24.92s 23.53%  github.com/valyala/gozstd.DecompressDict (inline)
+         0     0%  5.82%     24.92s 23.53%  github.com/valyala/gozstd.decompressDict
+         0     0%  5.82%     24.92s 23.53%  github.com/viktorxia/immkv.(*cgoDecoder).decode
+     0.02s 0.019%  5.84%     24.86s 23.47%  github.com/valyala/gozstd.decompress
+    16.86s 15.92% 21.76%     24.63s 23.26%  github.com/viktorxia/immkv.decodeValue
+    22.62s 21.36% 43.12%     22.83s 21.56%  runtime.cgocall
+     0.09s 0.085% 43.20%     22.46s 21.21%  github.com/valyala/gozstd.decompressInternal
+     0.05s 0.047% 43.25%     22.37s 21.12%  github.com/valyala/gozstd._Cfunc_ZSTD_decompress_usingDDict_wrapper
+     0.03s 0.028% 43.28%     21.35s 20.16%  runtime.systemstack
+     3.39s  3.20% 46.48%     17.53s 16.55%  runtime.scanObject
+         0     0% 46.48%     17.50s 16.53%  runtime.gcBgMarkWorker
+         0     0% 46.48%     17.46s 16.49%  runtime.gcBgMarkWorker.func2
+     0.01s 0.0094% 46.49%     17.46s 16.49%  runtime.gcDrain
+         0     0% 46.49%     15.02s 14.18%  github.com/viktorxia/immkv.(*StreamDB).GetBatch.func3
+         0     0% 46.49%     15.01s 14.17%  github.com/viktorxia/immkv.driveDirect
+     0.02s 0.019% 46.51%     12.04s 11.37%  syscall.RawSyscall6
+         0     0% 46.51%     12.03s 11.36%  syscall.Syscall6
+    12.02s 11.35% 57.86%     12.02s 11.35%  internal/runtime/syscall/linux.Syscall6
+     0.01s 0.0094% 57.87%     11.57s 10.93%  github.com/viktorxia/immkv.(*ioUring).submitWait
+         0     0% 57.87%     11.21s 10.59%  runtime.gcDrainMarkWorkerIdle (inline)
+     3.09s  2.92% 60.78%      9.61s  9.07%  github.com/viktorxia/immkv.projectRecord.func1
+     0.12s  0.11% 60.90%      6.86s  6.48%  runtime.mallocgc
+         0     0% 60.90%      6.25s  5.90%  runtime.gcDrainMarkWorkerDedicated (inline)
+     4.97s  4.69% 65.59%      6.01s  5.68%  runtime.findObject
+     0.22s  0.21% 65.80%      5.98s  5.65%  runtime.mallocgcSmallNoscan
+     4.06s  3.83% 69.63%      5.63s  5.32%  github.com/viktorxia/immkv.decodeScalar
+     5.04s  4.76% 74.39%      5.04s  4.76%  runtime.memclrNoHeapPointers
+     0.12s  0.11% 74.50%      4.77s  4.50%  runtime.growslice
+         0     0% 74.50%      4.65s  4.39%  runtime.makeslice
+     3.94s  3.72% 78.22%      4.37s  4.13%  runtime.tryDeferToSpanScan
+     3.66s  3.46% 81.68%      3.66s  3.46%  runtime.memmove
+     0.06s 0.057% 81.74%      3.32s  3.14%  github.com/viktorxia/immkv.driveDirect.func2
+     0.01s 0.0094% 81.75%      3.11s  2.94%  github.com/viktorxia/immkv.getDirectBuf
+     0.05s 0.047% 81.79%      2.40s  2.27%  runtime.(*mcache).nextFree
+     1.88s  1.78% 83.57%      2.40s  2.27%  runtime.typePointers.next
+     0.07s 0.066% 83.64%      2.34s  2.21%  runtime.(*mcache).refill
+     2.28s  2.15% 85.79%      2.33s  2.20%  github.com/viktorxia/immkv.bitAt (inline)
+     2.08s  1.96% 87.75%      2.08s  1.96%  github.com/viktorxia/immkv.Field.isArray (inline)
+     0.04s 0.038% 87.79%      2.03s  1.92%  runtime.(*mcentral).cacheSpan
+         0     0% 87.79%      1.92s  1.81%  runtime.(*mcentral).grow
+         0     0% 87.79%      1.92s  1.81%  runtime.(*mheap).alloc
+     0.12s  0.11% 87.90%      1.92s  1.81%  runtime.(*mheap).allocSpan
+         0     0% 87.90%      1.91s  1.80%  runtime.(*mheap).alloc.func1
+     0.85s   0.8% 88.71%      1.90s  1.79%  runtime.greyobject
+     0.02s 0.019% 88.73%      1.55s  1.46%  runtime.bgsweep
+     0.60s  0.57% 89.29%      1.53s  1.44%  runtime.sweepone
+     0.09s 0.085% 89.38%      1.24s  1.17%  github.com/viktorxia/immkv.mergeJoin
+     1.02s  0.96% 90.34%      1.02s  0.96%  encoding/binary.Uvarint (inline)
+     0.59s  0.56% 90.90%      0.91s  0.86%  runtime.spanOf (inline)

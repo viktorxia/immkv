@@ -767,6 +767,9 @@ func TestWriterFinishRemovesPublishedVals(t *testing.T) {
 	if err := w.Finish(); err == nil {
 		t.Fatal("keys rename should fail")
 	}
+	if info, err := os.Stat(base + ".keys"); err != nil || !info.IsDir() {
+		t.Fatalf("未发布的 keys 目录应保留：%v", err)
+	}
 	for _, p := range []string{base + ".vals", base + ".keys.tmp", base + ".vals.tmp"} {
 		if _, statErr := os.Stat(p); !os.IsNotExist(statErr) {
 			t.Errorf("failed Finish left %s behind", p)
@@ -784,7 +787,7 @@ func TestWriterFinishRemovesPublishedVals(t *testing.T) {
 func TestCreateRejectsColManifest(t *testing.T) {
 	dir := t.TempDir()
 	base := filepath.Join(dir, "lib")
-	for _, ext := range []string{".col", ".manifest"} {
+	for _, ext := range []string{".col", ".manifest", ".col.tmp", ".manifest.tmp"} {
 		if err := os.WriteFile(base+ext, []byte("x"), 0o644); err != nil {
 			t.Fatal(err)
 		}

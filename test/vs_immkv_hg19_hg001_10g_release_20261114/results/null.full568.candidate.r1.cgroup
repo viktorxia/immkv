@@ -1,0 +1,14 @@
+cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/run-r730cf609b30748ffbf182fa3854a4b5c.scope
+memory.max=10737418240
+memory.swap.max=0
+command=/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_10g_release_20261114/bin/candidate/query-only -query /home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz -lib /home/tian/immkv_test_nvme/gnomad/immkv -fields /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_568_fields/fields568.tsv -threads 4 -batch 4096 
+memory.peak
+811016192
+memory.events
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+sock_throttled 0

@@ -12,6 +12,7 @@ import (
 	"crypto/rand"
 	"encoding/binary"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -360,27 +361,27 @@ func writeColumnar(base string, schema Schema, buildID [16]byte, stats SourceInf
 	}
 	defer s.Close()
 
+	var files buildFiles
 	colPath := base + ".col"
 	tmp := colPath + ".tmp"
-	f, err := os.Create(tmp)
+	f, err := files.create(tmp)
 	if err != nil {
 		return err
 	}
-	cleanup := func() {
-		f.Close()
-		os.Remove(tmp)
-		os.Remove(colPath)
-		os.Remove(base + ".manifest")
-		os.Remove(base + ".manifest.tmp")
-	}
+	defer func() {
+		if f != nil {
+			err = errors.Join(err, f.Close())
+		}
+		if err != nil {
+			err = errors.Join(err, files.cleanup())
+		}
+	}()
 	cw, err := newColWriter(f, schema, binWidth, buildID)
 	if err != nil {
-		cleanup()
 		return err
 	}
 	vr, err := newSeqValReader(base+".vals", s.dec)
 	if err != nil {
-		cleanup()
 		return err
 	}
 	defer vr.Close()
@@ -400,20 +401,16 @@ func writeColumnar(base string, schema Schema, buildID [16]byte, stats SourceInf
 	if err == nil {
 		err = f.Sync()
 	}
-	if cerr := f.Close(); err == nil {
-		err = cerr
-	}
+	err = errors.Join(err, f.Close())
+	f = nil
 	if err != nil {
-		cleanup()
 		return err
 	}
-	if err := os.Rename(tmp, colPath); err != nil {
-		cleanup()
+	if err := files.publish(tmp, colPath); err != nil {
 		return err
 	}
 	m, err := NewManifest(filepath.Base(base), schema)
 	if err != nil {
-		cleanup()
 		return err
 	}
 	m.BuildID = hex.EncodeToString(buildID[:])
@@ -423,27 +420,24 @@ func writeColumnar(base string, schema Schema, buildID [16]byte, stats SourceInf
 	m.NonFiniteFloats = nonFinite
 	stK, err := os.Stat(base + ".keys")
 	if err != nil {
-		cleanup()
 		return err
 	}
 	stV, err := os.Stat(base + ".vals")
 	if err != nil {
-		cleanup()
 		return err
 	}
 	stC, err := os.Stat(colPath)
 	if err != nil {
-		cleanup()
 		return err
 	}
 	m.KeysBytes = stK.Size()
 	m.ValsBytes = stV.Size()
 	m.ColBytes = stC.Size()
-	if err := WriteManifest(base+".manifest", m); err != nil {
-		cleanup()
+	raw, err := marshalManifest(m)
+	if err != nil {
 		return err
 	}
-	return nil
+	return writeBuildFile(base+".manifest", raw)
 }
 
 // newBuildID 产生 16 字节随机构建代号。

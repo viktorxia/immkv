@@ -1,0 +1,96 @@
+Preloaded /home/tian/immkv_test_nvme/gnomad/immkv/chr22.keys: 61885524 bytes
+Preloaded /home/tian/immkv_test_nvme/gnomad/immkv/chr22.vals: 3241316452 bytes
+Preloaded /home/tian/immkv_test_nvme/gnomad/immkv/chr22.col: 1656291273 bytes
+Preloaded /home/tian/immkv_test_nvme/gnomad/immkv/chr22.manifest: 64970 bytes
+Preloaded /home/tian/immkv_test_nvme/test/17_fields/lib17/chr22.keys: 61885524 bytes
+Preloaded /home/tian/immkv_test_nvme/test/17_fields/lib17/chr22.vals: 129195493 bytes
+Preloaded /home/tian/immkv_test_nvme/test/17_fields/lib17/chr22.col: 56450882 bytes
+Preloaded /home/tian/immkv_test_nvme/test/17_fields/lib17/chr22.manifest: 2082 bytes
+Preloaded /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_10g_release_20261114/query-chr22.vcf: 26643669 bytes
+Preloaded /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv: 281 bytes
+Preloaded /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_540_fields/fields540.tsv: 15217 bytes
+Preloaded /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_568_fields/fields568.tsv: 15863 bytes
+Starting digest.narrow17.old
+Starting digest.narrow17.before
+Starting digest.narrow17.after
+Starting digest.full17.old
+Starting digest.full17.before
+Starting digest.full17.after
+Starting digest.full540.old
+Starting digest.full540.before
+Starting digest.full540.after
+Starting digest.full568.old
+Starting digest.full568.before
+Starting digest.full568.after
+Starting digest.full568_default.old
+Starting digest.full568_default.before
+Starting digest.full568_default.after
+Starting query.narrow17.old.r1
+Starting query.narrow17.before.r1
+Starting query.narrow17.after.r1
+Starting query.narrow17.after.r2
+Starting query.narrow17.before.r2
+Starting query.narrow17.old.r2
+Starting query.narrow17.old.r3
+Starting query.narrow17.before.r3
+Starting query.narrow17.after.r3
+Starting query.full17.old.r1
+Starting query.full17.before.r1
+Starting query.full17.after.r1
+Starting query.full17.after.r2
+Starting query.full17.before.r2
+Starting query.full17.old.r2
+Starting query.full17.old.r3
+Starting query.full17.before.r3
+Starting query.full17.after.r3
+Starting query.full540.old.r1
+Starting query.full540.before.r1
+Starting query.full540.after.r1
+Starting query.full540.after.r2
+Starting query.full540.before.r2
+Starting query.full540.old.r2
+Starting query.full540.old.r3
+Starting query.full540.before.r3
+Starting query.full540.after.r3
+Starting query.full568.old.r1
+Starting query.full568.before.r1
+Starting query.full568.after.r1
+Starting query.full568.after.r2
+Starting query.full568.before.r2
+Starting query.full568.old.r2
+Starting query.full568.old.r3
+Starting query.full568.before.r3
+Starting query.full568.after.r3
+Starting query.full568_default.old.r1
+Starting query.full568_default.before.r1
+Starting query.full568_default.after.r1
+Starting query.full568_default.after.r2
+Starting query.full568_default.before.r2
+Starting query.full568_default.old.r2
+Starting query.full568_default.old.r3
+Starting query.full568_default.before.r3
+Starting query.full568_default.after.r3
+Starting annotation.narrow17.old.r1
+Starting annotation.narrow17.after.r1
+Starting annotation.narrow17.after.r2
+Starting annotation.narrow17.old.r2
+Starting annotation.narrow17.old.r3
+Starting annotation.narrow17.after.r3
+Starting annotation.full17.old.r1
+Starting annotation.full17.after.r1
+Starting annotation.full17.after.r2
+Starting annotation.full17.old.r2
+Starting annotation.full17.old.r3
+Starting annotation.full17.after.r3
+Starting annotation.full540.old.r1
+Starting annotation.full540.after.r1
+Starting annotation.full540.after.r2
+Starting annotation.full540.old.r2
+Starting annotation.full540.old.r3
+Starting annotation.full540.after.r3
+Starting annotation.full568.old.r1
+Starting annotation.full568.after.r1
+Starting annotation.full568.after.r2
+Starting annotation.full568.old.r2
+Starting annotation.full568.old.r3
+Starting annotation.full568.after.r3

@@ -1,0 +1,520 @@
+diff --git a/README.cn.md b/README.cn.md
+index a787684..81b505d 100644
+--- a/README.cn.md
++++ b/README.cn.md
+@@ -188,8 +188,9 @@ bcftools sort -O z -o sorted.vcf.gz in.vcf.gz
+ 
+ - **生命周期**：构建目标必须不存在——`immkv.Create` 与
+   `immkv.BuildFromVCFs` 拒绝覆盖已有库或目录。`Finish` 走临时文件 + fsync +
+-  rename；构建失败返回错误并清理本次创建的产物；提前结束用
+-  `immkv.Writer.Abort`，残留删除后重建。同一份数据文件可被任意多进程
++  rename；构建失败返回错误并清理本次创建的产物；构建期间调用方独占目标，
++  成功返回后才能打开。提前结束用 `immkv.Writer.Abort`，即使清理报错也只清理
++  一次，残留由调用方删除后重建。同一份数据文件可被任意多进程
+   同时打开（无锁），每个句柄内多 goroutine 并发安全。
+ - **查询错误**：`immkv.DB.Get`、`immkv.DB.GetPrefix`、`immkv.DB.Scan`、
+   `immkv.SimpleKVDB.Get` 在读取、解析或解压失败时返回 error；未命中是
+diff --git a/README.md b/README.md
+index b1c2d1d..9e84ad7 100644
+--- a/README.md
++++ b/README.md
+@@ -227,8 +227,10 @@ field dose series); highlights:
+ - **Lifecycle**: build targets must not already exist — `immkv.Create` and
+   `immkv.BuildFromVCFs` refuse to overwrite an existing library or directory.
+   `Finish` writes through temp files + fsync + rename; a failed build returns
+-  an error and cleans up the artifacts it created. Call `immkv.Writer.Abort`
+-  to stop early; delete leftovers and rebuild. The same data files can be
++  an error and cleans up the artifacts it created. The caller must exclusively
++  own the build target until the build returns, and open it only after success.
++  Call `immkv.Writer.Abort` to stop early; cleanup runs once even if it reports
++  an error, so delete any leftovers before rebuilding. The same data files can be
+   opened by any number of processes at once (no locks), and within one
+   handle, concurrent use by multiple goroutines is safe.
+ - **Query errors**: `immkv.DB.Get`, `immkv.DB.GetPrefix`, `immkv.DB.Scan`,
+diff --git a/col.go b/col.go
+index 8b07177..66ce078 100644
+--- a/col.go
++++ b/col.go
+@@ -12,6 +12,7 @@ import (
+ 	"crypto/rand"
+ 	"encoding/binary"
+ 	"encoding/hex"
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"os"
+@@ -360,27 +361,27 @@ func writeColumnar(base string, schema Schema, buildID [16]byte, stats SourceInf
+ 	}
+ 	defer s.Close()
+ 
++	var files buildFiles
+ 	colPath := base + ".col"
+ 	tmp := colPath + ".tmp"
+-	f, err := os.Create(tmp)
++	f, err := files.create(tmp)
+ 	if err != nil {
+ 		return err
+ 	}
+-	cleanup := func() {
+-		f.Close()
+-		os.Remove(tmp)
+-		os.Remove(colPath)
+-		os.Remove(base + ".manifest")
+-		os.Remove(base + ".manifest.tmp")
+-	}
++	defer func() {
++		if f != nil {
++			err = errors.Join(err, f.Close())
++		}
++		if err != nil {
++			err = errors.Join(err, files.cleanup())
++		}
++	}()
+ 	cw, err := newColWriter(f, schema, binWidth, buildID)
+ 	if err != nil {
+-		cleanup()
+ 		return err
+ 	}
+ 	vr, err := newSeqValReader(base+".vals", s.dec)
+ 	if err != nil {
+-		cleanup()
+ 		return err
+ 	}
+ 	defer vr.Close()
+@@ -400,20 +401,16 @@ func writeColumnar(base string, schema Schema, buildID [16]byte, stats SourceInf
+ 	if err == nil {
+ 		err = f.Sync()
+ 	}
+-	if cerr := f.Close(); err == nil {
+-		err = cerr
+-	}
++	err = errors.Join(err, f.Close())
++	f = nil
+ 	if err != nil {
+-		cleanup()
+ 		return err
+ 	}
+-	if err := os.Rename(tmp, colPath); err != nil {
+-		cleanup()
++	if err := files.publish(tmp, colPath); err != nil {
+ 		return err
+ 	}
+ 	m, err := NewManifest(filepath.Base(base), schema)
+ 	if err != nil {
+-		cleanup()
+ 		return err
+ 	}
+ 	m.BuildID = hex.EncodeToString(buildID[:])
+@@ -423,27 +420,24 @@ func writeColumnar(base string, schema Schema, buildID [16]byte, stats SourceInf
+ 	m.NonFiniteFloats = nonFinite
+ 	stK, err := os.Stat(base + ".keys")
+ 	if err != nil {
+-		cleanup()
+ 		return err
+ 	}
+ 	stV, err := os.Stat(base + ".vals")
+ 	if err != nil {
+-		cleanup()
+ 		return err
+ 	}
+ 	stC, err := os.Stat(colPath)
+ 	if err != nil {
+-		cleanup()
+ 		return err
+ 	}
+ 	m.KeysBytes = stK.Size()
+ 	m.ValsBytes = stV.Size()
+ 	m.ColBytes = stC.Size()
+-	if err := WriteManifest(base+".manifest", m); err != nil {
+-		cleanup()
++	raw, err := marshalManifest(m)
++	if err != nil {
+ 		return err
+ 	}
+-	return nil
++	return writeBuildFile(base+".manifest", raw)
+ }
+ 
+ // newBuildID 产生 16 字节随机构建代号。
+diff --git a/docs/ingest-design.md b/docs/ingest-design.md
+index 1b23821..5fd3fc8 100644
+--- a/docs/ingest-design.md
++++ b/docs/ingest-design.md
+@@ -79,6 +79,8 @@ func BuildFromTSVs(basePath string, tsvs []string, opts BuildOptions) error
+ 
+ - 每条染色体 `outdir/chr<ChromName>.keys` + `.vals` + `.col` + `.manifest`。
+ - `outdir` 必须不存在（父目录可以存在）；已存在即报错，包括空目录，绝不覆盖。
++- 构建期间调用方独占输出目录或文件前缀，不删除或替换构建文件；入口成功返回后
++  才能打开库。
+ - 全部染色体 `Finish` 成功后写：
+   - `vcf.raw.header`：第一个输入文件的完整头（所有 `##` 行 + `#CHROM` 行），
+     逐字节保留。
+diff --git a/immkv.go b/immkv.go
+index db8dd30..b21b463 100644
+--- a/immkv.go
++++ b/immkv.go
+@@ -24,7 +24,8 @@
+ //
+ // 生命周期契约：
+ //   - Create 的目标文件必须不存在；已有库不会被覆盖，重建前先删除旧文件。
+-//   - Finish 走临时文件 + fsync + rename；失败时返回错误并清掉本次的 .tmp。
++//   - Finish 走临时文件 + fsync + rename；失败时返回错误并清理本次创建的文件。
++//   - 构建期间调用方独占目标，Finish 成功后才能打开库。
+ //   - 同一份数据文件可被任意多进程同时打开（无锁）。
+ //   - 查询返回的切片只保证到下一次查询前有效，要保留就拷贝。
+ //
+@@ -132,6 +133,7 @@ type Writer struct {
+ 	valsTmp       string
+ 	kf, vf        *os.File
+ 	kw, vw        *bufio.Writer
++	files         buildFiles
+ 	opts          CreateOptions
+ 	rawBelow      int
+ 	packTarget    int // <0：每值独立成帧模式（配合训练字典）
+@@ -145,7 +147,7 @@ type Writer struct {
+ 
+ 	mode     int8  // 0 未定，1 任意序（Add），2 组升序（AddSorted）；两种模式不可混用
+ 	finished bool  // Finish 已被调用（无论成败）
+-	closed   bool  // 资源已释放，Abort/Finish 成功后再调用无操作
++	closed   bool  // Finish/Abort 已结束，包括清理失败；不再重复清理
+ 	err      error // 首个构建错误；一旦置位，后续 Add/AddSorted/Finish 都返回它
+ 
+ 	recs   []kvRec // Add 全量驻存；AddSorted 是当前攒集缓冲
+@@ -178,7 +180,7 @@ type Writer struct {
+ // 删除残留再重建。Finish 前磁盘上只有两个 .tmp 文件。CreateOptions.Schema
+ // 决定 Add/AddSorted 收到的是原始值还是已编码 record：空 schema 由 writer
+ // 包 record，非空 schema 要求调用方自己编码。
+-func Create(basePath string, opts CreateOptions) (*Writer, error) {
++func Create(basePath string, opts CreateOptions) (_ *Writer, err error) {
+ 	if len(opts.Schema) > 0 {
+ 		if err := Schema(opts.Schema).Validate(); err != nil {
+ 			return nil, err
+@@ -186,40 +188,37 @@ func Create(basePath string, opts CreateOptions) (*Writer, error) {
+ 	}
+ 	kp, vp := basePath+".keys", basePath+".vals"
+ 	kt, vt := kp+".tmp", vp+".tmp"
+-	// .col/.manifest 一并检查：避免与 BuildFromTSVs 等入口的残留混建。
+-	for _, p := range []string{kp, vp, kt, vt, basePath + ".col", basePath + ".manifest"} {
++	for _, p := range []string{kp, vp, kt, vt, basePath + ".col", basePath + ".manifest", basePath + ".col.tmp", basePath + ".manifest.tmp"} {
+ 		if _, err := os.Lstat(p); err == nil {
+ 			return nil, fmt.Errorf("immkv: %s already exists; delete it and rebuild", p)
+ 		} else if !os.IsNotExist(err) {
+ 			return nil, err
+ 		}
+ 	}
+-	kf, err := os.OpenFile(kt, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
++	w := &Writer{
++		base: basePath, keysPath: kp, valsPath: vp, keysTmp: kt, valsTmp: vt,
++		opts: opts, wrapRawValues: len(opts.Schema) == 0,
++	}
++	defer func() {
++		if err != nil {
++			w.closeEnc()
++			err = errors.Join(err, w.abort())
++		}
++	}()
++	w.kf, err = w.files.create(kt)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+-	vf, err := os.OpenFile(vt, os.O_WRONLY|os.O_CREATE|os.O_EXCL, 0o644)
++	w.vf, err = w.files.create(vt)
+ 	if err != nil {
+-		kf.Close()
+-		os.Remove(kt)
+ 		return nil, err
+ 	}
+-	enc, err := zstd.NewWriter(nil)
++	w.enc, err = zstd.NewWriter(nil)
+ 	if err != nil {
+-		kf.Close()
+-		vf.Close()
+-		os.Remove(kt)
+-		os.Remove(vt)
+ 		return nil, err
+ 	}
+-	w := &Writer{
+-		base: basePath, keysPath: kp, valsPath: vp, keysTmp: kt, valsTmp: vt,
+-		kf: kf, vf: vf,
+-		kw:   bufio.NewWriterSize(kf, 1<<20),
+-		vw:   bufio.NewWriterSize(vf, 1<<20),
+-		opts: opts, enc: enc,
+-		wrapRawValues: len(opts.Schema) == 0,
+-	}
++	w.kw = bufio.NewWriterSize(w.kf, 1<<20)
++	w.vw = bufio.NewWriterSize(w.vf, 1<<20)
+ 	if w.opts.RawValueBelow <= 0 {
+ 		w.rawBelow = defaultRawValueBelow
+ 	} else {
+@@ -235,11 +234,9 @@ func Create(basePath string, opts CreateOptions) (*Writer, error) {
+ 	}
+ 	// 两个文件各预留 64B 头，Finish 时回填
+ 	if _, err := w.kw.Write(make([]byte, headerSize)); err != nil {
+-		w.abort()
+ 		return nil, err
+ 	}
+ 	if _, err := w.vw.Write(make([]byte, headerSize)); err != nil {
+-		w.abort()
+ 		return nil, err
+ 	}
+ 	w.keysAt, w.valsAt = headerSize, headerSize
+@@ -647,52 +644,35 @@ func (w *Writer) blkLensToBytes() []byte {
+ 	return out
+ }
+ 
+-// Finish 排序（Add 模式）、落盘锚点、回填两个文件头、fsync、rename，然后
+-// 关闭构建器。再次调用返回错误。构建期间出现过错误时，Finish 返回该错误且
+-// 不发布任何文件。任何一步失败都会清掉本次构建的全部产物（.tmp 与已
+-// rename 出去的正式文件）。
++// Finish 排序（Add 模式）、落盘锚点、回填两个文件头、fsync，再发布两个文件。
++// 再次调用返回错误。构建期间出现过错误时，Finish 返回该错误且不发布任何文件。
++// 失败时只清理本次创建或发布的文件，目标文件已存在时绝不覆盖。
+ func (w *Writer) Finish() error {
+ 	if w.finished {
+ 		return errors.New("immkv: Writer already finished")
+ 	}
+ 	w.finished = true
+-	if w.err != nil {
+-		w.closeEnc()
+-		cerr := w.abort()
+-		w.closed = true // 资源已释放；后续 Abort 不再执行清理，避免误删同路径新 writer 的文件
+-		if cerr != nil {
+-			return fmt.Errorf("%w; cleanup: %v", w.err, cerr)
+-		}
+-		return w.err
++	err := w.err
++	if err == nil {
++		err = w.finish()
+ 	}
+-	err := w.finish()
+ 	w.closeEnc()
+ 	if err != nil {
+-		cerr := w.abort()
+-		w.closed = true
+-		if cerr != nil {
+-			return fmt.Errorf("%w; cleanup: %v", err, cerr)
+-		}
+-		return err
++		err = errors.Join(err, w.abort())
+ 	}
+ 	w.closed = true
+-	return nil
++	return err
+ }
+ 
+-// Abort 放弃构建：关闭文件与编码器、删除本次构建的产物。幂等；Finish
+-// （无论成败）之后调用是无操作并返回 nil——清理只做一次，重试删除只会
+-// 误删同路径新 writer 的文件。
++// Abort 放弃构建：关闭文件与编码器，只删除本次创建的文件。幂等；第一次调用
++// 即使清理报错也会结束，残留由调用方处理。Finish 之后调用不再执行清理。
+ func (w *Writer) Abort() error {
+ 	if w.closed {
+ 		return nil
+ 	}
+-	w.finished = true
++	w.finished, w.closed = true, true
+ 	w.closeEnc()
+-	if err := w.abort(); err != nil {
+-		return err
+-	}
+-	w.closed = true
+-	return nil
++	return w.abort()
+ }
+ 
+ func (w *Writer) closeEnc() {
+@@ -747,19 +727,21 @@ func (w *Writer) finish() error {
+ 	if err := w.vf.Sync(); err != nil {
+ 		return err
+ 	}
+-	if err := w.kf.Close(); err != nil {
+-		return err
+-	}
++	err := w.kf.Close()
+ 	w.kf = nil
+-	if err := w.vf.Close(); err != nil {
++	if err != nil {
+ 		return err
+ 	}
++	err = w.vf.Close()
+ 	w.vf = nil
+-	// vals 先换、keys 后换：keys 文件的 rename 是构建可见性的分界
+-	if err := os.Rename(w.valsTmp, w.valsPath); err != nil {
++	if err != nil {
++		return err
++	}
++	// 值文件先发布；任一目标已经存在就报错，不覆盖其他文件。
++	if err := w.files.publish(w.valsTmp, w.valsPath); err != nil {
+ 		return err
+ 	}
+-	return os.Rename(w.keysTmp, w.keysPath)
++	return w.files.publish(w.keysTmp, w.keysPath)
+ }
+ 
+ func (w *Writer) writeKeysHeader(indexOff uint64) error {
+@@ -786,27 +768,16 @@ func (w *Writer) writeValsHeader() error {
+ 	return err
+ }
+ 
+-// abort 清理失败路径：关闭文件、删除本次构建的产物，返回首个清理错误。
+-// 正式路径若存在必为本次 rename 出去的文件（Create 的独占检查保证），
+-// 删除它们不会碰到别人的库。
++// abort 关闭尚未释放的文件，清理本次创建或发布的路径；清单只消耗一次。
+ func (w *Writer) abort() error {
+-	var first error
++	var err error
+ 	if w.kf != nil {
+-		if err := w.kf.Close(); err != nil {
+-			first = err
+-		}
++		err = errors.Join(err, w.kf.Close())
+ 		w.kf = nil
+ 	}
+ 	if w.vf != nil {
+-		if err := w.vf.Close(); err != nil && first == nil {
+-			first = err
+-		}
++		err = errors.Join(err, w.vf.Close())
+ 		w.vf = nil
+ 	}
+-	for _, p := range []string{w.keysTmp, w.valsTmp, w.keysPath, w.valsPath} {
+-		if err := os.Remove(p); err != nil && !os.IsNotExist(err) && first == nil {
+-			first = err
+-		}
+-	}
+-	return first
++	return errors.Join(err, w.files.cleanup())
+ }
+diff --git a/immkv_test.go b/immkv_test.go
+index ed68111..a74877a 100644
+--- a/immkv_test.go
++++ b/immkv_test.go
+@@ -767,6 +767,9 @@ func TestWriterFinishRemovesPublishedVals(t *testing.T) {
+ 	if err := w.Finish(); err == nil {
+ 		t.Fatal("keys rename should fail")
+ 	}
++	if info, err := os.Stat(base + ".keys"); err != nil || !info.IsDir() {
++		t.Fatalf("未发布的 keys 目录应保留：%v", err)
++	}
+ 	for _, p := range []string{base + ".vals", base + ".keys.tmp", base + ".vals.tmp"} {
+ 		if _, statErr := os.Stat(p); !os.IsNotExist(statErr) {
+ 			t.Errorf("failed Finish left %s behind", p)
+@@ -784,7 +787,7 @@ func TestWriterFinishRemovesPublishedVals(t *testing.T) {
+ func TestCreateRejectsColManifest(t *testing.T) {
+ 	dir := t.TempDir()
+ 	base := filepath.Join(dir, "lib")
+-	for _, ext := range []string{".col", ".manifest"} {
++	for _, ext := range []string{".col", ".manifest", ".col.tmp", ".manifest.tmp"} {
+ 		if err := os.WriteFile(base+ext, []byte("x"), 0o644); err != nil {
+ 			t.Fatal(err)
+ 		}
+diff --git a/ingest.go b/ingest.go
+index 0a1ddbf..82f5d1e 100644
+--- a/ingest.go
++++ b/ingest.go
+@@ -51,15 +51,6 @@ func BuildFromTSVs(basePath string, tsvs []string, opts BuildOptions) (err error
+ 	if err := os.MkdirAll(filepath.Dir(basePath), 0o755); err != nil {
+ 		return err
+ 	}
+-	// 目标与本次构建会写的全部产物都不允许预先存在，保证失败清理只删自己的。
+-	for _, ext := range []string{".keys", ".vals", ".col", ".manifest", ".keys.tmp", ".vals.tmp"} {
+-		p := basePath + ext
+-		if _, err := os.Lstat(p); err == nil {
+-			return fmt.Errorf("immkv: %s already exists; delete it and rebuild", p)
+-		} else if !os.IsNotExist(err) {
+-			return err
+-		}
+-	}
+ 	w, err := Create(basePath, CreateOptions{
+ 		RawValueBelow: opts.RawValueBelow,
+ 		PackTarget:    opts.PackTarget,
+@@ -69,12 +60,7 @@ func BuildFromTSVs(basePath string, tsvs []string, opts BuildOptions) (err error
+ 	}
+ 	defer func() {
+ 		if err != nil {
+-			if aerr := w.Abort(); aerr != nil {
+-				err = fmt.Errorf("%w; cleanup: %v", err, aerr)
+-			}
+-			if rerr := removeBaseArtifacts(basePath); rerr != nil {
+-				err = fmt.Errorf("%w; cleanup: %v", err, rerr)
+-			}
++			err = errors.Join(err, w.Abort(), w.files.cleanup())
+ 		}
+ 	}()
+ 	for _, path := range tsvs {
+@@ -92,18 +78,6 @@ func BuildFromTSVs(basePath string, tsvs []string, opts BuildOptions) (err error
+ 	return writeColumnar(basePath, simpleKVSchema(), buildID, SourceInfoOrder{}, 0, 0)
+ }
+ 
+-// removeBaseArtifacts 删除 basePath 及 .tmp 后缀的全部构建产物，忽略不存在的
+-// 文件，返回首个删除错误。只用于本次构建创建的目标（Create 已保证开始时不存在）。
+-func removeBaseArtifacts(basePath string) error {
+-	var first error
+-	for _, ext := range []string{".keys", ".vals", ".col", ".manifest", ".keys.tmp", ".vals.tmp"} {
+-		if err := os.Remove(basePath + ext); err != nil && !os.IsNotExist(err) && first == nil {
+-			first = err
+-		}
+-	}
+-	return first
+-}
+-
+ // addTSVFile 把一个 TSV 文件的记录按顺序喂给 w。行切片会被 AddSorted 拷贝，
+ // 调用方可复用扫描缓冲。
+ func addTSVFile(w *Writer, path string) error {
+@@ -198,10 +172,10 @@ func BuildFromVCFs(outdir string, vcfs []string, fields []string, prefix string,
+ 			return err
+ 		}
+ 	}
+-	if err := writeFileAtomic(filepath.Join(outdir, vcfRawHeaderName), plan.raw); err != nil {
++	if err := writeBuildFile(filepath.Join(outdir, vcfRawHeaderName), plan.raw); err != nil {
+ 		return err
+ 	}
+-	return writeFileAtomic(filepath.Join(outdir, vcfImmkvHeaderName),
++	return writeBuildFile(filepath.Join(outdir, vcfImmkvHeaderName),
+ 		buildImmkvHeader(plan.header.fileFormat, plan.selectedFields))
+ }
+ 
+diff --git a/iouring_other.go b/iouring_other.go
+index 694aff7..f8b5fd7 100644
+--- a/iouring_other.go
++++ b/iouring_other.go
+@@ -11,6 +11,10 @@ var errIOUringUnsupported = errors.New("immkv: io_uring 仅 linux 可用")
+ 
+ func newIOUring(entries uint32) (*ioUring, error) { return nil, errIOUringUnsupported }
+ 
++func (r *ioUring) close() {}
++
++func putDirectBuf(buf []byte) {}
++
+ // driveDirect 非 linux 不可达（newIOUring 恒失败）。
+ func driveDirect(r *ioUring, extCh <-chan []extent, decCh chan<- []extent,
+ 	abort <-chan struct{}, fail func(error)) {
+diff --git a/manifest.go b/manifest.go
+index 758d6c5..73c5f1f 100644
+--- a/manifest.go
++++ b/manifest.go
+@@ -205,13 +205,20 @@ func ReadSchema(dir string) (Schema, error) {
+ 
+ // WriteManifest 校验后原子写 base.manifest。
+ func WriteManifest(path string, m *Manifest) error {
+-	if err := m.Validate(); err != nil {
++	raw, err := marshalManifest(m)
++	if err != nil {
+ 		return err
+ 	}
++	return writeFileAtomic(path, raw)
++}
++
++func marshalManifest(m *Manifest) ([]byte, error) {
++	if err := m.Validate(); err != nil {
++		return nil, err
++	}
+ 	raw, err := json.MarshalIndent(m, "", "  ")
+ 	if err != nil {
+-		return err
++		return nil, err
+ 	}
+-	raw = append(raw, '\n')
+-	return writeFileAtomic(path, raw)
++	return append(raw, '\n'), nil
+ }

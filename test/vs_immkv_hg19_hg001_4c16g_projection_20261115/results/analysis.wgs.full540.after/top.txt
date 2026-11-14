@@ -1,0 +1,62 @@
+File: query-only
+Build ID: 85f28d5eb1640e12066109feac9e924685fde01f
+Type: cpu
+Time: 2026-11-15 02:31:51 CST
+Duration: 14.84s, Total samples = 41.60s (280.27%)
+Showing nodes accounting for 39.62s, 95.24% of 41.60s total
+Dropped 175 nodes (cum <= 0.21s)
+      flat  flat%   sum%        cum   cum%
+    19.02s 45.72% 45.72%     19.07s 45.84%  runtime.cgocall
+    10.19s 24.50% 70.22%     10.19s 24.50%  internal/runtime/syscall/linux.Syscall6
+     5.96s 14.33% 84.54%      6.93s 16.66%  github.com/viktorxia/immkv.(*recordProjection).appendRecord
+     0.84s  2.02% 86.56%      0.84s  2.02%  runtime.memclrNoHeapPointers
+     0.68s  1.63% 88.20%      0.87s  2.09%  runtime.findObject
+     0.61s  1.47% 89.66%      0.66s  1.59%  runtime.tryDeferToSpanScan
+     0.60s  1.44% 91.11%      0.60s  1.44%  encoding/binary.Uvarint (inline)
+     0.40s  0.96% 92.07%      2.67s  6.42%  runtime.scanObject
+     0.35s  0.84% 92.91%      0.42s  1.01%  runtime.typePointers.next
+     0.24s  0.58% 93.49%      0.24s  0.58%  runtime.memmove
+     0.23s  0.55% 94.04%      0.37s  0.89%  runtime.greyobject
+     0.16s  0.38% 94.42%     27.11s 65.17%  github.com/viktorxia/immkv.decodeExtent
+     0.09s  0.22% 94.64%      0.70s  1.68%  github.com/viktorxia/immkv.mergeJoin.func1 (inline)
+     0.06s  0.14% 94.78%     19.13s 45.99%  github.com/valyala/gozstd.decompressInternal
+     0.04s 0.096% 94.88%      1.06s  2.55%  github.com/viktorxia/immkv.mergeJoin
+     0.03s 0.072% 94.95%      0.21s   0.5%  github.com/viktorxia/immkv.buildExtents
+     0.03s 0.072% 95.02%      0.21s   0.5%  sort.Search (inline)
+     0.02s 0.048% 95.07%     19.22s 46.20%  github.com/valyala/gozstd.decompressDict
+     0.02s 0.048% 95.12%      1.37s  3.29%  main.lookupPass
+     0.01s 0.024% 95.14%     19.14s 46.01%  github.com/valyala/gozstd.decompress
+     0.01s 0.024% 95.17%     19.23s 46.23%  github.com/viktorxia/immkv.(*cgoDecoder).decode
+     0.01s 0.024% 95.19%     10.23s 24.59%  github.com/viktorxia/immkv.driveDirect
+     0.01s 0.024% 95.22%      0.23s  0.55%  github.com/viktorxia/immkv.driveDirect.func2
+     0.01s 0.024% 95.24%     10.20s 24.52%  syscall.RawSyscall6
+         0     0% 95.24%     19.22s 46.20%  github.com/valyala/gozstd.DecompressDict (inline)
+         0     0% 95.24%     19.07s 45.84%  github.com/valyala/gozstd._Cfunc_ZSTD_decompress_usingDDict_wrapper
+         0     0% 95.24%      1.35s  3.25%  github.com/viktorxia/immkv.(*StreamDB).GetBatch
+         0     0% 95.24%     10.23s 24.59%  github.com/viktorxia/immkv.(*StreamDB).GetBatch.func3
+         0     0% 95.24%     27.14s 65.24%  github.com/viktorxia/immkv.(*StreamDB).GetBatch.func5
+         0     0% 95.24%      9.85s 23.68%  github.com/viktorxia/immkv.(*ioUring).submitWait
+         0     0% 95.24%     27.12s 65.19%  github.com/viktorxia/immkv.decodeChunk
+         0     0% 95.24%      7.56s 18.17%  github.com/viktorxia/immkv.decodeExtent.func2 (inline)
+         0     0% 95.24%      0.34s  0.82%  internal/poll.(*FD).Pread
+         0     0% 95.24%      0.34s  0.82%  internal/poll.(*FD).Pread.func1 (inline)
+         0     0% 95.24%      0.34s  0.82%  internal/poll.ignoringEINTR2[go.shape.int] (inline)
+         0     0% 95.24%      1.37s  3.29%  main.main
+         0     0% 95.24%      1.37s  3.29%  main.run
+         0     0% 95.24%      0.34s  0.82%  os.(*File).ReadAt
+         0     0% 95.24%      0.34s  0.82%  os.(*File).pread (inline)
+         0     0% 95.24%      2.70s  6.49%  runtime.gcBgMarkWorker
+         0     0% 95.24%      2.67s  6.42%  runtime.gcBgMarkWorker.func2
+         0     0% 95.24%      2.67s  6.42%  runtime.gcDrain
+         0     0% 95.24%      1.05s  2.52%  runtime.gcDrainMarkWorkerDedicated (inline)
+         0     0% 95.24%      1.62s  3.89%  runtime.gcDrainMarkWorkerIdle (inline)
+         0     0% 95.24%      0.21s   0.5%  runtime.growslice
+         0     0% 95.24%      1.37s  3.29%  runtime.main
+         0     0% 95.24%      0.82s  1.97%  runtime.makeslice
+         0     0% 95.24%      0.98s  2.36%  runtime.mallocgc
+         0     0% 95.24%      0.93s  2.24%  runtime.mallocgcLarge
+         0     0% 95.24%      0.79s  1.90%  runtime.memclrNoHeapPointersChunked
+         0     0% 95.24%      2.93s  7.04%  runtime.systemstack
+         0     0% 95.24%      0.34s  0.82%  syscall.Pread (inline)
+         0     0% 95.24%     10.19s 24.50%  syscall.Syscall6
+         0     0% 95.24%      0.34s  0.82%  syscall.pread

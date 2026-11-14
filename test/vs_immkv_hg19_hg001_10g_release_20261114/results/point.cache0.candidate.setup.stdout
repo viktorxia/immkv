@@ -1,0 +1,2 @@
+{"phase":"sampled","count":100000,"hits":98486,"threads":4,"elapsed_sec":0.302824921,"qps":330223.8127224674,"mean_ns":11578.05218,"p50_ns":9807,"p99_ns":19164,"p999_ns":119874}
+{"phase":"misses","count":100000,"hits":0,"threads":4,"elapsed_sec":0.068577551,"qps":1458203.1370586564,"mean_ns":2544.25523,"p50_ns":2184,"p99_ns":5941,"p999_ns":19575}

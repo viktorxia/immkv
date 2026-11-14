@@ -1,0 +1,238 @@
+Total: 105.90s
+ROUTINE ======================== github.com/viktorxia/immkv.(*StreamDB).GetBatch in stream.go
+      90ms     45.70s (flat, cum) 43.15% of Total
+         .          .    144:func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
+         .          .    145:	if len(keys) == 0 {
+         .          .    146:		return [][]byte{}, nil
+         .          .    147:	}
+         .          .    148:	for i := 1; i < len(keys); i++ {
+         .       20ms    149:		if bytes.Compare(keys[i-1], keys[i]) > 0 {
+         .          .    150:			return nil, ErrUnsorted
+         .          .    151:		}
+         .          .    152:	}
+         .          .    153:	out := make([][]byte, len(keys))
+         .          .    154:	// \u4e09\u7ea7\u6d41\u6c34\u7ebf\uff1a\u751f\u4ea7\u8005\uff08\u672c goroutine\uff0c\u5408\u5e76\u8fde\u63a5\u987a\u626b\u952e\u6d41\uff09\u2192 \u8bfb\u6c60\uff08Threads \u8def
+         .          .    155:	// \u5728\u9014\u8bfb\uff09\u2192 \u89e3\u538b\u6c60\uff08Threads \u8def\uff0cCPU \u7531 GOMAXPROCS \u515c\u5e95\uff09\u3002\u8bfb\u4e0e\u89e3\u538b\u5206\u6c60
+         .          .    156:	// \u89e3\u8026\uff0c\u78c1\u76d8\u7b49\u5f85\u4e0d\u5360\u89e3\u538b\u7684 CPU \u65f6\u95f4\u3002
+         .          .    157:	var (
+         .          .    158:		extCh  = make(chan []extent, 4) // \u751f\u4ea7\u8005 \u2192 \u8bfb\u6c60
+         .          .    159:		decCh  = make(chan []extent, 8) // \u8bfb\u6c60 \u2192 \u89e3\u538b\u6c60
+         .          .    160:		abort  = make(chan struct{})
+         .          .    161:		wgRead sync.WaitGroup
+         .          .    162:		wgDec  sync.WaitGroup
+         .          .    163:		errMu  sync.Mutex
+         .          .    164:		ferr   error
+         .          .    165:	)
+         .          .    166:	fail := func(err error) {
+         .          .    167:		errMu.Lock()
+         .          .    168:		defer errMu.Unlock()
+         .          .    169:		if ferr == nil {
+         .          .    170:			ferr = err
+         .          .    171:			close(abort)
+         .          .    172:		}
+         .          .    173:	}
+         .          .    174:	failed := func() bool {
+         .          .    175:		errMu.Lock()
+         .          .    176:		defer errMu.Unlock()
+         .          .    177:		return ferr != nil
+         .          .    178:	}
+         .          .    179:	wgDec.Add(d.threads)
+         .       90ms    180:	if r, rerr := newIOUring(512); rerr == nil && d.directOK() {
+         .          .    181:		// O_DIRECT + io_uring\uff1a\u5355\u9a71\u52a8 goroutine \u6df1\u961f\u5217\u5f02\u6b65\u8bfb\uff08\u7ed5\u5f00\u9875\u7f13\u5b58\uff0c
+         .          .    182:		// \u5728\u9014\u8bfb\u6df1\u5ea6\u4e0e\u7ebf\u7a0b\u6570\u89e3\u8026\uff1b\u7ebf\u7a0b\u9884\u7b97\u5168\u90e8\u7559\u7ed9\u89e3\u538b\u6c60\uff09
+         .          .    183:		defer r.close()
+         .          .    184:		wgRead.Add(1)
+         .          .    185:		go func() {
+         .          .    186:			defer wgRead.Done()
+         .          .    187:			driveDirect(r, extCh, decCh, abort, fail)
+         .          .    188:		}()
+         .          .    189:	} else {
+         .          .    190:		wgRead.Add(d.threads)
+         .          .    191:		for w := 0; w < d.threads; w++ {
+         .          .    192:			go func() { // \u8bfb\u6c60\uff08io_uring \u6216 O_DIRECT \u4e0d\u53ef\u7528\u65f6\u7684\u515c\u5e95\uff09
+         .          .    193:				defer wgRead.Done()
+         .          .    194:				for {
+         .          .    195:					select {
+         .          .    196:					case ch, ok := <-extCh:
+         .          .    197:						if !ok {
+         .          .    198:							return
+         .          .    199:						}
+         .          .    200:						if err := readChunk(ch); err != nil {
+         .          .    201:							fail(err)
+         .          .    202:							return
+         .          .    203:						}
+         .          .    204:						select {
+         .          .    205:						case decCh <- ch:
+         .          .    206:						case <-abort:
+         .          .    207:							return
+         .          .    208:						}
+         .          .    209:					case <-abort:
+         .          .    210:						return
+         .          .    211:					}
+         .          .    212:				}
+         .          .    213:			}()
+         .          .    214:		}
+         .          .    215:	}
+         .          .    216:	for w := 0; w < d.threads; w++ {
+         .          .    217:		go func() { // \u89e3\u538b\u6c60
+         .          .    218:			defer wgDec.Done()
+         .          .    219:			for {
+         .          .    220:				select {
+         .          .    221:				case ch, ok := <-decCh:
+         .          .    222:					if !ok {
+         .          .    223:						return
+         .          .    224:					}
+         .          .    225:					if err := decodeChunk(ch, out); err != nil {
+         .          .    226:						fail(err)
+         .          .    227:						return
+         .          .    228:					}
+         .          .    229:				case <-abort:
+         .          .    230:					return
+         .          .    231:				}
+         .          .    232:			}
+         .          .    233:		}()
+         .          .    234:	}
+         .          .    235:	// \u751f\u4ea7\u8005\uff1a\u6309\u67d3\u8272\u4f53\u5206\u6bb5\uff08\u952e\u5347\u5e8f \u21d2 \u540c\u67d3\u8272\u4f53\u952e\u8fde\u7eed\uff09\u5408\u5e76\u8fde\u63a5\u3001\u5207\u8bfb\u6bb5\u6295\u9012
+         .          .    236:	type recSpan struct{ start, end int }
+         .          .    237:	var recSpans []recSpan
+         .          .    238:	i := 0
+         .          .    239:	for i < len(keys) && !failed() {
+         .          .    240:		if len(keys[i]) == 0 { // \u7a7a\u952e\u6392\u6700\u524d\uff0c\u76f4\u63a5\u672a\u547d\u4e2d
+         .          .    241:			i++
+         .          .    242:			continue
+         .          .    243:		}
+         .          .    244:		id := keys[i][0]
+         .          .    245:		j := i + 1
+      10ms       10ms    246:		for j < len(keys) && len(keys[j]) > 0 && keys[j][0] == id {
+         .          .    247:			j++
+         .          .    248:		}
+         .          .    249:		if id <= 24 && d.present[id] {
+         .      1.24s    250:			hits, err := mergeJoin(d.shards[id], keys[i:j], i)
+         .          .    251:			if err != nil {
+         .          .    252:				fail(err)
+         .          .    253:				break
+         .          .    254:			}
+         .          .    255:			if cs := d.cols[id]; cs != nil {
+         .      180ms    256:				useCol, cerr := d.preferColumnar(cs, d.shards[id], hits)
+         .          .    257:				if cerr != nil {
+         .          .    258:					fail(cerr)
+         .          .    259:					break
+         .          .    260:				}
+         .          .    261:				if useCol {
+         .          .    262:					if cerr := cs.readColBatch(hits, selectedColumns(cs.schema, d.colSel), out, d.threads); cerr != nil {
+         .          .    263:						fail(cerr)
+         .          .    264:						break
+         .          .    265:					}
+         .          .    266:					i = j
+         .          .    267:					continue
+         .          .    268:				}
+         .          .    269:			}
+         .          .    270:			recSpans = append(recSpans, recSpan{i, j})
+      10ms      140ms    271:			for _, ch := range chunkExtents(buildExtents(d.shards[id], hits)) {
+         .       20ms    272:				select {
+         .          .    273:				case extCh <- ch:
+         .          .    274:				case <-abort:
+         .          .    275:				}
+         .          .    276:				if failed() {
+         .          .    277:					break
+         .          .    278:				}
+         .          .    279:			}
+         .          .    280:		}
+         .          .    281:		i = j
+         .          .    282:	}
+         .          .    283:	// \u7edf\u4e00\u6536\u5c3e\uff1a\u5173 extCh \u2192 \u7b49\u8bfb\u6c60 \u2192 \u5173 decCh \u2192 \u7b49\u89e3\u538b\u6c60\uff0c\u5168\u90e8\u843d\u5b9a\u540e\u5224\u9519\u2014\u2014
+         .          .    284:	// \u89e3\u538b\u6c60\u7684\u9519\u8bef\u53ef\u80fd\u5728\u751f\u4ea7\u8005\u8dd1\u5b8c\u4e4b\u540e\u624d\u51fa\u73b0\uff0c\u63d0\u524d\u5224\u9519\u4f1a\u628a\u5b83\u4e22\u6389
+         .          .    285:	close(extCh)
+         .          .    286:	wgRead.Wait()
+         .          .    287:	close(decCh)
+         .          .    288:	wgDec.Wait()
+         .          .    289:	// \u8bb0\u5f55\u5e8f\u8def\u5f84\u6309 Columns \u88c1\u526a\uff0c\u4e0e\u5217\u5b58\u8def\u5f84\u8fd4\u56de\u540c\u5f62\u72b6\u7684 record\uff1b\u5217\u5b58\u8def\u5f84
+         .          .    290:	// \u5df2\u5728 readColBatch \u91cc\u6309\u540c\u4e00\u5217\u9009\u62e9\u88c5\u914d\u3002
+         .          .    291:	if ferr == nil && len(d.selMask) > 0 {
+         .          .    292:		schema := d.cols[d.chroms[0]].schema
+         .          .    293:		for _, sp := range recSpans {
+         .          .    294:			for k := sp.start; k < sp.end; k++ {
+      40ms       40ms    295:				if out[k] == nil {
+         .          .    296:					continue
+         .          .    297:				}
+      10ms     43.93s    298:				projected, perr := projectRecord(schema, out[k], d.selMask)
+         .          .    299:				if perr != nil {
+         .          .    300:					return nil, perr
+         .          .    301:				}
+      20ms       20ms    302:				out[k] = projected
+         .          .    303:			}
+         .          .    304:		}
+         .          .    305:	}
+         .          .    306:	if ferr != nil {
+         .          .    307:		return nil, ferr
+         .          .    308:	}
+         .       10ms    309:	return out, nil
+         .          .    310:}
+         .          .    311:
+         .          .    312:// costs \u8fd4\u56de\u8bfb\u8def\u7684\u7c97\u7565\u6210\u672c\u53c2\u6570\uff1a\u5355\u6b21\u968f\u673a\u8bfb\u8017\u65f6\uff08\u79d2\uff09\u4e0e\u987a\u5e8f\u5e26\u5bbd\uff08B/s\uff09\u3002
+         .          .    313:// \u6570\u503c\u53d6\u81ea 2026-11-09/10 \u7684 HDD/NVMe \u5b9e\u6d4b\u91cf\u7ea7\uff0c\u53ea\u7528\u4e8e\u4e8c\u9009\u4e00\uff0c\u4e0d\u53c2\u4e0e\u8ba1\u65f6\u3002
+         .          .    314:func (p ioProfile) costs() (randSec, seqBps float64) {
+ROUTINE ======================== github.com/viktorxia/immkv.(*StreamDB).GetBatch.func3 in stream.go
+         0     15.02s (flat, cum) 14.18% of Total
+         .          .    185:		go func() {
+         .          .    186:			defer wgRead.Done()
+         .     15.01s    187:			driveDirect(r, extCh, decCh, abort, fail)
+         .       10ms    188:		}()
+         .          .    189:	} else {
+         .          .    190:		wgRead.Add(d.threads)
+         .          .    191:		for w := 0; w < d.threads; w++ {
+         .          .    192:			go func() { // \u8bfb\u6c60\uff08io_uring \u6216 O_DIRECT \u4e0d\u53ef\u7528\u65f6\u7684\u515c\u5e95\uff09
+         .          .    193:				defer wgRead.Done()
+ROUTINE ======================== github.com/viktorxia/immkv.(*StreamDB).GetBatch.func5 in stream.go
+      10ms     25.17s (flat, cum) 23.77% of Total
+         .          .    217:		go func() { // \u89e3\u538b\u6c60
+         .          .    218:			defer wgDec.Done()
+         .          .    219:			for {
+         .       30ms    220:				select {
+         .          .    221:				case ch, ok := <-decCh:
+         .          .    222:					if !ok {
+         .          .    223:						return
+         .          .    224:					}
+      10ms     25.14s    225:					if err := decodeChunk(ch, out); err != nil {
+         .          .    226:						fail(err)
+         .          .    227:						return
+         .          .    228:					}
+         .          .    229:				case <-abort:
+         .          .    230:					return
+ROUTINE ======================== github.com/viktorxia/immkv.projectRecord in record.go
+      10ms     43.92s (flat, cum) 41.47% of Total
+         .          .    484:func projectRecord(s Schema, raw []byte, selected []bool) ([]byte, error) {
+         .          .    485:	bl := recordBitmapLen(len(s))
+         .      1.31s    486:	out := make([]byte, bl, bl+len(raw))
+         .          .    487:	var payload []byte
+      10ms     42.48s    488:	err := walkRecord(s, raw, func(i int, p []byte) error {
+         .          .    489:		if !selected[i] {
+         .          .    490:			return nil
+         .          .    491:		}
+         .          .    492:		out[i>>3] |= 1 << uint(i&7) // \u4f4d\u56fe\u6309\u5b57\u8282\u5bfb\u5740\uff08\u5c0f\u7aef\u5b57\u5185\u7684\u4f4d\u5e8f\u4e0e bitAt \u4e00\u81f4\uff09
+         .          .    493:		payload = append(payload, p...)
+         .          .    494:		return nil
+         .          .    495:	})
+         .          .    496:	if err != nil {
+         .          .    497:		return nil, err
+         .          .    498:	}
+         .      130ms    499:	return append(out, payload...), nil
+         .          .    500:}
+         .          .    501:
+         .          .    502:// walkRecord \u6821\u9a8c record \u7ed3\u6784\uff0c\u5e76\u6309 schema \u987a\u5e8f\u628a\u6bcf\u4e2a\u6709\u503c\u5b57\u6bb5\u7684\u7f16\u7801 payload
+         .          .    503:// \u4ea4\u7ed9 fn\u3002payload \u662f raw \u7684\u89c6\u56fe\uff0c\u6570\u7ec4\u4e0d\u5c55\u5f00\uff1bfn \u4e3a nil \u65f6\u53ea\u6821\u9a8c\u3002
+         .          .    504:func walkRecord(s Schema, raw []byte, fn func(index int, payload []byte) error) error {
+ROUTINE ======================== github.com/viktorxia/immkv.projectRecord.func1 in record.go
+     3.09s      9.61s (flat, cum)  9.07% of Total
+     410ms      410ms    488:	err := walkRecord(s, raw, func(i int, p []byte) error {
+     430ms      430ms    489:		if !selected[i] {
+         .          .    490:			return nil
+         .          .    491:		}
+     770ms      770ms    492:		out[i>>3] |= 1 << uint(i&7) // \u4f4d\u56fe\u6309\u5b57\u8282\u5bfb\u5740\uff08\u5c0f\u7aef\u5b57\u5185\u7684\u4f4d\u5e8f\u4e0e bitAt \u4e00\u81f4\uff09
+     1.31s      7.83s    493:		payload = append(payload, p...)
+     170ms      170ms    494:		return nil
+         .          .    495:	})
+         .          .    496:	if err != nil {
+         .          .    497:		return nil, err
+         .          .    498:	}
+         .          .    499:	return append(out, payload...), nil

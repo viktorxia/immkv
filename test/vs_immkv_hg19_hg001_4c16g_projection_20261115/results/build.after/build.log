@@ -1,0 +1,58 @@
++ go -C /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/after build -trimpath ./...
++ go -C /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/after test ./...
+?   	github.com/viktorxia/immkv	[no test files]
+?   	github.com/viktorxia/immkv/cmd/annotate	[no test files]
+ok  	github.com/viktorxia/immkv/cmd/query-only	0.003s
+?   	github.com/viktorxia/immkv/cmd/verifyvalues	[no test files]
++ for tool in query-only annotate verifyvalues
++ target=/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/after/query-only
++ go -C /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/after build -trimpath -o /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/after/query-only.partial ./cmd/query-only
++ mv -n /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/after/query-only.partial /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/after/query-only
++ for tool in query-only annotate verifyvalues
++ target=/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/after/annotate
++ go -C /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/after build -trimpath -o /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/after/annotate.partial ./cmd/annotate
++ mv -n /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/after/annotate.partial /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/after/annotate
++ for tool in query-only annotate verifyvalues
++ target=/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/after/verifyvalues
++ go -C /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/after build -trimpath -o /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/after/verifyvalues.partial ./cmd/verifyvalues
++ mv -n /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/after/verifyvalues.partial /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/after/verifyvalues
++ CGO_ENABLED=0
++ go -C /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/after build -trimpath ./...
++ CGO_ENABLED=0
++ go -C /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/after test ./...
+?   	github.com/viktorxia/immkv	[no test files]
+?   	github.com/viktorxia/immkv/cmd/annotate	[no test files]
+ok  	github.com/viktorxia/immkv/cmd/query-only	0.003s
+?   	github.com/viktorxia/immkv/cmd/verifyvalues	[no test files]
++ cd /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/after
++ sha256sum --check /home/tian/projects/immkv/test/vs_immkv_hg19_hg001_4c16g_projection_20261115/results/build.after/sources.sha256
+buildfile.go: OK
+cmd/annotate/main.go: OK
+cmd/query-only/main.go: OK
+cmd/query-only/main_test.go: OK
+cmd/verifyvalues/main.go: OK
+col.go: OK
+colread.go: OK
+direct_linux.go: OK
+direct_other.go: OK
+disk_linux.go: OK
+disk_other.go: OK
+evict_linux.go: OK
+fadvise_linux.go: OK
+fadvise_other.go: OK
+go.mod: OK
+go.sum: OK
+immkv.go: OK
+ingest.go: OK
+iouring_linux.go: OK
+iouring_other.go: OK
+key.go: OK
+manifest.go: OK
+projection.go: OK
+record.go: OK
+schema.go: OK
+shard.go: OK
+simple.go: OK
+stream.go: OK
+zstdcgo_cgo.go: OK
+zstdcgo_nocgo.go: OK

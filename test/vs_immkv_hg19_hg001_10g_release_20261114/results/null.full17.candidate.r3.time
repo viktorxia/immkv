@@ -1,0 +1,23 @@
+	Command being timed: "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_10g_release_20261114/bin/candidate/query-only -query /home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz -lib /home/tian/immkv_test_nvme/gnomad/immkv -fields /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv -threads 4 -batch 4096"
+	User time (seconds): 84.31
+	System time (seconds): 13.22
+	Percent of CPU this job got: 165%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:58.81
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 657340
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 689882
+	Voluntary context switches: 172660
+	Involuntary context switches: 12180
+	Swaps: 0
+	File system inputs: 44729736
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

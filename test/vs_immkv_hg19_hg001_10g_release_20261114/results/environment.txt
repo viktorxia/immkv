@@ -1,0 +1,43 @@
+2026-11-14T23:45:17+08:00
+go version go1.27.1 linux/amd64
+1
+linux
+amd64
+Linux tian-mini 7.0.0-42-generic #42~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Oct 19 14:43:01 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+CPU CORE SOCKET ONLINE
+  0    0      0     是
+  1    1      0     是
+  2    2      0     是
+  3    3      0     是
+  4    4      0     是
+  5    5      0     是
+  6    6      0     是
+  7    7      0     是
+  8    0      0     是
+  9    1      0     是
+ 10    2      0     是
+ 11    3      0     是
+ 12    4      0     是
+ 13    5      0     是
+ 14    6      0     是
+ 15    7      0     是
+文件系统        大小  已用  可用 已用% 挂载点
+/dev/nvme0n1p2  1.8T  1.3T  494G   72% /
+/dev/nvme0n1p2  1.8T  1.3T  494G   72% /
+/dev/nvme0n1p2  1.8T  1.3T  494G   72% /
+014dc5c07f967a71cfdcc650c57148aeaac34ceb12e7d9f3a513b9720a88a9c6  /home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz
+db2c8bc29926b5f4265e9077443a19571a55c8f99d2d30906e0a126c6c0db030  /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv
+fa1f21636fcd186308e3d070a65b0c087a8813f6763a78f8db70dc96c65f7643  /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_540_fields/fields540.tsv
+28e7720f959b1cf583af444f1290a9bad857e3d733ea8cd6d0b75442b78ebf86  /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_568_fields/fields568.tsv
+ M README.cn.md
+ M README.md
+ M col.go
+ M docs/ingest-design.md
+ M immkv.go
+ M immkv_test.go
+ M ingest.go
+ M iouring_other.go
+ M manifest.go
+?? buildfile.go
+?? buildfile_test.go
+?? test/vs_immkv_hg19_hg001_10g_release_20261114/

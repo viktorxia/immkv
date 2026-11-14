@@ -51,15 +51,6 @@ func BuildFromTSVs(basePath string, tsvs []string, opts BuildOptions) (err error
 	if err := os.MkdirAll(filepath.Dir(basePath), 0o755); err != nil {
 		return err
 	}
-	// 目标与本次构建会写的全部产物都不允许预先存在，保证失败清理只删自己的。
-	for _, ext := range []string{".keys", ".vals", ".col", ".manifest", ".keys.tmp", ".vals.tmp"} {
-		p := basePath + ext
-		if _, err := os.Lstat(p); err == nil {
-			return fmt.Errorf("immkv: %s already exists; delete it and rebuild", p)
-		} else if !os.IsNotExist(err) {
-			return err
-		}
-	}
 	w, err := Create(basePath, CreateOptions{
 		RawValueBelow: opts.RawValueBelow,
 		PackTarget:    opts.PackTarget,
@@ -69,12 +60,7 @@ func BuildFromTSVs(basePath string, tsvs []string, opts BuildOptions) (err error
 	}
 	defer func() {
 		if err != nil {
-			if aerr := w.Abort(); aerr != nil {
-				err = fmt.Errorf("%w; cleanup: %v", err, aerr)
-			}
-			if rerr := removeBaseArtifacts(basePath); rerr != nil {
-				err = fmt.Errorf("%w; cleanup: %v", err, rerr)
-			}
+			err = errors.Join(err, w.Abort(), w.files.cleanup())
 		}
 	}()
 	for _, path := range tsvs {
@@ -90,18 +76,6 @@ func BuildFromTSVs(basePath string, tsvs []string, opts BuildOptions) (err error
 		return err
 	}
 	return writeColumnar(basePath, simpleKVSchema(), buildID, SourceInfoOrder{}, 0, 0)
-}
-
-// removeBaseArtifacts 删除 basePath 及 .tmp 后缀的全部构建产物，忽略不存在的
-// 文件，返回首个删除错误。只用于本次构建创建的目标（Create 已保证开始时不存在）。
-func removeBaseArtifacts(basePath string) error {
-	var first error
-	for _, ext := range []string{".keys", ".vals", ".col", ".manifest", ".keys.tmp", ".vals.tmp"} {
-		if err := os.Remove(basePath + ext); err != nil && !os.IsNotExist(err) && first == nil {
-			first = err
-		}
-	}
-	return first
 }
 
 // addTSVFile 把一个 TSV 文件的记录按顺序喂给 w。行切片会被 AddSorted 拷贝，
@@ -198,10 +172,10 @@ func BuildFromVCFs(outdir string, vcfs []string, fields []string, prefix string,
 			return err
 		}
 	}
-	if err := writeFileAtomic(filepath.Join(outdir, vcfRawHeaderName), plan.raw); err != nil {
+	if err := writeBuildFile(filepath.Join(outdir, vcfRawHeaderName), plan.raw); err != nil {
 		return err
 	}
-	return writeFileAtomic(filepath.Join(outdir, vcfImmkvHeaderName),
+	return writeBuildFile(filepath.Join(outdir, vcfImmkvHeaderName),
 		buildImmkvHeader(plan.header.fileFormat, plan.selectedFields))
 }
 

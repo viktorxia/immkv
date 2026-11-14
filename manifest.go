@@ -205,13 +205,20 @@ func ReadSchema(dir string) (Schema, error) {
 
 // WriteManifest 校验后原子写 base.manifest。
 func WriteManifest(path string, m *Manifest) error {
-	if err := m.Validate(); err != nil {
-		return err
-	}
-	raw, err := json.MarshalIndent(m, "", "  ")
+	raw, err := marshalManifest(m)
 	if err != nil {
 		return err
 	}
-	raw = append(raw, '\n')
 	return writeFileAtomic(path, raw)
+}
+
+func marshalManifest(m *Manifest) ([]byte, error) {
+	if err := m.Validate(); err != nil {
+		return nil, err
+	}
+	raw, err := json.MarshalIndent(m, "", "  ")
+	if err != nil {
+		return nil, err
+	}
+	return append(raw, '\n'), nil
 }

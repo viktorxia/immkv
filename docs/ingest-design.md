@@ -79,6 +79,8 @@ func BuildFromTSVs(basePath string, tsvs []string, opts BuildOptions) error
 
 - 每条染色体 `outdir/chr<ChromName>.keys` + `.vals` + `.col` + `.manifest`。
 - `outdir` 必须不存在（父目录可以存在）；已存在即报错，包括空目录，绝不覆盖。
+- 构建期间调用方独占输出目录或文件前缀，不删除或替换构建文件；入口成功返回后
+  才能打开库。
 - 全部染色体 `Finish` 成功后写：
   - `vcf.raw.header`：第一个输入文件的完整头（所有 `##` 行 + `#CHROM` 行），
     逐字节保留。

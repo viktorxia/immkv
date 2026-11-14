@@ -1,0 +1,18 @@
+cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/run-rfdbe236709c74e4094005ac34b8c7a31.scope
+memory.max=17179869184
+memory.swap.max=0
+cpus=0,1,2,3
+GOMAXPROCS=4
+mode=untimed
+timeout_seconds=1800
+command=env -u IMMKV_NO_DIRECT -u LD_PRELOAD -u LD_AUDIT RUN_TIMEOUT_SECONDS=180 python3 -I /home/tian/projects/immkv/test/vs_immkv_hg19_hg001_4c16g_projection_20261115/memory_chr22.py --record /home/tian/projects/immkv/test/vs_immkv_hg19_hg001_4c16g_projection_20261115/results/memory.chr22 --build-root /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115 --query /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_10g_release_20261114/query-chr22.vcf --full-lib /home/tian/immkv_test_nvme/gnomad/immkv --narrow-lib /home/tian/immkv_test_nvme/test/17_fields/lib17 --fields17 /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv --fields540 /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_540_fields/fields540.tsv --fields568 /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_568_fields/fields568.tsv 
+memory.peak
+11986907136
+memory.events
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+sock_throttled 0

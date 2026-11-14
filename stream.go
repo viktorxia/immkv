@@ -30,11 +30,11 @@ var ErrUnsorted = errors.New("immkv: GetBatch keys not ascending")
 // 单条查询开 OpenEager；同一库可同时开两种句柄（只读无冲突）。
 type StreamDB struct {
 	shardSet
-	threads int
-	cols    [25]*colShard
-	colSel  []int  // 选中的列号（升序）；nil = 全部
-	selMask []bool // colSel 对应的位图；nil = 全部
-	profile ioProfile
+	threads    int
+	cols       [25]*colShard
+	colSel     []int // 选中的列号（升序）；nil = 全部
+	projection *recordProjection
+	profile    ioProfile
 
 	forceCol bool // 测试用：跳过成本估算，强制列存路径
 }
@@ -105,11 +105,11 @@ func OpenStreaming(dir string, opts StreamOptions) (*StreamDB, error) {
 			seen[c] = true
 			sel = append(sel, c)
 		}
-		sort.Ints(sel)
-		d.colSel = sel
-		d.selMask = make([]bool, len(d.cols[d.chroms[0]].schema))
-		for _, c := range sel {
-			d.selMask[c] = true
+		// 全选与 Columns=nil 走同一路径，不重复遍历或复制完整 record。
+		if len(sel) < len(d.cols[d.chroms[0]].schema) {
+			sort.Ints(sel)
+			d.colSel = sel
+			d.projection = newRecordProjection(d.cols[d.chroms[0]].schema, sel)
 		}
 	}
 	return d, nil
@@ -137,9 +137,9 @@ func (d *StreamDB) directOK() bool {
 	return len(d.chroms) > 0
 }
 
-// GetBatch 批量点查。keys 必须升序（字节序；VCF 按染色体自然序 + 位置排序
-// 即天然满足），返回切片与 keys 等长同序，某项未命中为 nil。返回切片只保证
-// 到下一次查询前有效，要保留自己拷。任何 I/O 或解压错误整批返回 error。
+// GetBatch 批量点查。keys 必须按完整编码键的字节序升序，返回切片与 keys
+// 等长同序，某项未命中为 nil。返回值是本次调用持有的只读视图，后续或并发
+// 调用不覆盖结果。任何 I/O 或解压错误整批返回 error。
 // 并发安全：句柄可被多个 goroutine 同时调用（每次调用状态独立）。
 func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 	if len(keys) == 0 {
@@ -155,13 +155,14 @@ func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 	// 在途读）→ 解压池（Threads 路，CPU 由 GOMAXPROCS 兜底）。读与解压分池
 	// 解耦，磁盘等待不占解压的 CPU 时间。
 	var (
-		extCh  = make(chan []extent, 4) // 生产者 → 读池
-		decCh  = make(chan []extent, 8) // 读池 → 解压池
-		abort  = make(chan struct{})
-		wgRead sync.WaitGroup
-		wgDec  sync.WaitGroup
-		errMu  sync.Mutex
-		ferr   error
+		extCh    = make(chan []extent, 4) // 生产者 → 读池
+		decCh    = make(chan []extent, 8) // 读池 → 解压池
+		abort    = make(chan struct{})
+		wgRead   sync.WaitGroup
+		wgDec    sync.WaitGroup
+		decodeMu sync.RWMutex // 两条路径共用 Threads 预算，列存装配时暂停记录序解压
+		errMu    sync.Mutex
+		ferr     error
 	)
 	fail := func(err error) {
 		errMu.Lock()
@@ -177,7 +178,11 @@ func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 		return ferr != nil
 	}
 	wgDec.Add(d.threads)
-	if r, rerr := newIOUring(512); rerr == nil && d.directOK() {
+	var r *ioUring
+	if d.directOK() {
+		r, _ = newIOUring(512)
+	}
+	if r != nil {
 		// O_DIRECT + io_uring：单驱动 goroutine 深队列异步读（绕开页缓存，
 		// 在途读深度与线程数解耦；线程预算全部留给解压池）
 		defer r.close()
@@ -222,7 +227,10 @@ func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 					if !ok {
 						return
 					}
-					if err := decodeChunk(ch, out); err != nil {
+					decodeMu.RLock()
+					err := decodeChunk(ch, out, d.projection)
+					decodeMu.RUnlock()
+					if err != nil {
 						fail(err)
 						return
 					}
@@ -233,8 +241,6 @@ func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 		}()
 	}
 	// 生产者：按染色体分段（键升序 ⇒ 同染色体键连续）合并连接、切读段投递
-	type recSpan struct{ start, end int }
-	var recSpans []recSpan
 	i := 0
 	for i < len(keys) && !failed() {
 		if len(keys[i]) == 0 { // 空键排最前，直接未命中
@@ -259,7 +265,10 @@ func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 					break
 				}
 				if useCol {
-					if cerr := cs.readColBatch(hits, selectedColumns(cs.schema, d.colSel), out, d.threads); cerr != nil {
+					decodeMu.Lock()
+					cerr := cs.readColBatch(hits, selectedColumns(cs.schema, d.colSel), out, d.threads)
+					decodeMu.Unlock()
+					if cerr != nil {
 						fail(cerr)
 						break
 					}
@@ -267,7 +276,6 @@ func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 					continue
 				}
 			}
-			recSpans = append(recSpans, recSpan{i, j})
 			for _, ch := range chunkExtents(buildExtents(d.shards[id], hits)) {
 				select {
 				case extCh <- ch:
@@ -286,23 +294,6 @@ func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 	wgRead.Wait()
 	close(decCh)
 	wgDec.Wait()
-	// 记录序路径按 Columns 裁剪，与列存路径返回同形状的 record；列存路径
-	// 已在 readColBatch 里按同一列选择装配。
-	if ferr == nil && len(d.selMask) > 0 {
-		schema := d.cols[d.chroms[0]].schema
-		for _, sp := range recSpans {
-			for k := sp.start; k < sp.end; k++ {
-				if out[k] == nil {
-					continue
-				}
-				projected, perr := projectRecord(schema, out[k], d.selMask)
-				if perr != nil {
-					return nil, perr
-				}
-				out[k] = projected
-			}
-		}
-	}
 	if ferr != nil {
 		return nil, ferr
 	}
@@ -563,24 +554,27 @@ func readChunk(chunk []extent) error {
 	return nil
 }
 
-// decodeChunk 解一块读段并回填。打包帧解出的成员值拷进本块 slab——结果自
-// 包含、段读缓冲可即时回收复用，全量注释一轮的分配量从「每命中一整帧」降到
-// 「每命中一个值」。
-func decodeChunk(chunk []extent, out [][]byte) error {
-	slab := make([]byte, 0, 1<<16)
+// decodeChunk 在解压池里完成字段投影；slab 只追加、由返回值持有，scratch
+// 只供本块解压复用，绝不向调用方暴露。
+func decodeChunk(chunk []extent, out [][]byte, projection *recordProjection) error {
+	var slab, scratch []byte
+	defer func() {
+		if scratch != nil {
+			putExtentBuf(scratch)
+		}
+	}()
 	for i := range chunk {
 		var err error
-		if slab, err = decodeExtent(&chunk[i], out, slab); err != nil {
+		if slab, err = decodeExtent(&chunk[i], out, slab, &scratch, projection); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-// decodeExtent 解一个读段并回填：raw 帧零拷（out 引用 buf，本块内该段缓冲
-// 不回收）；单值 zstd 帧整帧解压成新缓冲；打包帧整帧解压后把成员值拷进
-// slab，段缓冲随后回收。返回推进后的 slab。
-func decodeExtent(e *extent, out [][]byte, slab []byte) ([]byte, error) {
+// decodeExtent 每个物理帧解压一次，重复键共享只读结果。只有发布了 raw
+// 帧视图的读段才保留输入缓冲；解压输出与压缩输入相互独立。
+func decodeExtent(e *extent, out [][]byte, slab []byte, scratch *[]byte, projection *recordProjection) ([]byte, error) {
 	reusable := true
 	defer func() {
 		if reusable {
@@ -592,27 +586,39 @@ func decodeExtent(e *extent, out [][]byte, slab []byte) ([]byte, error) {
 			e.buf, e.dbuf = nil, nil
 		}
 	}()
+	appendValue := func(v []byte) ([]byte, error) {
+		// 投影只会缩短 record；预留原长上界，slab 满时另开一块，避免
+		// append 扩容反复复制已发布给 out 的前序记录。
+		if slab == nil || cap(slab)-len(slab) < len(v) {
+			slab = make([]byte, 0, max(1<<16, len(v)))
+		}
+		t := len(slab)
+		if projection != nil {
+			var err error
+			slab, err = projection.appendRecord(slab, v)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			slab = append(slab, v...)
+		}
+		return slab[t:len(slab):len(slab)], nil
+	}
 	for i := 0; i < len(e.hits); {
 		j := i
 		h := e.hits[i]
-		// 只把同一打包帧的成员并成组（valOff、frameLen、packed 三者全同）；
-		// 零长裸存帧与共址的下一帧不能并——它不是那帧的成员
-		for j+1 < len(e.hits) &&
-			e.hits[j+1].valOff == h.valOff &&
-			e.hits[j+1].frameLen == h.frameLen &&
-			h.packed && e.hits[j+1].packed {
+		for j+1 < len(e.hits) {
+			next := e.hits[j+1]
+			if next.valOff != h.valOff || next.frameLen != h.frameLen ||
+				next.packed != h.packed || next.raw != h.raw || (!h.packed && next.rec != h.rec) {
+				break
+			}
 			j++
 		}
 		frame := e.buf[h.valOff-e.off : h.valOff-e.off+uint64(h.frameLen)]
+		var v []byte
+		var err error
 		switch {
-		case h.raw:
-			if h.frameLen == 0 {
-				out[h.dst] = emptyValue // 零长值：非 nil 空切片（nil 会被当成未命中）
-				i = j + 1
-				continue
-			}
-			out[h.dst] = frame
-			reusable = false // out 引用 buf，本调用结束前不能复用
 		case h.packed:
 			p, err := decodePack(e.s.dec, frame, getExtentBuf(64<<10))
 			if err != nil {
@@ -622,21 +628,62 @@ func decodeExtent(e *extent, out [][]byte, slab []byte) ([]byte, error) {
 				hk := e.hits[k]
 				idx := hk.rec - int64(p.first)
 				if idx < 0 || idx >= int64(p.n) {
+					putExtentBuf(p.buf)
 					return slab, fmt.Errorf("immkv: 打包帧记录号 %d 不在 [%d, %d) 内", hk.rec, p.first, p.first+p.n)
 				}
-				v := p.value(uint32(idx))
-				t := len(slab)
-				slab = append(slab, v...)
-				out[hk.dst] = slab[t:]
+				if k == i || hk.rec != e.hits[k-1].rec {
+					v, err = appendValue(p.value(uint32(idx)))
+					if err != nil {
+						putExtentBuf(p.buf)
+						return slab, err
+					}
+				}
+				out[hk.dst] = v
 			}
-			putExtentBuf(p.buf) // 成员值已拷进 slab，解码缓冲即可复用
+			putExtentBuf(p.buf)
+			i = j + 1
+			continue
+		case h.raw:
+			v = frame
+			if projection == nil && h.frameLen > 0 {
+				reusable = false
+			}
 		default:
-			v, err := e.s.dec.decode(frame, nil)
+			if projection == nil {
+				if cap(slab)-len(slab) == 0 {
+					slab = make([]byte, 0, 1<<16)
+				}
+				// 只把尚未使用的尾部交给解压器；容量不足时返回新块，
+				// 前序结果继续持有旧块，不复制也不覆盖前序记录。
+				v, err = e.s.dec.decode(frame, slab[len(slab):len(slab)])
+				if err == nil {
+					slab = v
+				}
+			} else {
+				if *scratch == nil {
+					*scratch = getExtentBuf(16 << 10)
+				}
+				v, err = e.s.dec.decode(frame, (*scratch)[:0])
+				if err == nil {
+					*scratch = v
+				}
+			}
 			if err != nil {
 				return slab, err
 			}
-			out[h.dst] = v
-			reusable = false // 解出的整帧缓冲由 out 引用，交 GC
+		}
+		if projection != nil {
+			v, err = appendValue(v)
+			if err != nil {
+				return slab, err
+			}
+		}
+		if len(v) == 0 {
+			v = emptyValue // 命中的零长值不能与 nil（未命中）混淆
+		}
+		v = v[:len(v):len(v)]
+		for k := i; k <= j; k++ {
+			out[e.hits[k].dst] = v
 		}
 		i = j + 1
 	}
@@ -666,10 +713,10 @@ func getExtentBuf(n int) []byte {
 }
 
 func putExtentBuf(b []byte) {
-	switch {
-	case cap(b) <= 16<<10:
+	switch cap(b) {
+	case 16 << 10:
 		extentBufPools[0].Put(&b)
-	case cap(b) <= 64<<10:
+	case 64 << 10:
 		extentBufPools[1].Put(&b)
 	}
 }

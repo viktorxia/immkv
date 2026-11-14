@@ -1,0 +1,171 @@
+Total: 41.60s
+ROUTINE ======================== github.com/viktorxia/immkv.(*StreamDB).GetBatch in stream.go
+         0      1.35s (flat, cum)  3.25% of Total
+         .          .    144:func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
+         .          .    145:	if len(keys) == 0 {
+         .          .    146:		return [][]byte{}, nil
+         .          .    147:	}
+         .          .    148:	for i := 1; i < len(keys); i++ {
+         .       20ms    149:		if bytes.Compare(keys[i-1], keys[i]) > 0 {
+         .          .    150:			return nil, ErrUnsorted
+         .          .    151:		}
+         .          .    152:	}
+         .          .    153:	out := make([][]byte, len(keys))
+         .          .    154:	// \u4e09\u7ea7\u6d41\u6c34\u7ebf\uff1a\u751f\u4ea7\u8005\uff08\u672c goroutine\uff0c\u5408\u5e76\u8fde\u63a5\u987a\u626b\u952e\u6d41\uff09\u2192 \u8bfb\u6c60\uff08Threads \u8def
+         .          .    155:	// \u5728\u9014\u8bfb\uff09\u2192 \u89e3\u538b\u6c60\uff08Threads \u8def\uff0cCPU \u7531 GOMAXPROCS \u515c\u5e95\uff09\u3002\u8bfb\u4e0e\u89e3\u538b\u5206\u6c60
+         .          .    156:	// \u89e3\u8026\uff0c\u78c1\u76d8\u7b49\u5f85\u4e0d\u5360\u89e3\u538b\u7684 CPU \u65f6\u95f4\u3002
+         .          .    157:	var (
+         .          .    158:		extCh    = make(chan []extent, 4) // \u751f\u4ea7\u8005 \u2192 \u8bfb\u6c60
+         .          .    159:		decCh    = make(chan []extent, 8) // \u8bfb\u6c60 \u2192 \u89e3\u538b\u6c60
+         .          .    160:		abort    = make(chan struct{})
+         .          .    161:		wgRead   sync.WaitGroup
+         .          .    162:		wgDec    sync.WaitGroup
+         .          .    163:		decodeMu sync.RWMutex // \u4e24\u6761\u8def\u5f84\u5171\u7528 Threads \u9884\u7b97\uff0c\u5217\u5b58\u88c5\u914d\u65f6\u6682\u505c\u8bb0\u5f55\u5e8f\u89e3\u538b
+         .          .    164:		errMu    sync.Mutex
+         .          .    165:		ferr     error
+         .          .    166:	)
+         .          .    167:	fail := func(err error) {
+         .          .    168:		errMu.Lock()
+         .          .    169:		defer errMu.Unlock()
+         .          .    170:		if ferr == nil {
+         .          .    171:			ferr = err
+         .          .    172:			close(abort)
+         .          .    173:		}
+         .          .    174:	}
+         .          .    175:	failed := func() bool {
+         .          .    176:		errMu.Lock()
+         .          .    177:		defer errMu.Unlock()
+         .          .    178:		return ferr != nil
+         .          .    179:	}
+         .          .    180:	wgDec.Add(d.threads)
+         .          .    181:	var r *ioUring
+         .          .    182:	if d.directOK() {
+         .       20ms    183:		r, _ = newIOUring(512)
+         .          .    184:	}
+         .          .    185:	if r != nil {
+         .          .    186:		// O_DIRECT + io_uring\uff1a\u5355\u9a71\u52a8 goroutine \u6df1\u961f\u5217\u5f02\u6b65\u8bfb\uff08\u7ed5\u5f00\u9875\u7f13\u5b58\uff0c
+         .          .    187:		// \u5728\u9014\u8bfb\u6df1\u5ea6\u4e0e\u7ebf\u7a0b\u6570\u89e3\u8026\uff1b\u7ebf\u7a0b\u9884\u7b97\u5168\u90e8\u7559\u7ed9\u89e3\u538b\u6c60\uff09
+         .          .    188:		defer r.close()
+         .          .    189:		wgRead.Add(1)
+         .          .    190:		go func() {
+         .          .    191:			defer wgRead.Done()
+         .          .    192:			driveDirect(r, extCh, decCh, abort, fail)
+         .          .    193:		}()
+         .          .    194:	} else {
+         .          .    195:		wgRead.Add(d.threads)
+         .          .    196:		for w := 0; w < d.threads; w++ {
+         .          .    197:			go func() { // \u8bfb\u6c60\uff08io_uring \u6216 O_DIRECT \u4e0d\u53ef\u7528\u65f6\u7684\u515c\u5e95\uff09
+         .          .    198:				defer wgRead.Done()
+         .          .    199:				for {
+         .          .    200:					select {
+         .          .    201:					case ch, ok := <-extCh:
+         .          .    202:						if !ok {
+         .          .    203:							return
+         .          .    204:						}
+         .          .    205:						if err := readChunk(ch); err != nil {
+         .          .    206:							fail(err)
+         .          .    207:							return
+         .          .    208:						}
+         .          .    209:						select {
+         .          .    210:						case decCh <- ch:
+         .          .    211:						case <-abort:
+         .          .    212:							return
+         .          .    213:						}
+         .          .    214:					case <-abort:
+         .          .    215:						return
+         .          .    216:					}
+         .          .    217:				}
+         .          .    218:			}()
+         .          .    219:		}
+         .          .    220:	}
+         .          .    221:	for w := 0; w < d.threads; w++ {
+         .          .    222:		go func() { // \u89e3\u538b\u6c60
+         .          .    223:			defer wgDec.Done()
+         .          .    224:			for {
+         .          .    225:				select {
+         .          .    226:				case ch, ok := <-decCh:
+         .          .    227:					if !ok {
+         .          .    228:						return
+         .          .    229:					}
+         .          .    230:					decodeMu.RLock()
+         .          .    231:					err := decodeChunk(ch, out, d.projection)
+         .          .    232:					decodeMu.RUnlock()
+         .          .    233:					if err != nil {
+         .          .    234:						fail(err)
+         .          .    235:						return
+         .          .    236:					}
+         .          .    237:				case <-abort:
+         .          .    238:					return
+         .          .    239:				}
+         .          .    240:			}
+         .          .    241:		}()
+         .          .    242:	}
+         .          .    243:	// \u751f\u4ea7\u8005\uff1a\u6309\u67d3\u8272\u4f53\u5206\u6bb5\uff08\u952e\u5347\u5e8f \u21d2 \u540c\u67d3\u8272\u4f53\u952e\u8fde\u7eed\uff09\u5408\u5e76\u8fde\u63a5\u3001\u5207\u8bfb\u6bb5\u6295\u9012
+         .          .    244:	i := 0
+         .          .    245:	for i < len(keys) && !failed() {
+         .          .    246:		if len(keys[i]) == 0 { // \u7a7a\u952e\u6392\u6700\u524d\uff0c\u76f4\u63a5\u672a\u547d\u4e2d
+         .          .    247:			i++
+         .          .    248:			continue
+         .          .    249:		}
+         .          .    250:		id := keys[i][0]
+         .          .    251:		j := i + 1
+         .          .    252:		for j < len(keys) && len(keys[j]) > 0 && keys[j][0] == id {
+         .          .    253:			j++
+         .          .    254:		}
+         .          .    255:		if id <= 24 && d.present[id] {
+         .      1.06s    256:			hits, err := mergeJoin(d.shards[id], keys[i:j], i)
+         .          .    257:			if err != nil {
+         .          .    258:				fail(err)
+         .          .    259:				break
+         .          .    260:			}
+         .          .    261:			if cs := d.cols[id]; cs != nil {
+         .      110ms    262:				useCol, cerr := d.preferColumnar(cs, d.shards[id], hits)
+         .          .    263:				if cerr != nil {
+         .          .    264:					fail(cerr)
+         .          .    265:					break
+         .          .    266:				}
+         .          .    267:				if useCol {
+         .          .    268:					decodeMu.Lock()
+         .          .    269:					cerr := cs.readColBatch(hits, selectedColumns(cs.schema, d.colSel), out, d.threads)
+         .          .    270:					decodeMu.Unlock()
+         .          .    271:					if cerr != nil {
+         .          .    272:						fail(cerr)
+         .          .    273:						break
+         .          .    274:					}
+         .          .    275:					i = j
+         .          .    276:					continue
+         .          .    277:				}
+         .          .    278:			}
+         .      140ms    279:			for _, ch := range chunkExtents(buildExtents(d.shards[id], hits)) {
+         .          .    280:				select {
+         .          .    281:				case extCh <- ch:
+         .          .    282:				case <-abort:
+         .          .    283:				}
+         .          .    284:				if failed() {
+ROUTINE ======================== github.com/viktorxia/immkv.(*StreamDB).GetBatch.func3 in stream.go
+         0     10.23s (flat, cum) 24.59% of Total
+         .          .    190:		go func() {
+         .          .    191:			defer wgRead.Done()
+         .     10.23s    192:			driveDirect(r, extCh, decCh, abort, fail)
+         .          .    193:		}()
+         .          .    194:	} else {
+         .          .    195:		wgRead.Add(d.threads)
+         .          .    196:		for w := 0; w < d.threads; w++ {
+         .          .    197:			go func() { // \u8bfb\u6c60\uff08io_uring \u6216 O_DIRECT \u4e0d\u53ef\u7528\u65f6\u7684\u515c\u5e95\uff09
+ROUTINE ======================== github.com/viktorxia/immkv.(*StreamDB).GetBatch.func5 in stream.go
+         0     27.14s (flat, cum) 65.24% of Total
+         .          .    222:		go func() { // \u89e3\u538b\u6c60
+         .          .    223:			defer wgDec.Done()
+         .          .    224:			for {
+         .       20ms    225:				select {
+         .          .    226:				case ch, ok := <-decCh:
+         .          .    227:					if !ok {
+         .          .    228:						return
+         .          .    229:					}
+         .          .    230:					decodeMu.RLock()
+         .     27.12s    231:					err := decodeChunk(ch, out, d.projection)
+         .          .    232:					decodeMu.RUnlock()
+         .          .    233:					if err != nil {
+         .          .    234:						fail(err)
+         .          .    235:						return
+         .          .    236:					}

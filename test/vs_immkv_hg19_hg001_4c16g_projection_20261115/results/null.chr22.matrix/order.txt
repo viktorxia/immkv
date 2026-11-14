@@ -1,0 +1,16 @@
+null.chr22.narrow17.old.r1
+null.chr22.narrow17.before.r1
+null.chr22.narrow17.after.r1
+null.chr22.narrow17.after.r2
+null.chr22.narrow17.before.r2
+null.chr22.narrow17.old.r2
+null.chr22.narrow17.old.r3
+null.chr22.narrow17.before.r3
+null.chr22.narrow17.after.r3
+null.chr22.full17.old.r1
+null.chr22.full17.before.r1
+null.chr22.full17.after.r1
+null.chr22.full17.after.r2
+null.chr22.full17.before.r2
+null.chr22.full17.old.r2
+null.chr22.full17.old.r3

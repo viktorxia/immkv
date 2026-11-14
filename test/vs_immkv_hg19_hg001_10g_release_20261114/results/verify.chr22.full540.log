@@ -1,0 +1,5 @@
+rows 49540, field comparisons 26751600, misses agreed 456407, value mismatches 0, hit disagreements 0
+echtvar i32-overflow value losses (documented limitation): 0
+float comparisons 8371853, max |echtvar-immkv| observed: 0.000e+00 (tolerance 0.0e+00; expected just under 5e-7 from truncating quantization)
+VERIFY_VALUES OK: every field of every row agrees
+EXACT_STREAM_SHA256_OK

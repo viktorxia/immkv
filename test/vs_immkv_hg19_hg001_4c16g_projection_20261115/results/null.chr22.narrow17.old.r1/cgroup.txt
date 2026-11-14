@@ -1,0 +1,18 @@
+cgroup=/user.slice/user-1000.slice/user@1000.service/app.slice/run-r13db6addae314d08ab32704e7bbbdcdf.scope
+memory.max=17179869184
+memory.swap.max=0
+cpus=0,1,2,3
+GOMAXPROCS=4
+mode=timed
+timeout_seconds=180
+command=/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_projection_20261115/bin/old/query-only -query /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_10g_release_20261114/query-chr22.vcf -lib /home/tian/immkv_test_nvme/test/17_fields/lib17 -fields /home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv -threads 4 -batch 4096 -repeat 10 
+memory.peak
+198287360
+memory.events
+low 0
+high 0
+max 0
+oom 0
+oom_kill 0
+oom_group_kill 0
+sock_throttled 0
