@@ -489,7 +489,7 @@ func projectRecord(s Schema, raw []byte, selected []bool) ([]byte, error) {
 		if !selected[i] {
 			return nil
 		}
-		out[i>>6] |= 1 << uint(i&63)
+		out[i>>3] |= 1 << uint(i&7) // 位图按字节寻址（小端字内的位序与 bitAt 一致）
 		payload = append(payload, p...)
 		return nil
 	})

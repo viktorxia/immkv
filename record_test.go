@@ -499,3 +499,27 @@ func v003Raw(bits uint64, payload ...byte) []byte {
 	copy(raw[8:], payload)
 	return raw
 }
+
+// TestProjectRecordWideSchema 验证投影位图按字节寻址：跨 64 位字边界的字段
+// （第 8 列及以后）位不丢、不写错字节（回归：曾按 i>>6/i&63 寻址 []byte）。
+func TestProjectRecordWideSchema(t *testing.T) {
+	for _, col := range []int{0, 7, 8, 63, 64, 71} {
+		schema := make(Schema, 72)
+		for i := range schema {
+			schema[i] = Field{Name: fmt.Sprintf("F%d", i), Type: TypeFlag, Number: "0"}
+		}
+		raw, err := NewRecordEncoder(schema).Flag(schema[col].Name).Encode()
+		if err != nil {
+			t.Fatal(err)
+		}
+		selected := make([]bool, len(schema))
+		selected[col] = true
+		got, err := projectRecord(schema, raw, selected)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !bytes.Equal(got, raw) {
+			t.Errorf("column %d: projection changed the presence bitmap: got=%x want=%x", col, got, raw)
+		}
+	}
+}

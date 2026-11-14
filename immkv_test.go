@@ -716,3 +716,83 @@ func TestWriterKeyTooLong(t *testing.T) {
 		}
 	}
 }
+
+// TestWriterAbortOwnership Finish 失败后 Abort 不得再执行清理：同路径新 writer
+// 的 .tmp 不属于旧 writer，删了会让健康构建失败（回归）。
+func TestWriterAbortOwnership(t *testing.T) {
+	base := filepath.Join(t.TempDir(), "lib")
+	w1, err := Create(base, testWriteOptions())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := w1.Add(bytes.Repeat([]byte("k"), maxKeyLen+1), []byte("v")); err == nil {
+		t.Fatal("oversized key should error")
+	}
+	if err := w1.Finish(); err == nil {
+		t.Fatal("sticky error should fail Finish")
+	}
+	w2, err := Create(base, testWriteOptions())
+	if err != nil {
+		t.Fatalf("recreate after failed finish: %v", err)
+	}
+	if err := w2.Add(VarKey(0, 1, "A", "T"), []byte("v")); err != nil {
+		t.Fatal(err)
+	}
+	if err := w1.Abort(); err != nil {
+		t.Fatal(err)
+	}
+	if _, statErr := os.Stat(base + ".keys.tmp"); statErr != nil {
+		t.Fatalf("w2 的 .keys.tmp 应仍在（w1.Abort 不得删别人的文件）: %v", statErr)
+	}
+	if err := w2.Finish(); err != nil {
+		t.Errorf("healthy w2.Finish failed after w1.Abort: %v", err)
+	}
+}
+
+// TestWriterFinishRemovesPublishedVals Finish 分两步 rename；第二步失败时
+// 第一步已发布的正式文件也要清掉（回归：曾残留 base.vals）。
+func TestWriterFinishRemovesPublishedVals(t *testing.T) {
+	base := filepath.Join(t.TempDir(), "lib")
+	w, err := Create(base, CreateOptions{})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := w.Add([]byte("k"), []byte("v")); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Mkdir(base+".keys", 0o755); err != nil { // 占位让 keys rename 失败
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(base + ".keys")
+	if err := w.Finish(); err == nil {
+		t.Fatal("keys rename should fail")
+	}
+	for _, p := range []string{base + ".vals", base + ".keys.tmp", base + ".vals.tmp"} {
+		if _, statErr := os.Stat(p); !os.IsNotExist(statErr) {
+			t.Errorf("failed Finish left %s behind", p)
+		}
+	}
+	if err := w.Abort(); err != nil {
+		t.Fatal(err)
+	}
+	if _, statErr := os.Stat(base + ".vals"); !os.IsNotExist(statErr) {
+		t.Error("Abort after failed Finish still leaves base.vals behind")
+	}
+}
+
+// TestCreateRejectsColManifest 裸 Create 也要拒绝 BuildFromTSVs 系入口的残留。
+func TestCreateRejectsColManifest(t *testing.T) {
+	dir := t.TempDir()
+	base := filepath.Join(dir, "lib")
+	for _, ext := range []string{".col", ".manifest"} {
+		if err := os.WriteFile(base+ext, []byte("x"), 0o644); err != nil {
+			t.Fatal(err)
+		}
+		if _, err := Create(base, testWriteOptions()); err == nil {
+			t.Fatalf("已有 %s 残留应拒绝", ext)
+		}
+		if err := os.Remove(base + ext); err != nil {
+			t.Fatal(err)
+		}
+	}
+}

@@ -186,7 +186,8 @@ func Create(basePath string, opts CreateOptions) (*Writer, error) {
 	}
 	kp, vp := basePath+".keys", basePath+".vals"
 	kt, vt := kp+".tmp", vp+".tmp"
-	for _, p := range []string{kp, vp, kt, vt} {
+	// .col/.manifest 一并检查：避免与 BuildFromTSVs 等入口的残留混建。
+	for _, p := range []string{kp, vp, kt, vt, basePath + ".col", basePath + ".manifest"} {
 		if _, err := os.Lstat(p); err == nil {
 			return nil, fmt.Errorf("immkv: %s already exists; delete it and rebuild", p)
 		} else if !os.IsNotExist(err) {
@@ -648,7 +649,8 @@ func (w *Writer) blkLensToBytes() []byte {
 
 // Finish 排序（Add 模式）、落盘锚点、回填两个文件头、fsync、rename，然后
 // 关闭构建器。再次调用返回错误。构建期间出现过错误时，Finish 返回该错误且
-// 不发布任何文件。任何一步失败都会清掉两个 .tmp 文件。
+// 不发布任何文件。任何一步失败都会清掉本次构建的全部产物（.tmp 与已
+// rename 出去的正式文件）。
 func (w *Writer) Finish() error {
 	if w.finished {
 		return errors.New("immkv: Writer already finished")
@@ -656,7 +658,9 @@ func (w *Writer) Finish() error {
 	w.finished = true
 	if w.err != nil {
 		w.closeEnc()
-		if cerr := w.abort(); cerr != nil {
+		cerr := w.abort()
+		w.closed = true // 资源已释放；后续 Abort 不再执行清理，避免误删同路径新 writer 的文件
+		if cerr != nil {
 			return fmt.Errorf("%w; cleanup: %v", w.err, cerr)
 		}
 		return w.err
@@ -664,7 +668,9 @@ func (w *Writer) Finish() error {
 	err := w.finish()
 	w.closeEnc()
 	if err != nil {
-		if cerr := w.abort(); cerr != nil {
+		cerr := w.abort()
+		w.closed = true
+		if cerr != nil {
 			return fmt.Errorf("%w; cleanup: %v", err, cerr)
 		}
 		return err
@@ -673,8 +679,9 @@ func (w *Writer) Finish() error {
 	return nil
 }
 
-// Abort 放弃构建：关闭文件与编码器、删除本次构建的 .tmp 文件。幂等；
-// Finish 成功后调用是无操作并返回 nil，不会删除已发布的库。
+// Abort 放弃构建：关闭文件与编码器、删除本次构建的产物。幂等；Finish
+// （无论成败）之后调用是无操作并返回 nil——清理只做一次，重试删除只会
+// 误删同路径新 writer 的文件。
 func (w *Writer) Abort() error {
 	if w.closed {
 		return nil
@@ -779,7 +786,9 @@ func (w *Writer) writeValsHeader() error {
 	return err
 }
 
-// abort 清理失败路径：关闭文件、删除两个 .tmp，返回首个清理错误。
+// abort 清理失败路径：关闭文件、删除本次构建的产物，返回首个清理错误。
+// 正式路径若存在必为本次 rename 出去的文件（Create 的独占检查保证），
+// 删除它们不会碰到别人的库。
 func (w *Writer) abort() error {
 	var first error
 	if w.kf != nil {
@@ -794,7 +803,7 @@ func (w *Writer) abort() error {
 		}
 		w.vf = nil
 	}
-	for _, p := range []string{w.keysTmp, w.valsTmp} {
+	for _, p := range []string{w.keysTmp, w.valsTmp, w.keysPath, w.valsPath} {
 		if err := os.Remove(p); err != nil && !os.IsNotExist(err) && first == nil {
 			first = err
 		}

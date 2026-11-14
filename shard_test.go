@@ -2,12 +2,15 @@ package immkv
 
 import (
 	"bytes"
+	"encoding/binary"
 	"math/rand"
 	"os"
 	"path/filepath"
 	"sort"
 	"sync"
 	"testing"
+
+	"github.com/klauspost/compress/zstd"
 )
 
 // ---- 键编码（自 immdb 迁移） ----
@@ -660,5 +663,147 @@ func TestEagerCorruptFrameReportsError(t *testing.T) {
 	hi := append(bytes.Clone(victim), 0xFF)
 	if err := db.Scan(victim, hi, func(k, v []byte) bool { return true }); err == nil {
 		t.Fatal("Scan 应报错")
+	}
+}
+
+// ---- 损坏库应报错而非 panic（错误通道回归） ----
+
+// patchKeys 打开 base.keys 供调用方改字节后关闭。
+func patchKeys(t *testing.T, base string, fn func(raw []byte)) []byte {
+	t.Helper()
+	p := base + ".keys"
+	raw, err := os.ReadFile(p)
+	if err != nil {
+		t.Fatal(err)
+	}
+	fn(raw)
+	if err := os.WriteFile(p, raw, 0o644); err != nil {
+		t.Fatal(err)
+	}
+	return raw
+}
+
+func TestOpenRejectsIndexBeyondEOF(t *testing.T) {
+	dir := t.TempDir()
+	buildTestLib(t, dir, CreateOptions{}, false)
+	base := filepath.Join(dir, "chr1")
+	patchKeys(t, base, func(raw []byte) {
+		st, _ := os.Stat(base + ".keys")
+		binary.LittleEndian.PutUint64(raw[28:36], uint64(st.Size())+1000)
+	})
+	if _, err := OpenEager(dir, 0); err == nil {
+		t.Fatal("indexOff 越界应返回错误")
+	}
+}
+
+func TestOpenRejectsDescendingBlockOffsets(t *testing.T) {
+	dir := t.TempDir()
+	base := filepath.Join(dir, "chr1")
+	w, err := Create(base, CreateOptions{Schema: testRecordSchema})
+	if err != nil {
+		t.Fatal(err)
+	}
+	for i := 0; i < 100; i++ { // 2 个微块
+		if err := w.Add(VarKey(0, uint32(i), "A", "T"), []byte("v")); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := w.Finish(); err != nil {
+		t.Fatal(err)
+	}
+	patchKeys(t, base, func(raw []byte) {
+		indexOff := binary.LittleEndian.Uint64(raw[28:36])
+		nBlock := binary.LittleEndian.Uint32(raw[24:28])
+		if nBlock < 2 {
+			t.Fatal("需要至少 2 个块")
+		}
+		offAt := indexOff + 8*uint64(nBlock)
+		first := binary.LittleEndian.Uint64(raw[offAt:])
+		binary.LittleEndian.PutUint64(raw[offAt+8:], first-8) // 块 1 偏移 < 块 0
+	})
+	if _, err := OpenEager(dir, 0); err == nil {
+		t.Fatal("块偏移倒序应返回错误")
+	}
+}
+
+func TestGetRejectsNonMonotonicKeyEnds(t *testing.T) {
+	dir := t.TempDir()
+	base := filepath.Join(dir, "chr1")
+	w, err := Create(base, CreateOptions{Schema: testRecordSchema})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := w.Add(VarKey(0, 1, "AA", "T"), []byte("v1")); err != nil {
+		t.Fatal(err)
+	}
+	if err := w.Add(VarKey(0, 2, "AA", "T"), []byte("v2")); err != nil {
+		t.Fatal(err)
+	}
+	if err := w.Finish(); err != nil {
+		t.Fatal(err)
+	}
+	patchKeys(t, base, func(raw []byte) {
+		binary.LittleEndian.PutUint32(raw[headerSize+4:], 1) // keyEnds[1] < keyEnds[0]
+	})
+	db, err := OpenEager(dir, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	if _, _, err := db.Get(VarKey(0, 1, "AA", "T")); err == nil {
+		t.Fatal("keyEnds 倒序应使 Get 返回错误")
+	}
+}
+
+// TestDecodePackRejectsOverflowLengths 构造 lens=[0xffffffff,1] 的合法 zstd 帧：
+// int32 累加会回绕并通过末项校验，必须在逐项卡边界时拒绝（回归：曾 panic）。
+func TestDecodePackRejectsOverflowLengths(t *testing.T) {
+	enc, err := zstd.NewWriter(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer enc.Close()
+	payload := make([]byte, 16)
+	binary.LittleEndian.PutUint32(payload[0:4], 0)           // first
+	binary.LittleEndian.PutUint32(payload[4:8], 2)           // n
+	binary.LittleEndian.PutUint32(payload[8:12], 0xffffffff) // lens[0]
+	binary.LittleEndian.PutUint32(payload[12:16], 1)         // lens[1]
+	frame := enc.EncodeAll(payload, nil)
+	kd, err := zstd.NewReader(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer kd.Close()
+	if _, err := decodePack(&kpDecoder{dec: kd}, frame, nil); err == nil {
+		t.Fatal("溢出长度表应返回错误")
+	}
+}
+
+// TestPackedCacheHitRejectsOutOfRange 缓存命中路径与未命中同样校验成员范围
+// （回归：命中路径曾直接切片 panic）。
+func TestPackedCacheHitRejectsOutOfRange(t *testing.T) {
+	dir := t.TempDir()
+	base := filepath.Join(dir, "chr1")
+	w, err := Create(base, CreateOptions{Schema: testRecordSchema})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := w.Add(VarKey(0, 1, "A", "T"), bytes.Repeat([]byte("v"), 300)); err != nil {
+		t.Fatal(err)
+	}
+	if err := w.Finish(); err != nil {
+		t.Fatal(err)
+	}
+	s, err := openShard(base, newLRU(1<<20))
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer s.Close()
+	recs, _, _ := parseKeys(t, base+".keys")
+	valOff := recs[0].valOff
+	// 塞一个只覆盖记录 0 的假 packEnt，让记录 1 命中缓存但落在帧外。
+	s.cache.add(-int64(valOff), &packEnt{first: 0, n: 1, pfx: []int32{8, 9}, buf: make([]byte, 9)}, 64)
+	if _, err := s.value(1, valOff, uint32(recs[0].frameLen), false, true); err == nil {
+		t.Fatal("缓存命中的越界记录号应返回错误")
 	}
 }

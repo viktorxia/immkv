@@ -152,6 +152,9 @@ func openShard(base string, cache *lruCache) (*shard, error) {
 	fail := func(err error) (*shard, error) {
 		kf.Close()
 		vf.Close()
+		if s.vfDirect != nil {
+			s.vfDirect.Close()
+		}
 		return nil, err
 	}
 	var kh [headerSize]byte
@@ -185,23 +188,33 @@ func openShard(base string, cache *lruCache) (*shard, error) {
 	if v := binary.LittleEndian.Uint64(vh[12:20]); v != s.count {
 		return fail(fmt.Errorf("immkv: vals count %d ≠ keys count %d", v, s.count))
 	}
-	// 块索引一次读入常驻：[prefix 8B ×N][blockOff 8B ×N]
+	// 块索引一次读入常驻：[prefix 8B ×N][blockOff 8B ×N]。分配前先校验
+	// 偏移与字节数，坏头（越界/负长度）返回错误而不是 panic。
 	st, err := kf.Stat()
 	if err != nil {
 		return fail(err)
 	}
-	ib := make([]byte, int64(st.Size())-int64(s.indexOff))
+	if s.indexOff < headerSize || s.indexOff+16*uint64(s.nBlock) != uint64(st.Size()) {
+		return fail(fmt.Errorf("immkv: %s: keys 块索引区 [%d, %d) 与文件 %d B 不符",
+			base+".keys", s.indexOff, s.indexOff+16*uint64(s.nBlock), st.Size()))
+	}
+	ib := make([]byte, 16*uint64(s.nBlock))
 	if _, err := kf.ReadAt(ib, int64(s.indexOff)); err != nil {
 		return fail(err)
 	}
-	if uint64(len(ib)) != 16*uint64(s.nBlock) {
-		return fail(fmt.Errorf("immkv: 块索引区 %d B ≠ 16×%d", len(ib), s.nBlock))
-	}
 	s.blkPfx = make([]uint64, s.nBlock)
 	s.blkOff = make([]uint64, s.nBlock)
+	prevOff := uint64(0)
 	for i := uint32(0); i < s.nBlock; i++ {
 		s.blkPfx[i] = binary.BigEndian.Uint64(ib[8*i:])
-		s.blkOff[i] = binary.LittleEndian.Uint64(ib[8*uint64(s.nBlock)+8*uint64(i):])
+		off := binary.LittleEndian.Uint64(ib[8*uint64(s.nBlock)+8*uint64(i):])
+		// 块偏移必须落在数据区内且单调递增，否则 block() 的窗口长度会算负
+		if off < headerSize || off >= s.indexOff || (i > 0 && off < prevOff) {
+			return fail(fmt.Errorf("immkv: %s: 块 %d 偏移 %d 不合法（索引区起点 %d）",
+				base+".keys", i, off, s.indexOff))
+		}
+		s.blkOff[i] = off
+		prevOff = off
 	}
 	// 每值成帧构建的库在 vals 头里嵌训练字典；有字典的库 CGO 可用时解压走
 	// libzstd DDict。无字典的 v2 打包库保留 klauspost：实测 gozstd 解 64KB
@@ -318,6 +331,13 @@ func parseBlockView(buf []byte, n int) (blockView, int, error) {
 	lensAt := 4 * n
 	v.lens = unsafe.Slice((*uint32)(unsafe.Add(unsafe.Pointer(&buf[0]), lensAt)), n)
 	v.base = binary.LittleEndian.Uint64(buf[8*n:])
+	// keyEnds 必须非降（允许零长键）且末项在键区内；否则 keyAt 的切片
+	// 会高位小于低位而 panic。逐项校验，不只看末项。
+	for i := 1; i < n; i++ {
+		if v.keyEnds[i] < v.keyEnds[i-1] {
+			return blockView{}, 0, fmt.Errorf("immkv: 微块 keyEnds 第 %d 项 %d < 前项 %d", i, v.keyEnds[i], v.keyEnds[i-1])
+		}
+	}
 	keyLen := int(v.keyEnds[n-1])
 	if len(buf) < 8*n+8+keyLen {
 		return blockView{}, 0, errors.New("immkv: 微块键区不足")
@@ -538,13 +558,18 @@ func decodePack(dec frameDecoder, frame, dst []byte) (*packEnt, error) {
 		return nil, errors.New("immkv: 打包帧头不合法")
 	}
 	p.pfx = make([]int32, p.n+1)
-	o := int32(8 + 4*int(p.n))
+	// 长度表按 int 累加并逐项卡在值区内：u32 长度塞进 int32 累加会回绕，
+	// 只查末项拦不住越界（如 lens=[0xffffffff,1]）。
+	o := 8 + 4*int(p.n)
 	for i := uint32(0); i < p.n; i++ {
-		p.pfx[i] = o
-		o += int32(binary.LittleEndian.Uint32(buf[8+4*i:]))
+		p.pfx[i] = int32(o)
+		o += int(binary.LittleEndian.Uint32(buf[8+4*i:]))
+		if o > len(buf) {
+			return nil, fmt.Errorf("immkv: 打包帧长度表第 %d 项越过值区终点", i)
+		}
 	}
-	p.pfx[p.n] = o
-	if int(o) != len(buf) {
+	p.pfx[p.n] = int32(o)
+	if o != len(buf) {
 		return nil, errors.New("immkv: 打包帧长度表与值区不符")
 	}
 	p.buf = buf
@@ -563,7 +588,13 @@ func (s *shard) value(rec int, valOff uint64, frameLen uint32, raw, packed bool)
 	if s.cache != nil {
 		if v, ok := s.cache.get(ck); ok {
 			if packed {
-				return v.(*packEnt).value(uint32(rec) - v.(*packEnt).first), nil
+				// 缓存命中与未命中走同一成员校验：坏元数据让记录号落在帧外
+				// 时返回错误，而不是越界切片 panic。
+				p := v.(*packEnt)
+				if uint32(rec) < p.first || uint32(rec) >= p.first+p.n {
+					return nil, fmt.Errorf("immkv: 打包帧记录号 %d 不在 [%d, %d) 内", rec, p.first, p.first+p.n)
+				}
+				return p.value(uint32(rec) - p.first), nil
 			}
 			return v.([]byte), nil
 		}

@@ -3,8 +3,10 @@ package immkv
 import (
 	"bytes"
 	"encoding/binary"
+	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 )
 
@@ -324,5 +326,71 @@ func TestSelectedColumnsBothPaths(t *testing.T) {
 		if !bytes.Equal(colOut[i], recOut[i]) {
 			t.Fatalf("key %x: 记录序 %x ≠ 列存 %x", keys[i], recOut[i], colOut[i])
 		}
+	}
+}
+
+// TestSelectedColumnsWideSchemaBothPaths 宽 schema（70 字段）下选跨字边界的
+// 第 8 列，两条路径必须返回逐字节一致的 record，且选中字段不丢失
+// （回归：记录序投影曾静默丢 Flag 位、产出带尾部字节的非法 record）。
+func TestSelectedColumnsWideSchemaBothPaths(t *testing.T) {
+	for _, typ := range []string{"Flag", "Integer"} {
+		t.Run(typ, func(t *testing.T) {
+			work := t.TempDir()
+			var src strings.Builder
+			src.WriteString("##fileformat=VCFv4.2\n")
+			for i := 0; i < 70; i++ {
+				num := "1"
+				if typ == "Flag" {
+					num = "0"
+				}
+				fmt.Fprintf(&src, "##INFO=<ID=F%d,Number=%s,Type=%s,Description=\"t\">\n", i, num, typ)
+			}
+			src.WriteString("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n")
+			info := "F8"
+			if typ == "Integer" {
+				info = "F8=42"
+			}
+			fmt.Fprintf(&src, "1\t100\t.\tA\tG\t.\t.\t%s\n", info)
+			vcf := filepath.Join(work, "in.vcf")
+			if err := os.WriteFile(vcf, []byte(src.String()), 0o600); err != nil {
+				t.Fatal(err)
+			}
+			lib := filepath.Join(work, "lib")
+			if err := BuildFromVCFs(lib, []string{vcf}, nil, "", BuildOptions{}); err != nil {
+				t.Fatal(err)
+			}
+			schema, err := ReadSchema(lib)
+			if err != nil {
+				t.Fatal(err)
+			}
+			db, err := OpenStreaming(lib, StreamOptions{Columns: []int{8}})
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer db.Close()
+			keys := [][]byte{VarKey(0, 100, "A", "G")}
+
+			t.Setenv("IMMKV_FORCE_COLUMNAR", "1")
+			colOut, err := db.GetBatch(keys)
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Setenv("IMMKV_FORCE_COLUMNAR", "")
+			t.Setenv("IMMKV_FORCE_RECORD", "1")
+			recOut, err := db.GetBatch(keys)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !bytes.Equal(colOut[0], recOut[0]) {
+				t.Errorf("%s: columnar=%x record-order=%x", typ, colOut[0], recOut[0])
+			}
+			view, derr := NewRecord(schema, recOut[0])
+			switch {
+			case derr != nil:
+				t.Errorf("%s: record path returned an invalid record: %v", typ, derr)
+			case !view.HasValue("F8"):
+				t.Errorf("%s: record path silently lost the selected field F8", typ)
+			}
+		})
 	}
 }

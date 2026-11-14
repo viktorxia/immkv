@@ -122,9 +122,18 @@ func builtFieldsFromSchema(schema immkv.Schema) map[string]bool {
 }
 
 // validateCandidateFields 校验库 schema 的每个字段都在候选字段表里且类型一致。
+// 数组字段（Number 为 R/G/. 的数值字段）单独报错：本示例只演示标量解析，
+// 数组要用 Record.Values 的 Elems。
 // 真实使用中候选表由调用方维护；库新增字段时这里会报错，提示补表。
 func validateCandidateFields(schema immkv.Schema) error {
 	for _, field := range schema {
+		if field.Type == immkv.TypeInteger || field.Type == immkv.TypeFloat {
+			switch field.Number {
+			case "R", "G", ".":
+				return fmt.Errorf("库字段 %q 是数组字段（Number=%s）；本示例只演示标量，数组请遍历 Value.Elems",
+					field.Name, field.Number)
+			}
+		}
 		want, ok := candidateFieldTypes[field.Name]
 		if !ok {
 			return fmt.Errorf("库字段 %q 不在候选字段表里", field.Name)
