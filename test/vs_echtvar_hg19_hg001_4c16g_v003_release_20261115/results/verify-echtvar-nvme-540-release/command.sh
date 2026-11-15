@@ -1,0 +1,1 @@
+python3 -I /home/tian/projects/immkv/test/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/run_cell.py --engine echtvar --media nvme --fields 540 --record /home/tian/projects/immkv/test/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/results/verify-echtvar-nvme-540-release --verify-reference /home/tian/immkv_test_nvme/test/4c16g_gz_v003/540_fields/echtvar.pass2.wk 

@@ -1,0 +1,60 @@
+{
+  "annotation_command": [
+    "/home/tian/projects/immkv/tmp/echtvar/echtvar",
+    "anno",
+    "-e",
+    "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr1.echtvar.zip",
+    "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-540-release/sl1.vcf.gz",
+    "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-540-release/an1.vcf.gz"
+  ],
+  "annotation_exit_code": 0,
+  "annotation_finished": {
+    "monotonic_ns": 67041619639229,
+    "time_ns": 1794692864809963383
+  },
+  "annotation_started": {
+    "monotonic_ns": 66788663499763,
+    "time_ns": 1794692611853824208
+  },
+  "chromosome": 1,
+  "comparison": {
+    "equal": true,
+    "fresh": {
+      "data_sha256": "59ef94490a873f8ceb5139499102b66658a2c22d25a4e1c4fdc5166cb04bcdea",
+      "rows": 308298
+    },
+    "reference": {
+      "data_sha256": "59ef94490a873f8ceb5139499102b66658a2c22d25a4e1c4fdc5166cb04bcdea",
+      "rows": 308298
+    }
+  },
+  "finished": {
+    "monotonic_ns": 67041626409464,
+    "time_ns": 1794692864816733758
+  },
+  "slice_command": [
+    "/home/tian/miniforge3/envs/transvar/bin/bcftools",
+    "view",
+    "-r",
+    "1",
+    "-Oz",
+    "-o",
+    "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-540-release/sl1.vcf.gz",
+    "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/query/hg001.decomp.vcf.gz"
+  ],
+  "slice_compressed_bytes": 10999773,
+  "slice_exit_code": 0,
+  "slice_finished": {
+    "monotonic_ns": 66788663127908,
+    "time_ns": 1794692611853452122
+  },
+  "slice_started": {
+    "monotonic_ns": 66787459946637,
+    "time_ns": 1794692610650271202
+  },
+  "started": {
+    "monotonic_ns": 66787459542421,
+    "time_ns": 1794692610649866595
+  },
+  "status": "ok"
+}

@@ -1,0 +1,5 @@
+{
+  "status": "skipped_after_oom",
+  "source": "timing-hdd-568-echtvar-r1-release",
+  "timing_sample": false
+}

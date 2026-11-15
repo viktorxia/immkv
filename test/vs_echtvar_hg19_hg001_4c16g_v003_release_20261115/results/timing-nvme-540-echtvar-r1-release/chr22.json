@@ -1,0 +1,49 @@
+{
+  "annotation_command": [
+    "/home/tian/projects/immkv/tmp/echtvar/echtvar",
+    "anno",
+    "-e",
+    "/home/tian/immkv_test_nvme/test/540_fields/archives/chr22.echtvar.zip",
+    "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/timing-nvme-540-echtvar-r1-release/sl22.vcf.gz",
+    "/dev/null"
+  ],
+  "annotation_exit_code": 0,
+  "annotation_finished": {
+    "monotonic_ns": 61511869549499,
+    "time_ns": 1794687335059872982
+  },
+  "annotation_started": {
+    "monotonic_ns": 61488812165849,
+    "time_ns": 1794687312002490534
+  },
+  "chromosome": 22,
+  "finished": {
+    "monotonic_ns": 61511870273755,
+    "time_ns": 1794687335060598380
+  },
+  "slice_command": [
+    "/home/tian/miniforge3/envs/transvar/bin/bcftools",
+    "view",
+    "-r",
+    "22",
+    "-Oz",
+    "-o",
+    "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/timing-nvme-540-echtvar-r1-release/sl22.vcf.gz",
+    "/home/tian/immkv_test_nvme/test/540_fields/query/hg001.decomp.vcf.gz"
+  ],
+  "slice_compressed_bytes": 1765326,
+  "slice_exit_code": 0,
+  "slice_finished": {
+    "monotonic_ns": 61488812074688,
+    "time_ns": 1794687312002398612
+  },
+  "slice_started": {
+    "monotonic_ns": 61488407605172,
+    "time_ns": 1794687311597929936
+  },
+  "started": {
+    "monotonic_ns": 61488407489675,
+    "time_ns": 1794687311597814430
+  },
+  "status": "ok"
+}

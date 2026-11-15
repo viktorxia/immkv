@@ -1,0 +1,9 @@
+{
+  "status": "oom",
+  "original_status_source": "status.json",
+  "evidence": [
+    "systemd-unit.log",
+    "kernel-oom.log"
+  ],
+  "reason": "Kernel CONSTRAINT_MEMCG killed echtvar; scope result oom-kill. Outside observer stopped before final event update."
+}

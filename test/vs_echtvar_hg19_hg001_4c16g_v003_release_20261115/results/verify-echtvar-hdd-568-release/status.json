@@ -1,0 +1,16 @@
+{
+  "status": "oom",
+  "exit_code": 143,
+  "memory_events_unavailable": false,
+  "last_observed_cgroup": {
+    "cpu.stat": "usage_usec 121886784\nuser_usec 102675593\nsystem_usec 19211191\nnice_usec 0\ncore_sched.force_idle_usec 0",
+    "memory.current": "17179279360",
+    "memory.events": "low 0\nhigh 0\nmax 3982\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "memory.events.local": "low 0\nhigh 0\nmax 3982\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "memory.max": "17179869184",
+    "memory.peak": "17179869184",
+    "memory.swap.max": "0",
+    "timestamp_ns": 1794701065431660030
+  },
+  "systemd_journal_source": "systemd-unit.log"
+}

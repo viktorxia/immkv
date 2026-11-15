@@ -1,0 +1,19 @@
+/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/bin/annotate: go1.27.1
+	path	github.com/viktorxia/immkv/test/annotate
+	mod	github.com/viktorxia/immkv	v0.0.3+dirty	
+	dep	github.com/biogo/hts	v1.4.5	h1:mhVCpZaTYlAhBjMaAATGWBnauioBtmvOb0ApLdU4/+0=
+	dep	github.com/klauspost/compress	v1.20.3	h1:zWNoFqq/lSuYQRim3dUXlXeA0IqwuZGicdG5ZTfY5j4=
+	dep	github.com/valyala/gozstd	v1.26.0	h1:vvQxZ4FANU2Q6FG4dUMpuQ8PUvkq9MdbU2jFkF+brm8=
+	dep	golang.org/x/sys	v0.49.0	h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
+	build	-buildmode=exe
+	build	-compiler=gc
+	build	-trimpath=true
+	build	DefaultGODEBUG=tracebacklabels=0,x509sslcertoverrideplatform=0
+	build	CGO_ENABLED=1
+	build	GOARCH=amd64
+	build	GOOS=linux
+	build	GOAMD64=v1
+	build	vcs=git
+	build	vcs.revision=840d36d80351f8b8651d9dc90abf1314bf5db21c
+	build	vcs.time=2026-11-14T19:17:41Z
+	build	vcs.modified=true

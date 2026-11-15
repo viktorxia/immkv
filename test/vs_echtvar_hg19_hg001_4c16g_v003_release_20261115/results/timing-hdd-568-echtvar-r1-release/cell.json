@@ -1,0 +1,437 @@
+{
+  "chromosomes": [
+    {
+      "annotation_command": [
+        "/home/tian/projects/immkv/tmp/echtvar/echtvar",
+        "anno",
+        "-e",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr1.echtvar.zip",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/timing-hdd-568-echtvar-r1-release/sl1.vcf.gz",
+        "/dev/null"
+      ],
+      "annotation_exit_code": -15,
+      "annotation_finished": {
+        "monotonic_ns": 76696536199336,
+        "time_ns": 1794702519726523970
+      },
+      "annotation_started": {
+        "monotonic_ns": 76666090234947,
+        "time_ns": 1794702489280559611
+      },
+      "chromosome": 1,
+      "error": "echtvar exited -15",
+      "finished": {
+        "monotonic_ns": 76696537280302,
+        "time_ns": 1794702519727605037
+      },
+      "slice_command": [
+        "/home/tian/miniforge3/envs/transvar/bin/bcftools",
+        "view",
+        "-r",
+        "1",
+        "-Oz",
+        "-o",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/timing-hdd-568-echtvar-r1-release/sl1.vcf.gz",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/query/hg001.decomp.vcf.gz"
+      ],
+      "slice_compressed_bytes": 10999776,
+      "slice_exit_code": 0,
+      "slice_finished": {
+        "monotonic_ns": 76666089906948,
+        "time_ns": 1794702489280230971
+      },
+      "slice_started": {
+        "monotonic_ns": 76664987121563,
+        "time_ns": 1794702488177446057
+      },
+      "started": {
+        "monotonic_ns": 76664986851491,
+        "time_ns": 1794702488177175825
+      },
+      "status": "failed"
+    },
+    {
+      "annotation_command": [
+        "/home/tian/projects/immkv/tmp/echtvar/echtvar",
+        "anno",
+        "-e",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr2.echtvar.zip",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/timing-hdd-568-echtvar-r1-release/sl2.vcf.gz",
+        "/dev/null"
+      ],
+      "annotation_exit_code": -15,
+      "annotation_finished": {
+        "monotonic_ns": 76696484142980,
+        "time_ns": 1794702519674467143
+      },
+      "annotation_started": {
+        "monotonic_ns": 76666192160298,
+        "time_ns": 1794702489382484892
+      },
+      "chromosome": 2,
+      "error": "echtvar exited -15",
+      "finished": {
+        "monotonic_ns": 76696485391909,
+        "time_ns": 1794702519675716443
+      },
+      "slice_command": [
+        "/home/tian/miniforge3/envs/transvar/bin/bcftools",
+        "view",
+        "-r",
+        "2",
+        "-Oz",
+        "-o",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/timing-hdd-568-echtvar-r1-release/sl2.vcf.gz",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/query/hg001.decomp.vcf.gz"
+      ],
+      "slice_compressed_bytes": 11750295,
+      "slice_exit_code": 0,
+      "slice_finished": {
+        "monotonic_ns": 76666191940590,
+        "time_ns": 1794702489382264673
+      },
+      "slice_started": {
+        "monotonic_ns": 76664987655333,
+        "time_ns": 1794702488177979497
+      },
+      "started": {
+        "monotonic_ns": 76664987224945,
+        "time_ns": 1794702488177547906
+      },
+      "status": "failed"
+    },
+    {
+      "annotation_command": [
+        "/home/tian/projects/immkv/tmp/echtvar/echtvar",
+        "anno",
+        "-e",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr3.echtvar.zip",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/timing-hdd-568-echtvar-r1-release/sl3.vcf.gz",
+        "/dev/null"
+      ],
+      "annotation_exit_code": -9,
+      "annotation_finished": {
+        "monotonic_ns": 76696528199363,
+        "time_ns": 1794702519718522976
+      },
+      "annotation_started": {
+        "monotonic_ns": 76665990999728,
+        "time_ns": 1794702489181324283
+      },
+      "chromosome": 3,
+      "error": "echtvar exited -9",
+      "finished": {
+        "monotonic_ns": 76696529868261,
+        "time_ns": 1794702519720192896
+      },
+      "slice_command": [
+        "/home/tian/miniforge3/envs/transvar/bin/bcftools",
+        "view",
+        "-r",
+        "3",
+        "-Oz",
+        "-o",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/timing-hdd-568-echtvar-r1-release/sl3.vcf.gz",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/query/hg001.decomp.vcf.gz"
+      ],
+      "slice_compressed_bytes": 9815091,
+      "slice_exit_code": 0,
+      "slice_finished": {
+        "monotonic_ns": 76665990801981,
+        "time_ns": 1794702489181125814
+      },
+      "slice_started": {
+        "monotonic_ns": 76664988290282,
+        "time_ns": 1794702488178614956
+      },
+      "started": {
+        "monotonic_ns": 76664987781898,
+        "time_ns": 1794702488178106392
+      },
+      "status": "failed"
+    },
+    {
+      "annotation_command": [
+        "/home/tian/projects/immkv/tmp/echtvar/echtvar",
+        "anno",
+        "-e",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr4.echtvar.zip",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/timing-hdd-568-echtvar-r1-release/sl4.vcf.gz",
+        "/dev/null"
+      ],
+      "annotation_exit_code": -9,
+      "annotation_finished": {
+        "monotonic_ns": 76696534186839,
+        "time_ns": 1794702519724511333
+      },
+      "annotation_started": {
+        "monotonic_ns": 76666091943718,
+        "time_ns": 1794702489282268453
+      },
+      "chromosome": 4,
+      "error": "echtvar exited -9",
+      "finished": {
+        "monotonic_ns": 76696535855978,
+        "time_ns": 1794702519726180753
+      },
+      "slice_command": [
+        "/home/tian/miniforge3/envs/transvar/bin/bcftools",
+        "view",
+        "-r",
+        "4",
+        "-Oz",
+        "-o",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/timing-hdd-568-echtvar-r1-release/sl4.vcf.gz",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/query/hg001.decomp.vcf.gz"
+      ],
+      "slice_compressed_bytes": 10519958,
+      "slice_exit_code": 0,
+      "slice_finished": {
+        "monotonic_ns": 76666091824056,
+        "time_ns": 1794702489282148710
+      },
+      "slice_started": {
+        "monotonic_ns": 76664988611428,
+        "time_ns": 1794702488178936112
+      },
+      "started": {
+        "monotonic_ns": 76664988174627,
+        "time_ns": 1794702488178499121
+      },
+      "status": "failed"
+    },
+    {
+      "chromosome": 5,
+      "finished": {
+        "monotonic_ns": 76696485610364,
+        "time_ns": 1794702519675935179
+      },
+      "started": {
+        "monotonic_ns": 76696485609573,
+        "time_ns": 1794702519675934277
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 6,
+      "finished": {
+        "monotonic_ns": 76696485674864,
+        "time_ns": 1794702519675999679
+      },
+      "started": {
+        "monotonic_ns": 76696485674343,
+        "time_ns": 1794702519675999088
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 7,
+      "finished": {
+        "monotonic_ns": 76696485736789,
+        "time_ns": 1794702519676061624
+      },
+      "started": {
+        "monotonic_ns": 76696485736468,
+        "time_ns": 1794702519676061253
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 8,
+      "finished": {
+        "monotonic_ns": 76696485784868,
+        "time_ns": 1794702519676109703
+      },
+      "started": {
+        "monotonic_ns": 76696485784597,
+        "time_ns": 1794702519676109412
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 9,
+      "finished": {
+        "monotonic_ns": 76696485829791,
+        "time_ns": 1794702519676154626
+      },
+      "started": {
+        "monotonic_ns": 76696485829551,
+        "time_ns": 1794702519676154276
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 10,
+      "finished": {
+        "monotonic_ns": 76696485870267,
+        "time_ns": 1794702519676195091
+      },
+      "started": {
+        "monotonic_ns": 76696485870036,
+        "time_ns": 1794702519676194831
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 11,
+      "finished": {
+        "monotonic_ns": 76696485923335,
+        "time_ns": 1794702519676248150
+      },
+      "started": {
+        "monotonic_ns": 76696485923105,
+        "time_ns": 1794702519676247899
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 12,
+      "finished": {
+        "monotonic_ns": 76696485963910,
+        "time_ns": 1794702519676288735
+      },
+      "started": {
+        "monotonic_ns": 76696485963720,
+        "time_ns": 1794702519676288545
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 13,
+      "finished": {
+        "monotonic_ns": 76696486010076,
+        "time_ns": 1794702519676334911
+      },
+      "started": {
+        "monotonic_ns": 76696486009876,
+        "time_ns": 1794702519676334691
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 14,
+      "finished": {
+        "monotonic_ns": 76696486106475,
+        "time_ns": 1794702519676431300
+      },
+      "started": {
+        "monotonic_ns": 76696486106144,
+        "time_ns": 1794702519676430909
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 15,
+      "finished": {
+        "monotonic_ns": 76696486188167,
+        "time_ns": 1794702519676513002
+      },
+      "started": {
+        "monotonic_ns": 76696486187816,
+        "time_ns": 1794702519676512581
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 16,
+      "finished": {
+        "monotonic_ns": 76696486263637,
+        "time_ns": 1794702519676588442
+      },
+      "started": {
+        "monotonic_ns": 76696486263306,
+        "time_ns": 1794702519676588081
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 17,
+      "finished": {
+        "monotonic_ns": 76696486340540,
+        "time_ns": 1794702519676665365
+      },
+      "started": {
+        "monotonic_ns": 76696486340219,
+        "time_ns": 1794702519676664994
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 18,
+      "finished": {
+        "monotonic_ns": 76696486412002,
+        "time_ns": 1794702519676736827
+      },
+      "started": {
+        "monotonic_ns": 76696486411752,
+        "time_ns": 1794702519676736547
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 19,
+      "finished": {
+        "monotonic_ns": 76696486476232,
+        "time_ns": 1794702519676801057
+      },
+      "started": {
+        "monotonic_ns": 76696486475961,
+        "time_ns": 1794702519676800756
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 20,
+      "finished": {
+        "monotonic_ns": 76696486553435,
+        "time_ns": 1794702519676878270
+      },
+      "started": {
+        "monotonic_ns": 76696486553154,
+        "time_ns": 1794702519676877939
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 21,
+      "finished": {
+        "monotonic_ns": 76696486622143,
+        "time_ns": 1794702519676946967
+      },
+      "started": {
+        "monotonic_ns": 76696486621872,
+        "time_ns": 1794702519676946687
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 22,
+      "finished": {
+        "monotonic_ns": 76696486688957,
+        "time_ns": 1794702519677013782
+      },
+      "started": {
+        "monotonic_ns": 76696486688736,
+        "time_ns": 1794702519677013521
+      },
+      "status": "cancelled"
+    }
+  ],
+  "compressed_output": true,
+  "engine": "echtvar",
+  "exit_code": 143,
+  "fields": 568,
+  "finished": {
+    "monotonic_ns": 76696537548410,
+    "time_ns": 1794702519727873075
+  },
+  "media": "hdd",
+  "scratch": "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/timing-hdd-568-echtvar-r1-release",
+  "started": {
+    "monotonic_ns": 76664986631673,
+    "time_ns": 1794702488176952000
+  },
+  "status": "failed",
+  "worker_note": "Four chromosome subprocess tasks on CPUs 0-3; each echtvar process may create additional htslib threads.",
+  "workers": 4
+}

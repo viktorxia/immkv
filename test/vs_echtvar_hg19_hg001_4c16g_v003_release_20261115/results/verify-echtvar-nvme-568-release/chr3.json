@@ -1,0 +1,57 @@
+{
+  "annotation_command": [
+    "/home/tian/projects/immkv/tmp/echtvar/echtvar",
+    "anno",
+    "-e",
+    "/home/tian/immkv_test_nvme/test/568_fields/archives/chr3.echtvar.zip",
+    "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-nvme-568-release/sl3.vcf.gz",
+    "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-nvme-568-release/an3.vcf.gz"
+  ],
+  "annotation_exit_code": -15,
+  "annotation_finished": {
+    "monotonic_ns": 64035396198990,
+    "time_ns": 1794689858586523574
+  },
+  "annotation_started": {
+    "monotonic_ns": 64013076945735,
+    "time_ns": 1794689836267270470
+  },
+  "chromosome": 3,
+  "comparison": {
+    "error": "Run cancelled while reading compressed output",
+    "reference": {
+      "data_sha256": "d57d1a02c00df9b326a93be7d7c8dfc2ca9477a3f0dbce00c220a085a4203c34",
+      "rows": 275651
+    }
+  },
+  "error": "echtvar exited -15",
+  "finished": {
+    "monotonic_ns": 64049140885508,
+    "time_ns": 1794689872331209802
+  },
+  "slice_command": [
+    "/home/tian/miniforge3/envs/transvar/bin/bcftools",
+    "view",
+    "-r",
+    "3",
+    "-Oz",
+    "-o",
+    "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-nvme-568-release/sl3.vcf.gz",
+    "/home/tian/immkv_test_nvme/test/568_fields/query/hg001.decomp.vcf.gz"
+  ],
+  "slice_compressed_bytes": 9815088,
+  "slice_exit_code": 0,
+  "slice_finished": {
+    "monotonic_ns": 64013076418969,
+    "time_ns": 1794689836266742722
+  },
+  "slice_started": {
+    "monotonic_ns": 64012075039587,
+    "time_ns": 1794689835265364252
+  },
+  "started": {
+    "monotonic_ns": 64012074501790,
+    "time_ns": 1794689835264826295
+  },
+  "status": "failed"
+}

@@ -1,0 +1,468 @@
+{
+  "chromosomes": [
+    {
+      "annotation_command": [
+        "/home/tian/projects/immkv/tmp/echtvar/echtvar",
+        "anno",
+        "-e",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr1.echtvar.zip",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-568-release/sl1.vcf.gz",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-568-release/an1.vcf.gz"
+      ],
+      "annotation_exit_code": -15,
+      "annotation_finished": {
+        "monotonic_ns": 75242692231039,
+        "time_ns": 1794701065882555252
+      },
+      "annotation_started": {
+        "monotonic_ns": 75210358226962,
+        "time_ns": 1794701033548551676
+      },
+      "chromosome": 1,
+      "comparison": {
+        "error": "Run cancelled while reading compressed output",
+        "reference": {
+          "data_sha256": "fb64b29d91516329a11ae122a0c218c2aae3be5f07d3703d213683ccdbe094bb",
+          "rows": 308298
+        }
+      },
+      "error": "echtvar exited -15",
+      "finished": {
+        "monotonic_ns": 75251202927146,
+        "time_ns": 1794701074393250909
+      },
+      "slice_command": [
+        "/home/tian/miniforge3/envs/transvar/bin/bcftools",
+        "view",
+        "-r",
+        "1",
+        "-Oz",
+        "-o",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-568-release/sl1.vcf.gz",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/query/hg001.decomp.vcf.gz"
+      ],
+      "slice_compressed_bytes": 10999774,
+      "slice_exit_code": 0,
+      "slice_finished": {
+        "monotonic_ns": 75210357755815,
+        "time_ns": 1794701033548080039
+      },
+      "slice_started": {
+        "monotonic_ns": 75209154914494,
+        "time_ns": 1794701032345238888
+      },
+      "started": {
+        "monotonic_ns": 75209154578121,
+        "time_ns": 1794701032344902425
+      },
+      "status": "failed"
+    },
+    {
+      "annotation_command": [
+        "/home/tian/projects/immkv/tmp/echtvar/echtvar",
+        "anno",
+        "-e",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr2.echtvar.zip",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-568-release/sl2.vcf.gz",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-568-release/an2.vcf.gz"
+      ],
+      "annotation_exit_code": -15,
+      "annotation_finished": {
+        "monotonic_ns": 75242645053146,
+        "time_ns": 1794701065835377389
+      },
+      "annotation_started": {
+        "monotonic_ns": 75210369043456,
+        "time_ns": 1794701033559368150
+      },
+      "chromosome": 2,
+      "comparison": {
+        "error": "Run cancelled while reading compressed output",
+        "reference": {
+          "data_sha256": "ee14b863b7659303761d598a71ff94cb8b8448113a3fd27a5e6c6a8f6c47457a",
+          "rows": 329821
+        }
+      },
+      "error": "echtvar exited -15",
+      "finished": {
+        "monotonic_ns": 75246791945026,
+        "time_ns": 1794701069982269340
+      },
+      "slice_command": [
+        "/home/tian/miniforge3/envs/transvar/bin/bcftools",
+        "view",
+        "-r",
+        "2",
+        "-Oz",
+        "-o",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-568-release/sl2.vcf.gz",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/query/hg001.decomp.vcf.gz"
+      ],
+      "slice_compressed_bytes": 11750293,
+      "slice_exit_code": 0,
+      "slice_finished": {
+        "monotonic_ns": 75210360428034,
+        "time_ns": 1794701033550752618
+      },
+      "slice_started": {
+        "monotonic_ns": 75209155522548,
+        "time_ns": 1794701032345846822
+      },
+      "started": {
+        "monotonic_ns": 75209155075006,
+        "time_ns": 1794701032345399480
+      },
+      "status": "failed"
+    },
+    {
+      "annotation_command": [
+        "/home/tian/projects/immkv/tmp/echtvar/echtvar",
+        "anno",
+        "-e",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr3.echtvar.zip",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-568-release/sl3.vcf.gz",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-568-release/an3.vcf.gz"
+      ],
+      "annotation_exit_code": -15,
+      "annotation_finished": {
+        "monotonic_ns": 75242692264121,
+        "time_ns": 1794701065882588756
+      },
+      "annotation_started": {
+        "monotonic_ns": 75210258145661,
+        "time_ns": 1794701033448470125
+      },
+      "chromosome": 3,
+      "comparison": {
+        "error": "Run cancelled while reading compressed output",
+        "reference": {
+          "data_sha256": "d57d1a02c00df9b326a93be7d7c8dfc2ca9477a3f0dbce00c220a085a4203c34",
+          "rows": 275651
+        }
+      },
+      "error": "echtvar exited -15",
+      "finished": {
+        "monotonic_ns": 75244483615228,
+        "time_ns": 1794701067673939242
+      },
+      "slice_command": [
+        "/home/tian/miniforge3/envs/transvar/bin/bcftools",
+        "view",
+        "-r",
+        "3",
+        "-Oz",
+        "-o",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-568-release/sl3.vcf.gz",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/query/hg001.decomp.vcf.gz"
+      ],
+      "slice_compressed_bytes": 9815089,
+      "slice_exit_code": 0,
+      "slice_finished": {
+        "monotonic_ns": 75210257509173,
+        "time_ns": 1794701033447833137
+      },
+      "slice_started": {
+        "monotonic_ns": 75209156130021,
+        "time_ns": 1794701032346454706
+      },
+      "started": {
+        "monotonic_ns": 75209155644688,
+        "time_ns": 1794701032345969182
+      },
+      "status": "failed"
+    },
+    {
+      "annotation_command": [
+        "/home/tian/projects/immkv/tmp/echtvar/echtvar",
+        "anno",
+        "-e",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr4.echtvar.zip",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-568-release/sl4.vcf.gz",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-568-release/an4.vcf.gz"
+      ],
+      "annotation_exit_code": -9,
+      "annotation_finished": {
+        "monotonic_ns": 75242707577335,
+        "time_ns": 1794701065897902050
+      },
+      "annotation_started": {
+        "monotonic_ns": 75210263378558,
+        "time_ns": 1794701033453703273
+      },
+      "chromosome": 4,
+      "comparison": {
+        "error": "Run cancelled while reading compressed output",
+        "reference": {
+          "data_sha256": "a43876a68a6b3a4f81ee9c707a48b26bde5254e14c4f6bfc274ceb45f9473be4",
+          "rows": 296434
+        }
+      },
+      "error": "echtvar exited -9",
+      "finished": {
+        "monotonic_ns": 75245227769818,
+        "time_ns": 1794701068418093962
+      },
+      "slice_command": [
+        "/home/tian/miniforge3/envs/transvar/bin/bcftools",
+        "view",
+        "-r",
+        "4",
+        "-Oz",
+        "-o",
+        "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-568-release/sl4.vcf.gz",
+        "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/query/hg001.decomp.vcf.gz"
+      ],
+      "slice_compressed_bytes": 10519956,
+      "slice_exit_code": 0,
+      "slice_finished": {
+        "monotonic_ns": 75210263115954,
+        "time_ns": 1794701033453440609
+      },
+      "slice_started": {
+        "monotonic_ns": 75209156632206,
+        "time_ns": 1794701032346956611
+      },
+      "started": {
+        "monotonic_ns": 75209156309689,
+        "time_ns": 1794701032346634194
+      },
+      "status": "failed"
+    },
+    {
+      "chromosome": 5,
+      "finished": {
+        "monotonic_ns": 75244483836735,
+        "time_ns": 1794701067674161550
+      },
+      "started": {
+        "monotonic_ns": 75244483836084,
+        "time_ns": 1794701067674160829
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 6,
+      "finished": {
+        "monotonic_ns": 75244483967902,
+        "time_ns": 1794701067674292717
+      },
+      "started": {
+        "monotonic_ns": 75244483967321,
+        "time_ns": 1794701067674292066
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 7,
+      "finished": {
+        "monotonic_ns": 75244484102255,
+        "time_ns": 1794701067674427080
+      },
+      "started": {
+        "monotonic_ns": 75244484101894,
+        "time_ns": 1794701067674426629
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 8,
+      "finished": {
+        "monotonic_ns": 75244484281021,
+        "time_ns": 1794701067674605826
+      },
+      "started": {
+        "monotonic_ns": 75244484280530,
+        "time_ns": 1794701067674605215
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 9,
+      "finished": {
+        "monotonic_ns": 75244484422087,
+        "time_ns": 1794701067674746902
+      },
+      "started": {
+        "monotonic_ns": 75244484421726,
+        "time_ns": 1794701067674746491
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 10,
+      "finished": {
+        "monotonic_ns": 75244484545870,
+        "time_ns": 1794701067674870684
+      },
+      "started": {
+        "monotonic_ns": 75244484545459,
+        "time_ns": 1794701067674870204
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 11,
+      "finished": {
+        "monotonic_ns": 75244484656207,
+        "time_ns": 1794701067674981022
+      },
+      "started": {
+        "monotonic_ns": 75244484655816,
+        "time_ns": 1794701067674980561
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 12,
+      "finished": {
+        "monotonic_ns": 75244484747349,
+        "time_ns": 1794701067675072174
+      },
+      "started": {
+        "monotonic_ns": 75244484747048,
+        "time_ns": 1794701067675071803
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 13,
+      "finished": {
+        "monotonic_ns": 75244484834402,
+        "time_ns": 1794701067675159227
+      },
+      "started": {
+        "monotonic_ns": 75244484834072,
+        "time_ns": 1794701067675158847
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 14,
+      "finished": {
+        "monotonic_ns": 75244484994003,
+        "time_ns": 1794701067675318828
+      },
+      "started": {
+        "monotonic_ns": 75244484993672,
+        "time_ns": 1794701067675318437
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 15,
+      "finished": {
+        "monotonic_ns": 75244485112977,
+        "time_ns": 1794701067675437802
+      },
+      "started": {
+        "monotonic_ns": 75244485112666,
+        "time_ns": 1794701067675437441
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 16,
+      "finished": {
+        "monotonic_ns": 75244485218365,
+        "time_ns": 1794701067675543200
+      },
+      "started": {
+        "monotonic_ns": 75244485218054,
+        "time_ns": 1794701067675542849
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 17,
+      "finished": {
+        "monotonic_ns": 75244485350423,
+        "time_ns": 1794701067675675248
+      },
+      "started": {
+        "monotonic_ns": 75244485350153,
+        "time_ns": 1794701067675674928
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 18,
+      "finished": {
+        "monotonic_ns": 75244485481390,
+        "time_ns": 1794701067675806205
+      },
+      "started": {
+        "monotonic_ns": 75244485480879,
+        "time_ns": 1794701067675805543
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 19,
+      "finished": {
+        "monotonic_ns": 75244485607527,
+        "time_ns": 1794701067675932342
+      },
+      "started": {
+        "monotonic_ns": 75244485606946,
+        "time_ns": 1794701067675931631
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 20,
+      "finished": {
+        "monotonic_ns": 75244485734957,
+        "time_ns": 1794701067676059792
+      },
+      "started": {
+        "monotonic_ns": 75244485734576,
+        "time_ns": 1794701067676059291
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 21,
+      "finished": {
+        "monotonic_ns": 75244485899687,
+        "time_ns": 1794701067676224502
+      },
+      "started": {
+        "monotonic_ns": 75244485899386,
+        "time_ns": 1794701067676224161
+      },
+      "status": "cancelled"
+    },
+    {
+      "chromosome": 22,
+      "finished": {
+        "monotonic_ns": 75244488706077,
+        "time_ns": 1794701067679030902
+      },
+      "started": {
+        "monotonic_ns": 75244488705637,
+        "time_ns": 1794701067679030391
+      },
+      "status": "cancelled"
+    }
+  ],
+  "compressed_output": true,
+  "engine": "echtvar",
+  "error": "Combined fresh data-row count differs from expected query rows",
+  "exit_code": 143,
+  "expected_rows": 3933714,
+  "fields": 568,
+  "finished": {
+    "monotonic_ns": 75251203457625,
+    "time_ns": 1794701074393782109
+  },
+  "fresh_rows": 0,
+  "media": "hdd",
+  "scratch": "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-hdd-568-release",
+  "started": {
+    "monotonic_ns": 75209154346876,
+    "time_ns": 1794701032344667653
+  },
+  "status": "failed",
+  "worker_note": "Four chromosome subprocess tasks on CPUs 0-3; each echtvar process may create additional htslib threads.",
+  "workers": 4
+}

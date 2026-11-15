@@ -1,0 +1,18 @@
+2026-11-15T03:26:55+08:00
+go version go1.27.1 linux/amd64
+1
+linux
+amd64
+/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/cache/go-build
+/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/cache/mod
+-mod=readonly
+Linux tian-mini 7.0.0-42-generic #42~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Oct 19 14:43:01 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+echtvar 0.2.4
+bcftools 1.25
+Using htslib 1.25
+Copyright (C) 2026 Genome Research Ltd.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+2c425bad9a4e6aeeade5eeec229e7f887d7385642a0aada3a03909b6303f1e09  /home/tian/projects/immkv/tmp/echtvar/echtvar
+728cc52cd0a82eed97995b78622f882d9e19c9b947b687c8bbb295065aca9c58  /home/tian/miniforge3/envs/transvar/bin/bcftools

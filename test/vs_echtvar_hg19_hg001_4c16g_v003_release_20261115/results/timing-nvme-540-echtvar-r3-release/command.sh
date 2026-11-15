@@ -1,0 +1,1 @@
+python3 -I /home/tian/projects/immkv/test/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/run_cell.py --engine echtvar --media nvme --fields 540 --record /home/tian/projects/immkv/test/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/results/timing-nvme-540-echtvar-r3-release 

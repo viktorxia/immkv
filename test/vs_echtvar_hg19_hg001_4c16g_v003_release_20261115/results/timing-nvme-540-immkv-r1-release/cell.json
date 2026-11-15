@@ -1,0 +1,32 @@
+{
+  "command": [
+    "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/bin/annotate",
+    "-in",
+    "/home/tian/immkv_test_nvme/test/540_fields/query/hg001.decomp.vcf.gz",
+    "-lib",
+    "/home/tian/immkv_test_nvme/gnomad/immkv",
+    "-out",
+    "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/timing-nvme-540-immkv-r1-release/output.vcf.gz",
+    "-fields",
+    "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_540_fields/fields540.tsv",
+    "-threads",
+    "4",
+    "-batch",
+    "4096"
+  ],
+  "compressed_output": true,
+  "engine": "immkv",
+  "exit_code": 0,
+  "fields": 540,
+  "finished": {
+    "monotonic_ns": 60867788555925,
+    "time_ns": 1794686690978878886
+  },
+  "media": "nvme",
+  "scratch": "/home/tian/projects/immkv/tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/timing-nvme-540-immkv-r1-release",
+  "started": {
+    "monotonic_ns": 60710071476172,
+    "time_ns": 1794686533261797150
+  },
+  "status": "ok"
+}

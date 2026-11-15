@@ -1,0 +1,137 @@
+11月 15 04:57:38 tian-mini kernel: echtvar invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=200
+11月 15 04:57:38 tian-mini kernel: CPU: 2 UID: 1000 PID: 93972 Comm: echtvar Not tainted 7.0.0-42-generic #42~24.04.1-Ubuntu PREEMPT(lazy) 
+11月 15 04:57:38 tian-mini kernel: Hardware name: Micro Computer (HK) Tech Limited EliteMini Series/HPBSD, BIOS 1.02 03/28/2024
+11月 15 04:57:38 tian-mini kernel: Call Trace:
+11月 15 04:57:38 tian-mini kernel:  <TASK>
+11月 15 04:57:38 tian-mini kernel:  dump_stack_lvl+0x76/0xa0
+11月 15 04:57:38 tian-mini kernel:  dump_stack+0x10/0x20
+11月 15 04:57:38 tian-mini kernel:  dump_header+0x48/0x210
+11月 15 04:57:38 tian-mini kernel:  oom_kill_process+0xd7/0x250
+11月 15 04:57:38 tian-mini kernel:  out_of_memory+0x101/0x340
+11月 15 04:57:38 tian-mini kernel:  mem_cgroup_out_of_memory+0x100/0x120
+11月 15 04:57:38 tian-mini kernel:  try_charge_memcg+0x40f/0x6a0
+11月 15 04:57:38 tian-mini kernel:  charge_memcg+0x34/0x90
+11月 15 04:57:38 tian-mini kernel:  __mem_cgroup_charge+0x2d/0xa0
+11月 15 04:57:38 tian-mini kernel:  filemap_add_folio+0x66/0x220
+11月 15 04:57:38 tian-mini kernel:  filemap_get_pages+0x242/0x500
+11月 15 04:57:38 tian-mini kernel:  filemap_read+0x11d/0x520
+11月 15 04:57:38 tian-mini kernel:  generic_file_read_iter+0xbb/0x110
+11月 15 04:57:38 tian-mini kernel:  ext4_file_read_iter+0x60/0x200
+11月 15 04:57:38 tian-mini kernel:  vfs_read+0x261/0x390
+11月 15 04:57:38 tian-mini kernel:  ksys_read+0x71/0xf0
+11月 15 04:57:38 tian-mini kernel:  __x64_sys_read+0x19/0x30
+11月 15 04:57:38 tian-mini kernel:  x64_sys_call+0x2554/0x26e0
+11月 15 04:57:38 tian-mini kernel:  do_syscall_64+0xd9/0x5a0
+11月 15 04:57:38 tian-mini kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
+11月 15 04:57:38 tian-mini kernel:  ? do_anonymous_page+0x106/0x480
+11月 15 04:57:38 tian-mini kernel:  ? __pte_offset_map+0x1c/0x140
+11月 15 04:57:38 tian-mini kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
+11月 15 04:57:38 tian-mini kernel:  ? handle_pte_fault+0x1df/0x200
+11月 15 04:57:38 tian-mini kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
+11月 15 04:57:38 tian-mini kernel:  ? __handle_mm_fault+0x56a/0x760
+11月 15 04:57:38 tian-mini kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
+11月 15 04:57:38 tian-mini kernel:  ? count_memcg_events+0x101/0x1d0
+11月 15 04:57:38 tian-mini kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
+11月 15 04:57:38 tian-mini kernel:  ? handle_mm_fault+0x272/0x3a0
+11月 15 04:57:38 tian-mini kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
+11月 15 04:57:38 tian-mini kernel:  ? arch_exit_to_user_mode_prepare.isra.0+0xd/0x100
+11月 15 04:57:38 tian-mini kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
+11月 15 04:57:38 tian-mini kernel:  ? irqentry_exit+0x9d/0x640
+11月 15 04:57:38 tian-mini kernel:  ? srso_alias_return_thunk+0x5/0xfbef5
+11月 15 04:57:38 tian-mini kernel:  ? exc_page_fault+0x92/0x1c0
+11月 15 04:57:38 tian-mini kernel:  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+11月 15 04:57:38 tian-mini kernel: RIP: 0033:0x750fbfe38505
+11月 15 04:57:38 tian-mini kernel: Code: 0f 05 48 83 f8 da 75 08 4c 89 c0 48 89 d6 0f 05 c3 48 89 f8 4d 89 c2 48 89 f7 4d 89 c8 48 89 d6 4c 8b 4c 24 08 48 89 ca 0f 05 <c3> e9 e1 ff ff ff 64 48 8b 04 25 00 00 00 00 48 8b 0f 48 8b 50 08
+11月 15 04:57:38 tian-mini kernel: RSP: 002b:00007ffe81b68488 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+11月 15 04:57:38 tian-mini kernel: RAX: ffffffffffffffda RBX: 00007ffe81b75b98 RCX: 0000750fbfe38505
+11月 15 04:57:38 tian-mini kernel: RDX: 0000000000008000 RSI: 0000750fbb9c1a80 RDI: 0000000000000004
+11月 15 04:57:38 tian-mini kernel: RBP: 00007ffe81b684c0 R08: 0000000000000000 R09: 0000000000000000
+11月 15 04:57:38 tian-mini kernel: R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffe81b75b88
+11月 15 04:57:38 tian-mini kernel: R13: 0000000000002000 R14: 0000000000008000 R15: 00000000077a20a6
+11月 15 04:57:38 tian-mini kernel:  </TASK>
+11月 15 04:57:38 tian-mini kernel: memory: usage 16777216kB, limit 16777216kB, failcnt 9268
+11月 15 04:57:38 tian-mini kernel: swap: usage 0kB, limit 0kB, failcnt 0
+11月 15 04:57:38 tian-mini kernel: Memory cgroup stats for /user.slice/user-1000.slice/user@1000.service/app.slice/immkv-echtvar-verify-echtvar-nvme-568-release-1794689835-91662.scope:
+11月 15 04:57:38 tian-mini kernel: anon 17082466304
+11月 15 04:57:38 tian-mini kernel: file 52568064
+11月 15 04:57:38 tian-mini kernel: kernel 44834816
+11月 15 04:57:38 tian-mini kernel: kernel_stack 442368
+11月 15 04:57:38 tian-mini kernel: pagetables 34140160
+11月 15 04:57:38 tian-mini kernel: sec_pagetables 0
+11月 15 04:57:38 tian-mini kernel: percpu 2304
+11月 15 04:57:38 tian-mini kernel: sock 0
+11月 15 04:57:38 tian-mini kernel: vmalloc 0
+11月 15 04:57:38 tian-mini kernel: shmem 43094016
+11月 15 04:57:38 tian-mini kernel: zswap 0
+11月 15 04:57:38 tian-mini kernel: zswapped 0
+11月 15 04:57:38 tian-mini kernel: file_mapped 0
+11月 15 04:57:38 tian-mini kernel: file_dirty 0
+11月 15 04:57:38 tian-mini kernel: file_writeback 0
+11月 15 04:57:38 tian-mini kernel: swapcached 0
+11月 15 04:57:38 tian-mini kernel: anon_thp 0
+11月 15 04:57:38 tian-mini kernel: file_thp 0
+11月 15 04:57:38 tian-mini kernel: shmem_thp 0
+11月 15 04:57:38 tian-mini kernel: inactive_anon 2473984
+11月 15 04:57:38 tian-mini kernel: active_anon 17123086336
+11月 15 04:57:38 tian-mini kernel: inactive_file 7483392
+11月 15 04:57:38 tian-mini kernel: active_file 1703936
+11月 15 04:57:38 tian-mini kernel: unevictable 0
+11月 15 04:57:38 tian-mini kernel: slab_reclaimable 9618760
+11月 15 04:57:38 tian-mini kernel: slab_unreclaimable 628624
+11月 15 04:57:38 tian-mini kernel: slab 10247384
+11月 15 04:57:38 tian-mini kernel: workingset_refault_anon 0
+11月 15 04:57:38 tian-mini kernel: workingset_refault_file 22034
+11月 15 04:57:38 tian-mini kernel: workingset_activate_anon 0
+11月 15 04:57:38 tian-mini kernel: workingset_activate_file 0
+11月 15 04:57:38 tian-mini kernel: workingset_restore_anon 0
+11月 15 04:57:38 tian-mini kernel: workingset_restore_file 0
+11月 15 04:57:38 tian-mini kernel: workingset_nodereclaim 0
+11月 15 04:57:38 tian-mini kernel: pgdemote_kswapd 0
+11月 15 04:57:38 tian-mini kernel: pgdemote_direct 0
+11月 15 04:57:38 tian-mini kernel: pgdemote_khugepaged 0
+11月 15 04:57:38 tian-mini kernel: pgdemote_proactive 0
+11月 15 04:57:38 tian-mini kernel: pgpromote_success 0
+11月 15 04:57:38 tian-mini kernel: pgscan 1428314
+11月 15 04:57:38 tian-mini kernel: pgsteal 1101692
+11月 15 04:57:38 tian-mini kernel: pswpin 0
+11月 15 04:57:38 tian-mini kernel: pswpout 0
+11月 15 04:57:38 tian-mini kernel: pgscan_kswapd 0
+11月 15 04:57:38 tian-mini kernel: pgscan_direct 1428314
+11月 15 04:57:38 tian-mini kernel: pgscan_khugepaged 0
+11月 15 04:57:38 tian-mini kernel: pgscan_proactive 0
+11月 15 04:57:38 tian-mini kernel: pgsteal_kswapd 0
+11月 15 04:57:38 tian-mini kernel: pgsteal_direct 1101692
+11月 15 04:57:38 tian-mini kernel: pgsteal_khugepaged 0
+11月 15 04:57:38 tian-mini kernel: pgsteal_proactive 0
+11月 15 04:57:38 tian-mini kernel: pgfault 6294576
+11月 15 04:57:38 tian-mini kernel: pgmajfault 0
+11月 15 04:57:38 tian-mini kernel: pgrefill 338
+11月 15 04:57:38 tian-mini kernel: pgactivate 296
+11月 15 04:57:38 tian-mini kernel: pgdeactivate 0
+11月 15 04:57:38 tian-mini kernel: pglazyfree 194
+11月 15 04:57:38 tian-mini kernel: pglazyfreed 22
+11月 15 04:57:38 tian-mini kernel: swpin_zero 0
+11月 15 04:57:38 tian-mini kernel: swpout_zero 0
+11月 15 04:57:38 tian-mini kernel: zswpin 0
+11月 15 04:57:38 tian-mini kernel: zswpout 0
+11月 15 04:57:38 tian-mini kernel: zswpwb 0
+11月 15 04:57:38 tian-mini kernel: thp_fault_alloc 0
+11月 15 04:57:38 tian-mini kernel: thp_collapse_alloc 0
+11月 15 04:57:38 tian-mini kernel: thp_swpout 0
+11月 15 04:57:38 tian-mini kernel: thp_swpout_fallback 0
+11月 15 04:57:38 tian-mini kernel: numa_pages_migrated 0
+11月 15 04:57:38 tian-mini kernel: numa_pte_updates 0
+11月 15 04:57:38 tian-mini kernel: numa_hint_faults 0
+11月 15 04:57:38 tian-mini kernel: Memory cgroup min protection 0kB -- low protection 0kB
+11月 15 04:57:38 tian-mini kernel: Tasks state (memory values in pages):
+11月 15 04:57:38 tian-mini kernel: [  pid  ]   uid  tgid total_vm      rss rss_anon rss_file rss_shmem pgtables_bytes swapents oom_score_adj name
+11月 15 04:57:38 tian-mini kernel: [  93933]  1000 93933     1085      843       81      762         0    45056        0           200 bash
+11月 15 04:57:38 tian-mini kernel: [  93938]  1000 93938      677      402       24      378         0    53248        0           200 time
+11月 15 04:57:38 tian-mini kernel: [  93939]  1000 93939      680      454       25      429         0    49152        0           200 timeout
+11月 15 04:57:38 tian-mini kernel: [  93940]  1000 93940   154981     6472     3622     2850         0   167936        0           200 python3
+11月 15 04:57:38 tian-mini kernel: [  93962]  1000 93962  1153227  1034404  1033508      896         0  8376320        0           200 echtvar
+11月 15 04:57:38 tian-mini kernel: [  93967]  1000 93967  1253859  1129484  1128588      896         0  9154560        0           200 echtvar
+11月 15 04:57:38 tian-mini kernel: [  93972]  1000 93972  1129997  1015401  1014505      896         0  8220672        0           200 echtvar
+11月 15 04:57:38 tian-mini kernel: [  93977]  1000 93977  1111884   991067   990171      896         0  8040448        0           200 echtvar
+11月 15 04:57:38 tian-mini kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=user.slice,mems_allowed=0,oom_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-echtvar-verify-echtvar-nvme-568-release-1794689835-91662.scope,task_memcg=/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-echtvar-verify-echtvar-nvme-568-release-1794689835-91662.scope,task=echtvar,pid=93967,uid=1000
+11月 15 04:57:38 tian-mini kernel: Memory cgroup out of memory: Killed process 93967 (echtvar) total-vm:5015436kB, anon-rss:4514352kB, file-rss:3584kB, shmem-rss:0kB, UID:1000 pgtables:8940kB oom_score_adj:200

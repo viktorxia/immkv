@@ -1,0 +1,99 @@
+Command: lscpu
+架构：                                   x86_64
+CPU 运行模式：                           32-bit, 64-bit
+Address sizes:                           48 bits physical, 48 bits virtual
+字节序：                                 Little Endian
+CPU:                                     16
+在线 CPU 列表：                          0-15
+厂商 ID：                                AuthenticAMD
+型号名称：                               AMD Ryzen 7 8845HS w/ Radeon 780M Graphics
+CPU 系列：                               25
+型号：                                   117
+每个核的线程数：                         2
+每个座的核数：                           8
+座：                                     1
+步进：                                   2
+Frequency boost:                         启用
+CPU(s) scaling MHz:                      47%
+CPU 最大 MHz：                           5102.7129
+CPU 最小 MHz：                           416.5480
+BogoMIPS：                               7586.12
+标记：                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good amd_lbr_v2 nopl xtopology nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpuid_fault cpb cat_l3 cdp_l3 hw_pstate ssbd mba perfmon_v2 ibrs ibpb stibp ibrs_enhanced vmmcall fsgsbase bmi1 avx2 smep bmi2 erms invpcid cqm rdt_a avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local user_shstk avx512_bf16 clzero irperf xsaveerptr rdpru wbnoinvd cppc arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold vgif x2avic v_spec_ctrl vnmi avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid overflow_recov succor smca fsrm flush_l1d
+虚拟化：                                 AMD-V
+L1d 缓存：                               256 KiB (8 instances)
+L1i 缓存：                               256 KiB (8 instances)
+L2 缓存：                                8 MiB (8 instances)
+L3 缓存：                                16 MiB (1 instance)
+NUMA 节点：                              1
+NUMA 节点0 CPU：                         0-15
+Vulnerability Gather data sampling:      Not affected
+Vulnerability Ghostwrite:                Not affected
+Vulnerability Indirect target selection: Not affected
+Vulnerability Itlb multihit:             Not affected
+Vulnerability L1tf:                      Not affected
+Vulnerability Mds:                       Not affected
+Vulnerability Meltdown:                  Not affected
+Vulnerability Mmio stale data:           Not affected
+Vulnerability Old microcode:             Not affected
+Vulnerability Reg file data sampling:    Not affected
+Vulnerability Retbleed:                  Not affected
+Vulnerability Spec rstack overflow:      Mitigation; Safe RET
+Vulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl
+Vulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization
+Vulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; STIBP always-on; PBRSB-eIBRS Not affected; BHI Not affected
+Vulnerability Srbds:                     Not affected
+Vulnerability Tsa:                       Mitigation; Clear CPU buffers
+Vulnerability Tsx async abort:           Not affected
+Vulnerability Vmscape:                   Mitigation; IBPB before exit to userspace
+
+Command: lsblk -o NAME,TYPE,SIZE,ROTA,MODEL,FSTYPE,MOUNTPOINTS
+NAME        TYPE   SIZE ROTA MODEL                FSTYPE   MOUNTPOINTS
+loop0       loop     4K    0                      squashfs /snap/bare/5
+loop1       loop 162.4M    0                      squashfs /snap/bitwarden/175
+loop2       loop 189.9M    0                      squashfs /snap/chromium/3583
+loop3       loop 227.1M    0                      squashfs /snap/bitwarden/179
+loop4       loop  55.5M    0                      squashfs /snap/core18/3084
+loop5       loop    74M    0                      squashfs /snap/core22/2955
+loop6       loop 187.2M    0                      squashfs /snap/chromium/3569
+loop7       loop    74M    0                      squashfs /snap/core22/2987
+loop8       loop  66.8M    0                      squashfs /snap/core24/2124
+loop9       loop  60.6M    0                      squashfs /snap/core26/646
+loop10      loop  50.7M    0                      squashfs /snap/cups/1272
+loop11      loop  60.7M    0                      squashfs /snap/core26/750
+loop12      loop  50.7M    0                      squashfs /snap/cups/1277
+loop13      loop 262.3M    0                      squashfs /snap/firefox/9036
+loop14      loop 283.8M    0                      squashfs /snap/firefox/9057
+loop15      loop  12.7M    0                      squashfs /snap/firmware-updater/258
+loop16      loop  12.7M    0                      squashfs /snap/firmware-updater/262
+loop17      loop 164.8M    0                      squashfs /snap/gnome-3-28-1804/198
+loop18      loop 531.5M    0                      squashfs /snap/gnome-42-2204/263
+loop19      loop 615.3M    0                      squashfs /snap/gnome-46-2404/168
+loop20      loop   616M    0                      squashfs /snap/gnome-46-2404/177
+loop21      loop  91.7M    0                      squashfs /snap/gtk-common-themes/1535
+loop22      loop   402M    0                      squashfs /snap/mesa-2404/1839
+loop23      loop  11.7M    0                      squashfs /snap/snap-store/1489
+loop24      loop  44.7M    0                      squashfs /snap/snapd/28254
+loop25      loop   828K    0                      squashfs /snap/snapd-desktop-integration/391
+loop26      loop  50.3M    0                      squashfs /snap/snapd/27738
+loop27      loop  11.6M    0                      squashfs /snap/snap-store/1468
+loop28      loop 222.9M    0                      squashfs /snap/thunderbird/1299
+loop29      loop   128M    0                      squashfs /snap/vpnfly/8
+loop30      loop 222.9M    0                      squashfs /snap/thunderbird/1312
+loop31      loop   148M    0                      squashfs /snap/typora/119
+sda         disk   5.5T    1 SEAGATE ST6000NM0034          
+├─sda1      part    16M    1                               
+└─sda2      part   5.5T    1                      ext4     /mnt/data6t
+nvme1n1     disk 953.9G    0 HS-SSD-E2000L 1024G           
+└─nvme1n1p1 part 953.9G    0                      ext4     /mnt/ssd1t
+nvme0n1     disk   1.8T    0 KINGSTON SNV3S2000G           
+├─nvme0n1p1 part     1G    0                      vfat     /boot/efi
+└─nvme0n1p2 part   1.8T    0                      ext4     /
+
+Command: findmnt -T /mnt/data6t/tian/immkv_test_hdd
+TARGET      SOURCE    FSTYPE OPTIONS
+/mnt/data6t /dev/sda2 ext4   rw,relatime,stripe=8191
+
+Command: findmnt -T /home/tian/immkv_test_nvme
+TARGET SOURCE         FSTYPE OPTIONS
+/      /dev/nvme0n1p2 ext4   rw,relatime
+

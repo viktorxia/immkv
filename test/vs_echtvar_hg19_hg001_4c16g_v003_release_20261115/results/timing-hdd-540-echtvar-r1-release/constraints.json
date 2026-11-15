@@ -1,0 +1,19 @@
+{
+  "GOMAXPROCS": "4",
+  "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-echtvar-timing-hdd-540-echtvar-r1-release-1794694804-96421.scope",
+  "cpu.stat": "usage_usec 29788\nuser_usec 16880\nsystem_usec 12908\nnice_usec 0\ncore_sched.force_idle_usec 0",
+  "cpus": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "gnu_time_rss": "Maximum resident set size is a maximum child RSS, not aggregate simultaneous RSS; use cgroup memory.peak for aggregate memory.",
+  "memory.current": "9502720",
+  "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+  "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+  "memory.max": "17179869184",
+  "memory.peak": "9502720",
+  "memory.swap.max": "0",
+  "timestamp_ns": 1794694804133551304
+}

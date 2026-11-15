@@ -1,0 +1,8 @@
+{
+  "status": "oom",
+  "original_status_source": "status.json",
+  "evidence": [
+    "systemd-final.log"
+  ],
+  "reason": "Unit journal explicitly records the OOM killer; raw observer status is retained."
+}

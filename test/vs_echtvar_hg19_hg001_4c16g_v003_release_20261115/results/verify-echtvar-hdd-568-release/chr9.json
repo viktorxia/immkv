@@ -1,0 +1,12 @@
+{
+  "chromosome": 9,
+  "finished": {
+    "monotonic_ns": 75244484422087,
+    "time_ns": 1794701067674746902
+  },
+  "started": {
+    "monotonic_ns": 75244484421726,
+    "time_ns": 1794701067674746491
+  },
+  "status": "cancelled"
+}

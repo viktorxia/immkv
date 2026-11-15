@@ -1,0 +1,566 @@
+[
+  {
+    "media": "nvme",
+    "fields": 17,
+    "engine": "immkv",
+    "runs": [
+      {
+        "round": 1,
+        "status": "ok",
+        "source": "results/timing-nvme-17-immkv-r1-release",
+        "cgroup_peak_gib": 0.4850044250488281,
+        "user_seconds": 27.49,
+        "system_seconds": 2.15,
+        "wall_seconds": 8.37,
+        "filesystem_inputs_blocks": 11693048.0,
+        "cpu_seconds": 29.639999999999997
+      },
+      {
+        "round": 2,
+        "status": "ok",
+        "source": "results/timing-nvme-17-immkv-r2-release",
+        "cgroup_peak_gib": 0.49028778076171875,
+        "user_seconds": 27.96,
+        "system_seconds": 2.1,
+        "wall_seconds": 8.17,
+        "filesystem_inputs_blocks": 11693048.0,
+        "cpu_seconds": 30.060000000000002
+      },
+      {
+        "round": 3,
+        "status": "ok",
+        "source": "results/timing-nvme-17-immkv-r3-release",
+        "cgroup_peak_gib": 0.4932518005371094,
+        "user_seconds": 27.84,
+        "system_seconds": 2.18,
+        "wall_seconds": 8.16,
+        "filesystem_inputs_blocks": 11693048.0,
+        "cpu_seconds": 30.02
+      }
+    ],
+    "median": {
+      "wall_seconds": 8.17,
+      "user_seconds": 27.84,
+      "system_seconds": 2.15,
+      "cpu_seconds": 30.02,
+      "cgroup_peak_gib": 0.49028778076171875,
+      "filesystem_inputs_blocks": 11693048.0
+    },
+    "wall_range": [
+      8.16,
+      8.37
+    ]
+  },
+  {
+    "media": "nvme",
+    "fields": 17,
+    "engine": "echtvar",
+    "runs": [
+      {
+        "round": 1,
+        "status": "ok",
+        "source": "results/timing-nvme-17-echtvar-r1-release",
+        "cgroup_peak_gib": 0.126953125,
+        "user_seconds": 85.66,
+        "system_seconds": 9.15,
+        "wall_seconds": 24.42,
+        "filesystem_inputs_blocks": 0.0,
+        "cpu_seconds": 94.81
+      },
+      {
+        "round": 2,
+        "status": "ok",
+        "source": "results/timing-nvme-17-echtvar-r2-release",
+        "cgroup_peak_gib": 0.12731552124023438,
+        "user_seconds": 85.96,
+        "system_seconds": 9.26,
+        "wall_seconds": 24.52,
+        "filesystem_inputs_blocks": 0.0,
+        "cpu_seconds": 95.22
+      },
+      {
+        "round": 3,
+        "status": "ok",
+        "source": "results/timing-nvme-17-echtvar-r3-release",
+        "cgroup_peak_gib": 0.12688064575195312,
+        "user_seconds": 86.12,
+        "system_seconds": 9.06,
+        "wall_seconds": 24.52,
+        "filesystem_inputs_blocks": 0.0,
+        "cpu_seconds": 95.18
+      }
+    ],
+    "median": {
+      "wall_seconds": 24.52,
+      "user_seconds": 85.96,
+      "system_seconds": 9.15,
+      "cpu_seconds": 95.18,
+      "cgroup_peak_gib": 0.126953125,
+      "filesystem_inputs_blocks": 0.0
+    },
+    "wall_range": [
+      24.42,
+      24.52
+    ]
+  },
+  {
+    "media": "nvme",
+    "fields": 540,
+    "engine": "immkv",
+    "runs": [
+      {
+        "round": 1,
+        "status": "ok",
+        "source": "results/timing-nvme-540-immkv-r1-release",
+        "cgroup_peak_gib": 2.3959693908691406,
+        "user_seconds": 596.51,
+        "system_seconds": 12.37,
+        "wall_seconds": 157.76,
+        "filesystem_inputs_blocks": 44801576.0,
+        "cpu_seconds": 608.88
+      },
+      {
+        "round": 2,
+        "status": "ok",
+        "source": "results/timing-nvme-540-immkv-r2-release",
+        "cgroup_peak_gib": 2.4051513671875,
+        "user_seconds": 596.23,
+        "system_seconds": 12.29,
+        "wall_seconds": 157.55,
+        "filesystem_inputs_blocks": 44801576.0,
+        "cpu_seconds": 608.52
+      },
+      {
+        "round": 3,
+        "status": "ok",
+        "source": "results/timing-nvme-540-immkv-r3-release",
+        "cgroup_peak_gib": 2.400482177734375,
+        "user_seconds": 595.61,
+        "system_seconds": 12.34,
+        "wall_seconds": 157.57,
+        "filesystem_inputs_blocks": 44801576.0,
+        "cpu_seconds": 607.95
+      }
+    ],
+    "median": {
+      "wall_seconds": 157.57,
+      "user_seconds": 596.23,
+      "system_seconds": 12.34,
+      "cpu_seconds": 608.52,
+      "cgroup_peak_gib": 2.400482177734375,
+      "filesystem_inputs_blocks": 44801576.0
+    },
+    "wall_range": [
+      157.55,
+      157.76
+    ]
+  },
+  {
+    "media": "nvme",
+    "fields": 540,
+    "engine": "echtvar",
+    "runs": [
+      {
+        "round": 1,
+        "status": "ok",
+        "source": "results/timing-nvme-540-echtvar-r1-release",
+        "cgroup_peak_gib": 16.0,
+        "user_seconds": 2190.82,
+        "system_seconds": 322.45,
+        "wall_seconds": 643.97,
+        "filesystem_inputs_blocks": 90444408.0,
+        "cpu_seconds": 2513.27
+      },
+      {
+        "round": 2,
+        "status": "ok",
+        "source": "results/timing-nvme-540-echtvar-r2-release",
+        "cgroup_peak_gib": 16.0,
+        "user_seconds": 2091.7,
+        "system_seconds": 301.77,
+        "wall_seconds": 606.4,
+        "filesystem_inputs_blocks": 59958072.0,
+        "cpu_seconds": 2393.47
+      },
+      {
+        "round": 3,
+        "status": "ok",
+        "source": "results/timing-nvme-540-echtvar-r3-release",
+        "cgroup_peak_gib": 16.0,
+        "user_seconds": 2087.86,
+        "system_seconds": 297.0,
+        "wall_seconds": 603.36,
+        "filesystem_inputs_blocks": 39519488.0,
+        "cpu_seconds": 2384.86
+      }
+    ],
+    "median": {
+      "wall_seconds": 606.4,
+      "user_seconds": 2091.7,
+      "system_seconds": 301.77,
+      "cpu_seconds": 2393.47,
+      "cgroup_peak_gib": 16.0,
+      "filesystem_inputs_blocks": 59958072.0
+    },
+    "wall_range": [
+      603.36,
+      643.97
+    ]
+  },
+  {
+    "media": "nvme",
+    "fields": 568,
+    "engine": "immkv",
+    "runs": [
+      {
+        "round": 1,
+        "status": "ok",
+        "source": "results/timing-nvme-568-immkv-r1-release",
+        "cgroup_peak_gib": 3.84368896484375,
+        "user_seconds": 642.79,
+        "system_seconds": 12.77,
+        "wall_seconds": 168.76,
+        "filesystem_inputs_blocks": 45487664.0,
+        "cpu_seconds": 655.56
+      },
+      {
+        "round": 2,
+        "status": "ok",
+        "source": "results/timing-nvme-568-immkv-r2-release",
+        "cgroup_peak_gib": 3.82025146484375,
+        "user_seconds": 642.09,
+        "system_seconds": 12.85,
+        "wall_seconds": 168.05,
+        "filesystem_inputs_blocks": 45727832.0,
+        "cpu_seconds": 654.94
+      },
+      {
+        "round": 3,
+        "status": "ok",
+        "source": "results/timing-nvme-568-immkv-r3-release",
+        "cgroup_peak_gib": 3.4235610961914062,
+        "user_seconds": 643.63,
+        "system_seconds": 12.83,
+        "wall_seconds": 168.65,
+        "filesystem_inputs_blocks": 44801576.0,
+        "cpu_seconds": 656.46
+      }
+    ],
+    "median": {
+      "wall_seconds": 168.65,
+      "user_seconds": 642.79,
+      "system_seconds": 12.83,
+      "cpu_seconds": 655.56,
+      "cgroup_peak_gib": 3.82025146484375,
+      "filesystem_inputs_blocks": 45487664.0
+    },
+    "wall_range": [
+      168.05,
+      168.76
+    ]
+  },
+  {
+    "media": "nvme",
+    "fields": 568,
+    "engine": "echtvar",
+    "runs": [
+      {
+        "round": 1,
+        "status": "oom",
+        "source": "results/timing-nvme-568-echtvar-r1-release"
+      },
+      {
+        "round": 2,
+        "status": "skipped_after_oom",
+        "source": "results/timing-nvme-568-echtvar-r2-release"
+      },
+      {
+        "round": 3,
+        "status": "skipped_after_oom",
+        "source": "results/timing-nvme-568-echtvar-r3-release"
+      }
+    ]
+  },
+  {
+    "media": "hdd",
+    "fields": 17,
+    "engine": "immkv",
+    "runs": [
+      {
+        "round": 1,
+        "status": "ok",
+        "source": "results/timing-hdd-17-immkv-r1-release",
+        "cgroup_peak_gib": 0.3307838439941406,
+        "user_seconds": 197.31,
+        "system_seconds": 3.09,
+        "wall_seconds": 64.57,
+        "filesystem_inputs_blocks": 3070360.0,
+        "cpu_seconds": 200.4
+      },
+      {
+        "round": 2,
+        "status": "ok",
+        "source": "results/timing-hdd-17-immkv-r2-release",
+        "cgroup_peak_gib": 0.3260307312011719,
+        "user_seconds": 197.46,
+        "system_seconds": 3.05,
+        "wall_seconds": 64.76,
+        "filesystem_inputs_blocks": 3070360.0,
+        "cpu_seconds": 200.51000000000002
+      },
+      {
+        "round": 3,
+        "status": "ok",
+        "source": "results/timing-hdd-17-immkv-r3-release",
+        "cgroup_peak_gib": 0.341094970703125,
+        "user_seconds": 197.63,
+        "system_seconds": 3.22,
+        "wall_seconds": 64.66,
+        "filesystem_inputs_blocks": 3070360.0,
+        "cpu_seconds": 200.85
+      }
+    ],
+    "median": {
+      "wall_seconds": 64.66,
+      "user_seconds": 197.46,
+      "system_seconds": 3.09,
+      "cpu_seconds": 200.51000000000002,
+      "cgroup_peak_gib": 0.3307838439941406,
+      "filesystem_inputs_blocks": 3070360.0
+    },
+    "wall_range": [
+      64.57,
+      64.76
+    ]
+  },
+  {
+    "media": "hdd",
+    "fields": 17,
+    "engine": "echtvar",
+    "runs": [
+      {
+        "round": 1,
+        "status": "ok",
+        "source": "results/timing-hdd-17-echtvar-r1-release",
+        "cgroup_peak_gib": 0.126953125,
+        "user_seconds": 86.58,
+        "system_seconds": 8.98,
+        "wall_seconds": 24.53,
+        "filesystem_inputs_blocks": 0.0,
+        "cpu_seconds": 95.56
+      },
+      {
+        "round": 2,
+        "status": "ok",
+        "source": "results/timing-hdd-17-echtvar-r2-release",
+        "cgroup_peak_gib": 0.127197265625,
+        "user_seconds": 86.32,
+        "system_seconds": 9.06,
+        "wall_seconds": 24.55,
+        "filesystem_inputs_blocks": 0.0,
+        "cpu_seconds": 95.38
+      },
+      {
+        "round": 3,
+        "status": "ok",
+        "source": "results/timing-hdd-17-echtvar-r3-release",
+        "cgroup_peak_gib": 0.12694549560546875,
+        "user_seconds": 86.55,
+        "system_seconds": 8.79,
+        "wall_seconds": 24.53,
+        "filesystem_inputs_blocks": 0.0,
+        "cpu_seconds": 95.34
+      }
+    ],
+    "median": {
+      "wall_seconds": 24.53,
+      "user_seconds": 86.55,
+      "system_seconds": 8.98,
+      "cpu_seconds": 95.38,
+      "cgroup_peak_gib": 0.126953125,
+      "filesystem_inputs_blocks": 0.0
+    },
+    "wall_range": [
+      24.53,
+      24.55
+    ]
+  },
+  {
+    "media": "hdd",
+    "fields": 540,
+    "engine": "immkv",
+    "runs": [
+      {
+        "round": 1,
+        "status": "ok",
+        "source": "results/timing-hdd-540-immkv-r1-release",
+        "cgroup_peak_gib": 1.5030670166015625,
+        "user_seconds": 623.74,
+        "system_seconds": 41.64,
+        "wall_seconds": 1416.31,
+        "filesystem_inputs_blocks": 46185256.0,
+        "cpu_seconds": 665.38
+      },
+      {
+        "round": 2,
+        "status": "ok",
+        "source": "results/timing-hdd-540-immkv-r2-release",
+        "cgroup_peak_gib": 2.2522659301757812,
+        "user_seconds": 623.18,
+        "system_seconds": 41.35,
+        "wall_seconds": 1428.45,
+        "filesystem_inputs_blocks": 47778944.0,
+        "cpu_seconds": 664.53
+      },
+      {
+        "round": 3,
+        "status": "ok",
+        "source": "results/timing-hdd-540-immkv-r3-release",
+        "cgroup_peak_gib": 0.8355712890625,
+        "user_seconds": 621.95,
+        "system_seconds": 41.38,
+        "wall_seconds": 1410.04,
+        "filesystem_inputs_blocks": 44801872.0,
+        "cpu_seconds": 663.33
+      }
+    ],
+    "median": {
+      "wall_seconds": 1416.31,
+      "user_seconds": 623.18,
+      "system_seconds": 41.38,
+      "cpu_seconds": 664.53,
+      "cgroup_peak_gib": 1.5030670166015625,
+      "filesystem_inputs_blocks": 46185256.0
+    },
+    "wall_range": [
+      1410.04,
+      1428.45
+    ]
+  },
+  {
+    "media": "hdd",
+    "fields": 540,
+    "engine": "echtvar",
+    "runs": [
+      {
+        "round": 1,
+        "status": "ok",
+        "source": "results/timing-hdd-540-echtvar-r1-release",
+        "cgroup_peak_gib": 16.0,
+        "user_seconds": 2091.69,
+        "system_seconds": 298.15,
+        "wall_seconds": 631.26,
+        "filesystem_inputs_blocks": 96294872.0,
+        "cpu_seconds": 2389.84
+      },
+      {
+        "round": 2,
+        "status": "ok",
+        "source": "results/timing-hdd-540-echtvar-r2-release",
+        "cgroup_peak_gib": 16.0,
+        "user_seconds": 2098.82,
+        "system_seconds": 298.08,
+        "wall_seconds": 621.93,
+        "filesystem_inputs_blocks": 73387984.0,
+        "cpu_seconds": 2396.9
+      },
+      {
+        "round": 3,
+        "status": "ok",
+        "source": "results/timing-hdd-540-echtvar-r3-release",
+        "cgroup_peak_gib": 16.0,
+        "user_seconds": 2089.02,
+        "system_seconds": 296.92,
+        "wall_seconds": 616.84,
+        "filesystem_inputs_blocks": 58645824.0,
+        "cpu_seconds": 2385.94
+      }
+    ],
+    "median": {
+      "wall_seconds": 621.93,
+      "user_seconds": 2091.69,
+      "system_seconds": 298.08,
+      "cpu_seconds": 2389.84,
+      "cgroup_peak_gib": 16.0,
+      "filesystem_inputs_blocks": 73387984.0
+    },
+    "wall_range": [
+      616.84,
+      631.26
+    ]
+  },
+  {
+    "media": "hdd",
+    "fields": 568,
+    "engine": "immkv",
+    "runs": [
+      {
+        "round": 1,
+        "status": "ok",
+        "source": "results/timing-hdd-568-immkv-r1-release",
+        "cgroup_peak_gib": 1.6346282958984375,
+        "user_seconds": 665.46,
+        "system_seconds": 41.58,
+        "wall_seconds": 1422.31,
+        "filesystem_inputs_blocks": 46107248.0,
+        "cpu_seconds": 707.0400000000001
+      },
+      {
+        "round": 2,
+        "status": "ok",
+        "source": "results/timing-hdd-568-immkv-r2-release",
+        "cgroup_peak_gib": 1.0515022277832031,
+        "user_seconds": 665.21,
+        "system_seconds": 41.84,
+        "wall_seconds": 1413.1,
+        "filesystem_inputs_blocks": 44932832.0,
+        "cpu_seconds": 707.0500000000001
+      },
+      {
+        "round": 3,
+        "status": "ok",
+        "source": "results/timing-hdd-568-immkv-r3-release",
+        "cgroup_peak_gib": 0.9950180053710938,
+        "user_seconds": 665.59,
+        "system_seconds": 41.79,
+        "wall_seconds": 1412.24,
+        "filesystem_inputs_blocks": 44801576.0,
+        "cpu_seconds": 707.38
+      }
+    ],
+    "median": {
+      "wall_seconds": 1413.1,
+      "user_seconds": 665.46,
+      "system_seconds": 41.79,
+      "cpu_seconds": 707.0500000000001,
+      "cgroup_peak_gib": 1.0515022277832031,
+      "filesystem_inputs_blocks": 44932832.0
+    },
+    "wall_range": [
+      1412.24,
+      1422.31
+    ]
+  },
+  {
+    "media": "hdd",
+    "fields": 568,
+    "engine": "echtvar",
+    "runs": [
+      {
+        "round": 1,
+        "status": "oom",
+        "source": "results/timing-hdd-568-echtvar-r1-release"
+      },
+      {
+        "round": 2,
+        "status": "skipped_after_oom",
+        "source": "results/timing-hdd-568-echtvar-r2-release"
+      },
+      {
+        "round": 3,
+        "status": "skipped_after_oom",
+        "source": "results/timing-hdd-568-echtvar-r3-release"
+      }
+    ]
+  }
+]

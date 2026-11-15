@@ -1,0 +1,10 @@
+{
+  "cpu.stat": "usage_usec 654998836\nuser_usec 642131993\nsystem_usec 12866842\nnice_usec 0\ncore_sched.force_idle_usec 0",
+  "memory.current": "480317440",
+  "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+  "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+  "memory.max": "17179869184",
+  "memory.peak": "4101963776",
+  "memory.swap.max": "0",
+  "timestamp_ns": 1794690503437634548
+}

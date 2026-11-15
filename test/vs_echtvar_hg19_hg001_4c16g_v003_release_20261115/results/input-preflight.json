@@ -1,0 +1,1930 @@
+{
+  "created_ns": 1794684432117851506,
+  "media": {
+    "nvme": {
+      "17": {
+        "query": "/home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz",
+        "query_bytes": 139085620,
+        "query_sha256": "014dc5c07f967a71cfdcc650c57148aeaac34ceb12e7d9f3a513b9720a88a9c6",
+        "index_bytes": 1367854,
+        "library": "/home/tian/immkv_test_nvme/test/17_fields/lib17",
+        "manifests": [
+          {
+            "chromosome": 1,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 20370890,
+            "manifest_sha256": "b828cfa17a2df725f18e9907cee4cf0e9907c433d0ab5992ad6a25651f59852d"
+          },
+          {
+            "chromosome": 2,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 21892245,
+            "manifest_sha256": "c99e8c2b512d651fefdba28fd4bc47ebc1ca96b816393fd8c77d08245a868505"
+          },
+          {
+            "chromosome": 3,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 17834355,
+            "manifest_sha256": "88c35cffd4cc14950f915a4b39d1f466ccd0bcf1d49890a29beb47436dbf4f55"
+          },
+          {
+            "chromosome": 4,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 17423639,
+            "manifest_sha256": "e310f6b01626703f969a903e630f029d97d3fdb089de0c8e3a5a1cb4b3f2a23c"
+          },
+          {
+            "chromosome": 5,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 16290654,
+            "manifest_sha256": "96bfbf63bfb6181918baa760bdb8ff6ec675ef1459e2241ce0eb6eee1f8490f4"
+          },
+          {
+            "chromosome": 6,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 15190442,
+            "manifest_sha256": "9a77beac2449ac85a8cf028e7769b9568fc7dc168c7f82134761233c8a6983ca"
+          },
+          {
+            "chromosome": 7,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 14752321,
+            "manifest_sha256": "3e6c4b0b97e2e8acc707f9001fba3c96b7583aa761f285fb9187726b0737467f"
+          },
+          {
+            "chromosome": 8,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 14073574,
+            "manifest_sha256": "a0de0210e73dbd886181a9c6e3b39e17854efabb53aa95d2f39114ab5de8ed64"
+          },
+          {
+            "chromosome": 9,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 11480614,
+            "manifest_sha256": "90d4ded4deb27f1c1ffadebe47f5c65cf45455e657191676a4c23c557b61f8a9"
+          },
+          {
+            "chromosome": 10,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 12118750,
+            "manifest_sha256": "12d27572091e8cb3fbb27386b5e777f73e330643f72d18ac8ea79618f465d547"
+          },
+          {
+            "chromosome": 11,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 12345492,
+            "manifest_sha256": "c9343209324cedb76d8336d0b162e13adbde8ac07357906e101d816042827b3c"
+          },
+          {
+            "chromosome": 12,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 11933435,
+            "manifest_sha256": "9c93500cf3fdbdde0991afd4a9a42602419f56be02fc0ede49e2268dec415de8"
+          },
+          {
+            "chromosome": 13,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 8693573,
+            "manifest_sha256": "ee367aa983c8d31b9ef6485966954bc84c840c308f9ec10673955eea0ba8f052"
+          },
+          {
+            "chromosome": 14,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 8220638,
+            "manifest_sha256": "2336388c4f0d6324d1d391bcbac4e81f0e32e95a343bb1a6872d1879f8446f2c"
+          },
+          {
+            "chromosome": 15,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 7723667,
+            "manifest_sha256": "ca21551ad8d8d7b5e92ff40d830393ba374c9aaa8e18a45017433de9ea1c9b29"
+          },
+          {
+            "chromosome": 16,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 8618657,
+            "manifest_sha256": "43209ec7835c225072e05d34144afba16d6bba7d83b747fccceb6f018d837cc7"
+          },
+          {
+            "chromosome": 17,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 7373819,
+            "manifest_sha256": "57583441aab447fa2243d6939f679e50098ab45bb207b93820a679c6d36b6488"
+          },
+          {
+            "chromosome": 18,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 6893751,
+            "manifest_sha256": "9a8bb1ae9a643ee3388533082705d2e26bcd09ab03cda90b64e8965d509cd369"
+          },
+          {
+            "chromosome": 19,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 5991870,
+            "manifest_sha256": "c905eb1ca428e5fc53d8d67e0c5d4fdc0ee719800d8e089e3f3b794d6c80510a"
+          },
+          {
+            "chromosome": 20,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 5516836,
+            "manifest_sha256": "fc4513940ce0caed90006e84a126eb2660c11f6e07a28c1cf70d352e89d529a3"
+          },
+          {
+            "chromosome": 21,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 3483000,
+            "manifest_sha256": "5a064dcd7b265753c4e4e49d31e6aec772357bba315257e7d1b0a8e78d6c1772"
+          },
+          {
+            "chromosome": 22,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 3567085,
+            "manifest_sha256": "d5987ea72aaf88492de717ab4f935c2108bec30b957d63357268d66bafff178c"
+          }
+        ],
+        "archives": [
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr1.echtvar.zip",
+            "bytes": 244234654,
+            "central_directory_members": 4163,
+            "uncompressed_bytes": 578567882,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr2.echtvar.zip",
+            "bytes": 258657713,
+            "central_directory_members": 4391,
+            "uncompressed_bytes": 620538239,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr3.echtvar.zip",
+            "bytes": 210659980,
+            "central_directory_members": 3555,
+            "uncompressed_bytes": 505087392,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr4.echtvar.zip",
+            "bytes": 208828208,
+            "central_directory_members": 3441,
+            "uncompressed_bytes": 494714168,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr5.echtvar.zip",
+            "bytes": 192352387,
+            "central_directory_members": 3251,
+            "uncompressed_bytes": 461270809,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr6.echtvar.zip",
+            "bytes": 183934502,
+            "central_directory_members": 3080,
+            "uncompressed_bytes": 432604103,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr7.echtvar.zip",
+            "bytes": 178674759,
+            "central_directory_members": 2852,
+            "uncompressed_bytes": 420231928,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr8.echtvar.zip",
+            "bytes": 164725132,
+            "central_directory_members": 2624,
+            "uncompressed_bytes": 397702935,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr9.echtvar.zip",
+            "bytes": 138388260,
+            "central_directory_members": 2263,
+            "uncompressed_bytes": 325968828,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr10.echtvar.zip",
+            "bytes": 147108442,
+            "central_directory_members": 2434,
+            "uncompressed_bytes": 345447116,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr11.echtvar.zip",
+            "bytes": 146764897,
+            "central_directory_members": 2415,
+            "uncompressed_bytes": 350042016,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr12.echtvar.zip",
+            "bytes": 144193515,
+            "central_directory_members": 2396,
+            "uncompressed_bytes": 339777686,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr13.echtvar.zip",
+            "bytes": 104972306,
+            "central_directory_members": 1750,
+            "uncompressed_bytes": 247521444,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr14.echtvar.zip",
+            "bytes": 99273295,
+            "central_directory_members": 1617,
+            "uncompressed_bytes": 233719970,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr15.echtvar.zip",
+            "bytes": 93455566,
+            "central_directory_members": 1503,
+            "uncompressed_bytes": 219684326,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr16.echtvar.zip",
+            "bytes": 102348503,
+            "central_directory_members": 1465,
+            "uncompressed_bytes": 244290082,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr17.echtvar.zip",
+            "bytes": 89862907,
+            "central_directory_members": 1446,
+            "uncompressed_bytes": 210528323,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr18.echtvar.zip",
+            "bytes": 83163449,
+            "central_directory_members": 1389,
+            "uncompressed_bytes": 196324184,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr19.echtvar.zip",
+            "bytes": 75601696,
+            "central_directory_members": 1047,
+            "uncompressed_bytes": 172173473,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr20.echtvar.zip",
+            "bytes": 66291586,
+            "central_directory_members": 1123,
+            "uncompressed_bytes": 157162354,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr21.echtvar.zip",
+            "bytes": 43014863,
+            "central_directory_members": 686,
+            "uncompressed_bytes": 99628454,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/17_fields/archives/chr22.echtvar.zip",
+            "bytes": 44732754,
+            "central_directory_members": 648,
+            "uncompressed_bytes": 102376807,
+            "central_directory_valid": true
+          }
+        ],
+        "fields_sha256": "db2c8bc29926b5f4265e9077443a19571a55c8f99d2d30906e0a126c6c0db030"
+      },
+      "540": {
+        "query": "/home/tian/immkv_test_nvme/test/540_fields/query/hg001.decomp.vcf.gz",
+        "query_bytes": 139085621,
+        "query_sha256": "21b02c83b020ef6d97ad39068ce21deb28c496aaec3ba984365b4799bc2f29da",
+        "index_bytes": 1367925,
+        "library": "/home/tian/immkv_test_nvme/gnomad/immkv",
+        "manifests": [
+          {
+            "chromosome": 1,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 20370890,
+            "manifest_sha256": "e6502a10540c839e768f615df8081d70b4a71e61b2a0a88afa0821d687343e4d"
+          },
+          {
+            "chromosome": 2,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 21892245,
+            "manifest_sha256": "0be51c08eec7941cd997de60a6fef8e3f72f9f38c3a4af9d889e395a7de99ea7"
+          },
+          {
+            "chromosome": 3,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 17834355,
+            "manifest_sha256": "4fb8ff096c20282a966b468355676dc8e476b8400d7c200f4a42bd882d587e9c"
+          },
+          {
+            "chromosome": 4,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 17423639,
+            "manifest_sha256": "85e3fdd517978eefa71480c09b88efbfe179188da72392025e1c995802ff3e37"
+          },
+          {
+            "chromosome": 5,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 16290654,
+            "manifest_sha256": "88624fbba2bbc84b65c8ef80d78420d0b7a35928ed8ae9ac523b9f2e8f0f91a3"
+          },
+          {
+            "chromosome": 6,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 15190442,
+            "manifest_sha256": "bdf9562a2110e95c010b344e601f16f8a543a51dca79fa2ced4031c53896fb91"
+          },
+          {
+            "chromosome": 7,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 14752321,
+            "manifest_sha256": "77e5990e85572cbbbfce7871d79ee2fde5f7fc18cff2fe9a8f9c9900e2d824b5"
+          },
+          {
+            "chromosome": 8,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 14073574,
+            "manifest_sha256": "56f8047c1da4c09bdb6e15f44acd99c448132ae6230e32ef22cfa20239567b5e"
+          },
+          {
+            "chromosome": 9,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 11480614,
+            "manifest_sha256": "48b7a1d79c9a4a057bc7513eb930b850d7354f2abe380e3768aadaf87b45714f"
+          },
+          {
+            "chromosome": 10,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 12118750,
+            "manifest_sha256": "db671e979c2a949f8c0433112f9053bcb02dcf4bc09a30e3407cdffa9378788a"
+          },
+          {
+            "chromosome": 11,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 12345492,
+            "manifest_sha256": "0c8f3ed0470504385960e748aba1bc8854b806e3dd5044768739ef3d3a19a7f6"
+          },
+          {
+            "chromosome": 12,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 11933435,
+            "manifest_sha256": "f0d71794035581a52f8a9c49187e7c5d77f79f5300aa76fb147efa0afa65ff88"
+          },
+          {
+            "chromosome": 13,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 8693573,
+            "manifest_sha256": "563bb2b82c86652d08e862b28befc5be90d24897cf921aaad34621e79744f5d1"
+          },
+          {
+            "chromosome": 14,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 8220638,
+            "manifest_sha256": "0471ec2e516c76f6b89410c89d8825aebfa36bfc9b15378c0045f9b46f7035c7"
+          },
+          {
+            "chromosome": 15,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 7723667,
+            "manifest_sha256": "f9210d1c3b5ca3d8b36087dcc025a44f9e9934158ef77f78d85b5bb90c391667"
+          },
+          {
+            "chromosome": 16,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 8618657,
+            "manifest_sha256": "3cf4786236d60d3c5402f496bd1cd8cfbe2ac3a2773e32f7cb1e680ef96c9a77"
+          },
+          {
+            "chromosome": 17,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 7373819,
+            "manifest_sha256": "7f18009ed6de25e04fe6781dd2b181ad310ca3ecadeb5d65fd5f881be16eff8b"
+          },
+          {
+            "chromosome": 18,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 6893751,
+            "manifest_sha256": "e7d6244b50c2e3b2752e25ab393dee0d5135133f087b10a0178d83a0bdb72ccb"
+          },
+          {
+            "chromosome": 19,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 5991870,
+            "manifest_sha256": "df905df6fec7a78b7a65108551deb1e8c29bd3a3dca06edf68f5488bf8e7d360"
+          },
+          {
+            "chromosome": 20,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 5516836,
+            "manifest_sha256": "5ffef94f04de22a04f846f3f06f2b33d1c6e828cc099efd15abeb6d6196a1db5"
+          },
+          {
+            "chromosome": 21,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 3483000,
+            "manifest_sha256": "869bb863c33345bfcedba5de9265f1acac3c5033460ef83cb11d432d7143cdf4"
+          },
+          {
+            "chromosome": 22,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 3567085,
+            "manifest_sha256": "872946e081799b83f30444581a23e5d7a4d3a4f46dba7e12a5185f8109e77895"
+          }
+        ],
+        "archives": [
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr1.echtvar.zip",
+            "bytes": 5123651180,
+            "central_directory_members": 118700,
+            "uncompressed_bytes": 17527475456,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr2.echtvar.zip",
+            "bytes": 5398570861,
+            "central_directory_members": 125204,
+            "uncompressed_bytes": 18815801585,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr3.echtvar.zip",
+            "bytes": 4396709608,
+            "central_directory_members": 101356,
+            "uncompressed_bytes": 15334578110,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr4.echtvar.zip",
+            "bytes": 4372074758,
+            "central_directory_members": 98104,
+            "uncompressed_bytes": 15000414640,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr5.echtvar.zip",
+            "bytes": 4015346448,
+            "central_directory_members": 92684,
+            "uncompressed_bytes": 14002770510,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr6.echtvar.zip",
+            "bytes": 3834498842,
+            "central_directory_members": 87806,
+            "uncompressed_bytes": 13088773102,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr7.echtvar.zip",
+            "bytes": 3752875084,
+            "central_directory_members": 81302,
+            "uncompressed_bytes": 12699326179,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr8.echtvar.zip",
+            "bytes": 3445232398,
+            "central_directory_members": 74798,
+            "uncompressed_bytes": 12093741209,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr9.echtvar.zip",
+            "bytes": 2927934457,
+            "central_directory_members": 64500,
+            "uncompressed_bytes": 9883896838,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr10.echtvar.zip",
+            "bytes": 3075555846,
+            "central_directory_members": 69378,
+            "uncompressed_bytes": 10438645523,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr11.echtvar.zip",
+            "bytes": 3075222135,
+            "central_directory_members": 68836,
+            "uncompressed_bytes": 10620876194,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr12.echtvar.zip",
+            "bytes": 3019225963,
+            "central_directory_members": 68294,
+            "uncompressed_bytes": 10271390853,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr13.echtvar.zip",
+            "bytes": 2190906161,
+            "central_directory_members": 49866,
+            "uncompressed_bytes": 7487102196,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr14.echtvar.zip",
+            "bytes": 2082208118,
+            "central_directory_members": 46072,
+            "uncompressed_bytes": 7077438370,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr15.echtvar.zip",
+            "bytes": 1966885592,
+            "central_directory_members": 42820,
+            "uncompressed_bytes": 6648377385,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr16.echtvar.zip",
+            "bytes": 2159856477,
+            "central_directory_members": 41736,
+            "uncompressed_bytes": 7407307841,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr17.echtvar.zip",
+            "bytes": 1890442581,
+            "central_directory_members": 41194,
+            "uncompressed_bytes": 6342630113,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr18.echtvar.zip",
+            "bytes": 1730167927,
+            "central_directory_members": 39568,
+            "uncompressed_bytes": 5936324589,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr19.echtvar.zip",
+            "bytes": 1612041534,
+            "central_directory_members": 29812,
+            "uncompressed_bytes": 5165403019,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr20.echtvar.zip",
+            "bytes": 1376525969,
+            "central_directory_members": 31980,
+            "uncompressed_bytes": 4746336425,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr21.echtvar.zip",
+            "bytes": 902589299,
+            "central_directory_members": 19514,
+            "uncompressed_bytes": 3004608164,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/540_fields/archives/chr22.echtvar.zip",
+            "bytes": 945741018,
+            "central_directory_members": 18430,
+            "uncompressed_bytes": 3075770914,
+            "central_directory_valid": true
+          }
+        ],
+        "fields_sha256": "fa1f21636fcd186308e3d070a65b0c087a8813f6763a78f8db70dc96c65f7643"
+      },
+      "568": {
+        "query": "/home/tian/immkv_test_nvme/test/568_fields/query/hg001.decomp.vcf.gz",
+        "query_bytes": 139085621,
+        "query_sha256": "ab247503db51111482d0b54b5cc76e3c0a94d5b2310746dd85f51d92b48f937b",
+        "index_bytes": 1367925,
+        "library": "/home/tian/immkv_test_nvme/gnomad/immkv",
+        "manifests": [
+          {
+            "chromosome": 1,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 20370890,
+            "manifest_sha256": "e6502a10540c839e768f615df8081d70b4a71e61b2a0a88afa0821d687343e4d"
+          },
+          {
+            "chromosome": 2,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 21892245,
+            "manifest_sha256": "0be51c08eec7941cd997de60a6fef8e3f72f9f38c3a4af9d889e395a7de99ea7"
+          },
+          {
+            "chromosome": 3,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 17834355,
+            "manifest_sha256": "4fb8ff096c20282a966b468355676dc8e476b8400d7c200f4a42bd882d587e9c"
+          },
+          {
+            "chromosome": 4,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 17423639,
+            "manifest_sha256": "85e3fdd517978eefa71480c09b88efbfe179188da72392025e1c995802ff3e37"
+          },
+          {
+            "chromosome": 5,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 16290654,
+            "manifest_sha256": "88624fbba2bbc84b65c8ef80d78420d0b7a35928ed8ae9ac523b9f2e8f0f91a3"
+          },
+          {
+            "chromosome": 6,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 15190442,
+            "manifest_sha256": "bdf9562a2110e95c010b344e601f16f8a543a51dca79fa2ced4031c53896fb91"
+          },
+          {
+            "chromosome": 7,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 14752321,
+            "manifest_sha256": "77e5990e85572cbbbfce7871d79ee2fde5f7fc18cff2fe9a8f9c9900e2d824b5"
+          },
+          {
+            "chromosome": 8,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 14073574,
+            "manifest_sha256": "56f8047c1da4c09bdb6e15f44acd99c448132ae6230e32ef22cfa20239567b5e"
+          },
+          {
+            "chromosome": 9,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 11480614,
+            "manifest_sha256": "48b7a1d79c9a4a057bc7513eb930b850d7354f2abe380e3768aadaf87b45714f"
+          },
+          {
+            "chromosome": 10,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 12118750,
+            "manifest_sha256": "db671e979c2a949f8c0433112f9053bcb02dcf4bc09a30e3407cdffa9378788a"
+          },
+          {
+            "chromosome": 11,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 12345492,
+            "manifest_sha256": "0c8f3ed0470504385960e748aba1bc8854b806e3dd5044768739ef3d3a19a7f6"
+          },
+          {
+            "chromosome": 12,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 11933435,
+            "manifest_sha256": "f0d71794035581a52f8a9c49187e7c5d77f79f5300aa76fb147efa0afa65ff88"
+          },
+          {
+            "chromosome": 13,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 8693573,
+            "manifest_sha256": "563bb2b82c86652d08e862b28befc5be90d24897cf921aaad34621e79744f5d1"
+          },
+          {
+            "chromosome": 14,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 8220638,
+            "manifest_sha256": "0471ec2e516c76f6b89410c89d8825aebfa36bfc9b15378c0045f9b46f7035c7"
+          },
+          {
+            "chromosome": 15,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 7723667,
+            "manifest_sha256": "f9210d1c3b5ca3d8b36087dcc025a44f9e9934158ef77f78d85b5bb90c391667"
+          },
+          {
+            "chromosome": 16,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 8618657,
+            "manifest_sha256": "3cf4786236d60d3c5402f496bd1cd8cfbe2ac3a2773e32f7cb1e680ef96c9a77"
+          },
+          {
+            "chromosome": 17,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 7373819,
+            "manifest_sha256": "7f18009ed6de25e04fe6781dd2b181ad310ca3ecadeb5d65fd5f881be16eff8b"
+          },
+          {
+            "chromosome": 18,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 6893751,
+            "manifest_sha256": "e7d6244b50c2e3b2752e25ab393dee0d5135133f087b10a0178d83a0bdb72ccb"
+          },
+          {
+            "chromosome": 19,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 5991870,
+            "manifest_sha256": "df905df6fec7a78b7a65108551deb1e8c29bd3a3dca06edf68f5488bf8e7d360"
+          },
+          {
+            "chromosome": 20,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 5516836,
+            "manifest_sha256": "5ffef94f04de22a04f846f3f06f2b33d1c6e828cc099efd15abeb6d6196a1db5"
+          },
+          {
+            "chromosome": 21,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 3483000,
+            "manifest_sha256": "869bb863c33345bfcedba5de9265f1acac3c5033460ef83cb11d432d7143cdf4"
+          },
+          {
+            "chromosome": 22,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 3567085,
+            "manifest_sha256": "872946e081799b83f30444581a23e5d7a4d3a4f46dba7e12a5185f8109e77895"
+          }
+        ],
+        "archives": [
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr1.echtvar.zip",
+            "bytes": 7257511949,
+            "central_directory_members": 124848,
+            "uncompressed_bytes": 38780286499,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr2.echtvar.zip",
+            "bytes": 7624945470,
+            "central_directory_members": 131688,
+            "uncompressed_bytes": 40899531669,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr3.echtvar.zip",
+            "bytes": 6263830958,
+            "central_directory_members": 106608,
+            "uncompressed_bytes": 34926259821,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr4.echtvar.zip",
+            "bytes": 6074278192,
+            "central_directory_members": 103188,
+            "uncompressed_bytes": 30168583462,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr5.echtvar.zip",
+            "bytes": 5622847357,
+            "central_directory_members": 97488,
+            "uncompressed_bytes": 28696987035,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr6.echtvar.zip",
+            "bytes": 5333501460,
+            "central_directory_members": 92358,
+            "uncompressed_bytes": 26290904570,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr7.echtvar.zip",
+            "bytes": 5284983462,
+            "central_directory_members": 85518,
+            "uncompressed_bytes": 27981956434,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr8.echtvar.zip",
+            "bytes": 4867485483,
+            "central_directory_members": 78678,
+            "uncompressed_bytes": 26040552400,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr9.echtvar.zip",
+            "bytes": 4063797988,
+            "central_directory_members": 67848,
+            "uncompressed_bytes": 19890246125,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr10.echtvar.zip",
+            "bytes": 4299658931,
+            "central_directory_members": 72978,
+            "uncompressed_bytes": 21839763121,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr11.echtvar.zip",
+            "bytes": 4415331558,
+            "central_directory_members": 72408,
+            "uncompressed_bytes": 24849737455,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr12.echtvar.zip",
+            "bytes": 4324593804,
+            "central_directory_members": 71838,
+            "uncompressed_bytes": 24288159769,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr13.echtvar.zip",
+            "bytes": 2982695276,
+            "central_directory_members": 52458,
+            "uncompressed_bytes": 13200835719,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr14.echtvar.zip",
+            "bytes": 2978458193,
+            "central_directory_members": 48468,
+            "uncompressed_bytes": 16672855058,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr15.echtvar.zip",
+            "bytes": 2821168599,
+            "central_directory_members": 45048,
+            "uncompressed_bytes": 16007926228,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr16.echtvar.zip",
+            "bytes": 3147128737,
+            "central_directory_members": 43908,
+            "uncompressed_bytes": 18820464097,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr17.echtvar.zip",
+            "bytes": 2804825536,
+            "central_directory_members": 43338,
+            "uncompressed_bytes": 17740105448,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr18.echtvar.zip",
+            "bytes": 2434370983,
+            "central_directory_members": 41628,
+            "uncompressed_bytes": 12818068081,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr19.echtvar.zip",
+            "bytes": 2393428912,
+            "central_directory_members": 31368,
+            "uncompressed_bytes": 14771573347,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr20.echtvar.zip",
+            "bytes": 1939275218,
+            "central_directory_members": 33648,
+            "uncompressed_bytes": 10042845922,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr21.echtvar.zip",
+            "bytes": 1259700453,
+            "central_directory_members": 20538,
+            "uncompressed_bytes": 6372577608,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/home/tian/immkv_test_nvme/test/568_fields/archives/chr22.echtvar.zip",
+            "bytes": 1362922300,
+            "central_directory_members": 19398,
+            "uncompressed_bytes": 7774267602,
+            "central_directory_valid": true
+          }
+        ],
+        "fields_sha256": "28e7720f959b1cf583af444f1290a9bad857e3d733ea8cd6d0b75442b78ebf86"
+      }
+    },
+    "hdd": {
+      "17": {
+        "query": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/query/hg001.decomp.vcf.gz",
+        "query_bytes": 139085616,
+        "query_sha256": "b9afb10b724c9b85c59e723be330a3ea756928c9ca2092692db3b1faa64472d0",
+        "index_bytes": 1367830,
+        "library": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/lib17",
+        "manifests": [
+          {
+            "chromosome": 1,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 20370890,
+            "manifest_sha256": "b828cfa17a2df725f18e9907cee4cf0e9907c433d0ab5992ad6a25651f59852d"
+          },
+          {
+            "chromosome": 2,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 21892245,
+            "manifest_sha256": "c99e8c2b512d651fefdba28fd4bc47ebc1ca96b816393fd8c77d08245a868505"
+          },
+          {
+            "chromosome": 3,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 17834355,
+            "manifest_sha256": "88c35cffd4cc14950f915a4b39d1f466ccd0bcf1d49890a29beb47436dbf4f55"
+          },
+          {
+            "chromosome": 4,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 17423639,
+            "manifest_sha256": "e310f6b01626703f969a903e630f029d97d3fdb089de0c8e3a5a1cb4b3f2a23c"
+          },
+          {
+            "chromosome": 5,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 16290654,
+            "manifest_sha256": "96bfbf63bfb6181918baa760bdb8ff6ec675ef1459e2241ce0eb6eee1f8490f4"
+          },
+          {
+            "chromosome": 6,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 15190442,
+            "manifest_sha256": "9a77beac2449ac85a8cf028e7769b9568fc7dc168c7f82134761233c8a6983ca"
+          },
+          {
+            "chromosome": 7,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 14752321,
+            "manifest_sha256": "3e6c4b0b97e2e8acc707f9001fba3c96b7583aa761f285fb9187726b0737467f"
+          },
+          {
+            "chromosome": 8,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 14073574,
+            "manifest_sha256": "a0de0210e73dbd886181a9c6e3b39e17854efabb53aa95d2f39114ab5de8ed64"
+          },
+          {
+            "chromosome": 9,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 11480614,
+            "manifest_sha256": "90d4ded4deb27f1c1ffadebe47f5c65cf45455e657191676a4c23c557b61f8a9"
+          },
+          {
+            "chromosome": 10,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 12118750,
+            "manifest_sha256": "12d27572091e8cb3fbb27386b5e777f73e330643f72d18ac8ea79618f465d547"
+          },
+          {
+            "chromosome": 11,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 12345492,
+            "manifest_sha256": "c9343209324cedb76d8336d0b162e13adbde8ac07357906e101d816042827b3c"
+          },
+          {
+            "chromosome": 12,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 11933435,
+            "manifest_sha256": "9c93500cf3fdbdde0991afd4a9a42602419f56be02fc0ede49e2268dec415de8"
+          },
+          {
+            "chromosome": 13,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 8693573,
+            "manifest_sha256": "ee367aa983c8d31b9ef6485966954bc84c840c308f9ec10673955eea0ba8f052"
+          },
+          {
+            "chromosome": 14,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 8220638,
+            "manifest_sha256": "2336388c4f0d6324d1d391bcbac4e81f0e32e95a343bb1a6872d1879f8446f2c"
+          },
+          {
+            "chromosome": 15,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 7723667,
+            "manifest_sha256": "ca21551ad8d8d7b5e92ff40d830393ba374c9aaa8e18a45017433de9ea1c9b29"
+          },
+          {
+            "chromosome": 16,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 8618657,
+            "manifest_sha256": "43209ec7835c225072e05d34144afba16d6bba7d83b747fccceb6f018d837cc7"
+          },
+          {
+            "chromosome": 17,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 7373819,
+            "manifest_sha256": "57583441aab447fa2243d6939f679e50098ab45bb207b93820a679c6d36b6488"
+          },
+          {
+            "chromosome": 18,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 6893751,
+            "manifest_sha256": "9a8bb1ae9a643ee3388533082705d2e26bcd09ab03cda90b64e8965d509cd369"
+          },
+          {
+            "chromosome": 19,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 5991870,
+            "manifest_sha256": "c905eb1ca428e5fc53d8d67e0c5d4fdc0ee719800d8e089e3f3b794d6c80510a"
+          },
+          {
+            "chromosome": 20,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 5516836,
+            "manifest_sha256": "fc4513940ce0caed90006e84a126eb2660c11f6e07a28c1cf70d352e89d529a3"
+          },
+          {
+            "chromosome": 21,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 3483000,
+            "manifest_sha256": "5a064dcd7b265753c4e4e49d31e6aec772357bba315257e7d1b0a8e78d6c1772"
+          },
+          {
+            "chromosome": 22,
+            "build_id": "7e9d2daf469b5ec1581da28cfc6b2894",
+            "schema_hash": "99944e3316871f58",
+            "records": 3567085,
+            "manifest_sha256": "d5987ea72aaf88492de717ab4f935c2108bec30b957d63357268d66bafff178c"
+          }
+        ],
+        "archives": [
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr1.echtvar.zip",
+            "bytes": 244234654,
+            "central_directory_members": 4163,
+            "uncompressed_bytes": 578567882,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr2.echtvar.zip",
+            "bytes": 258657713,
+            "central_directory_members": 4391,
+            "uncompressed_bytes": 620538239,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr3.echtvar.zip",
+            "bytes": 210659980,
+            "central_directory_members": 3555,
+            "uncompressed_bytes": 505087392,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr4.echtvar.zip",
+            "bytes": 208828208,
+            "central_directory_members": 3441,
+            "uncompressed_bytes": 494714168,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr5.echtvar.zip",
+            "bytes": 192352387,
+            "central_directory_members": 3251,
+            "uncompressed_bytes": 461270809,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr6.echtvar.zip",
+            "bytes": 183934502,
+            "central_directory_members": 3080,
+            "uncompressed_bytes": 432604103,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr7.echtvar.zip",
+            "bytes": 178674759,
+            "central_directory_members": 2852,
+            "uncompressed_bytes": 420231928,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr8.echtvar.zip",
+            "bytes": 164725132,
+            "central_directory_members": 2624,
+            "uncompressed_bytes": 397702935,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr9.echtvar.zip",
+            "bytes": 138388260,
+            "central_directory_members": 2263,
+            "uncompressed_bytes": 325968828,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr10.echtvar.zip",
+            "bytes": 147108442,
+            "central_directory_members": 2434,
+            "uncompressed_bytes": 345447116,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr11.echtvar.zip",
+            "bytes": 146764897,
+            "central_directory_members": 2415,
+            "uncompressed_bytes": 350042016,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr12.echtvar.zip",
+            "bytes": 144193515,
+            "central_directory_members": 2396,
+            "uncompressed_bytes": 339777686,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr13.echtvar.zip",
+            "bytes": 104972306,
+            "central_directory_members": 1750,
+            "uncompressed_bytes": 247521444,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr14.echtvar.zip",
+            "bytes": 99273295,
+            "central_directory_members": 1617,
+            "uncompressed_bytes": 233719970,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr15.echtvar.zip",
+            "bytes": 93455566,
+            "central_directory_members": 1503,
+            "uncompressed_bytes": 219684326,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr16.echtvar.zip",
+            "bytes": 102348503,
+            "central_directory_members": 1465,
+            "uncompressed_bytes": 244290082,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr17.echtvar.zip",
+            "bytes": 89862907,
+            "central_directory_members": 1446,
+            "uncompressed_bytes": 210528323,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr18.echtvar.zip",
+            "bytes": 83163449,
+            "central_directory_members": 1389,
+            "uncompressed_bytes": 196324184,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr19.echtvar.zip",
+            "bytes": 75601696,
+            "central_directory_members": 1047,
+            "uncompressed_bytes": 172173473,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr20.echtvar.zip",
+            "bytes": 66291586,
+            "central_directory_members": 1123,
+            "uncompressed_bytes": 157162354,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr21.echtvar.zip",
+            "bytes": 43014863,
+            "central_directory_members": 686,
+            "uncompressed_bytes": 99628454,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/archives/chr22.echtvar.zip",
+            "bytes": 44732754,
+            "central_directory_members": 648,
+            "uncompressed_bytes": 102376807,
+            "central_directory_valid": true
+          }
+        ],
+        "fields_sha256": "db2c8bc29926b5f4265e9077443a19571a55c8f99d2d30906e0a126c6c0db030"
+      },
+      "540": {
+        "query": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/query/hg001.decomp.vcf.gz",
+        "query_bytes": 139085616,
+        "query_sha256": "4fed97e319de887d251a7b1c603f2f842dfbc1247c1740eb7140172b67b22fe8",
+        "index_bytes": 1367830,
+        "library": "/mnt/data6t/tian/immkv_test_hdd/gnomad/immkv",
+        "manifests": [
+          {
+            "chromosome": 1,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 20370890,
+            "manifest_sha256": "e6502a10540c839e768f615df8081d70b4a71e61b2a0a88afa0821d687343e4d"
+          },
+          {
+            "chromosome": 2,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 21892245,
+            "manifest_sha256": "0be51c08eec7941cd997de60a6fef8e3f72f9f38c3a4af9d889e395a7de99ea7"
+          },
+          {
+            "chromosome": 3,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 17834355,
+            "manifest_sha256": "4fb8ff096c20282a966b468355676dc8e476b8400d7c200f4a42bd882d587e9c"
+          },
+          {
+            "chromosome": 4,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 17423639,
+            "manifest_sha256": "85e3fdd517978eefa71480c09b88efbfe179188da72392025e1c995802ff3e37"
+          },
+          {
+            "chromosome": 5,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 16290654,
+            "manifest_sha256": "88624fbba2bbc84b65c8ef80d78420d0b7a35928ed8ae9ac523b9f2e8f0f91a3"
+          },
+          {
+            "chromosome": 6,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 15190442,
+            "manifest_sha256": "bdf9562a2110e95c010b344e601f16f8a543a51dca79fa2ced4031c53896fb91"
+          },
+          {
+            "chromosome": 7,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 14752321,
+            "manifest_sha256": "77e5990e85572cbbbfce7871d79ee2fde5f7fc18cff2fe9a8f9c9900e2d824b5"
+          },
+          {
+            "chromosome": 8,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 14073574,
+            "manifest_sha256": "56f8047c1da4c09bdb6e15f44acd99c448132ae6230e32ef22cfa20239567b5e"
+          },
+          {
+            "chromosome": 9,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 11480614,
+            "manifest_sha256": "48b7a1d79c9a4a057bc7513eb930b850d7354f2abe380e3768aadaf87b45714f"
+          },
+          {
+            "chromosome": 10,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 12118750,
+            "manifest_sha256": "db671e979c2a949f8c0433112f9053bcb02dcf4bc09a30e3407cdffa9378788a"
+          },
+          {
+            "chromosome": 11,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 12345492,
+            "manifest_sha256": "0c8f3ed0470504385960e748aba1bc8854b806e3dd5044768739ef3d3a19a7f6"
+          },
+          {
+            "chromosome": 12,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 11933435,
+            "manifest_sha256": "f0d71794035581a52f8a9c49187e7c5d77f79f5300aa76fb147efa0afa65ff88"
+          },
+          {
+            "chromosome": 13,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 8693573,
+            "manifest_sha256": "563bb2b82c86652d08e862b28befc5be90d24897cf921aaad34621e79744f5d1"
+          },
+          {
+            "chromosome": 14,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 8220638,
+            "manifest_sha256": "0471ec2e516c76f6b89410c89d8825aebfa36bfc9b15378c0045f9b46f7035c7"
+          },
+          {
+            "chromosome": 15,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 7723667,
+            "manifest_sha256": "f9210d1c3b5ca3d8b36087dcc025a44f9e9934158ef77f78d85b5bb90c391667"
+          },
+          {
+            "chromosome": 16,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 8618657,
+            "manifest_sha256": "3cf4786236d60d3c5402f496bd1cd8cfbe2ac3a2773e32f7cb1e680ef96c9a77"
+          },
+          {
+            "chromosome": 17,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 7373819,
+            "manifest_sha256": "7f18009ed6de25e04fe6781dd2b181ad310ca3ecadeb5d65fd5f881be16eff8b"
+          },
+          {
+            "chromosome": 18,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 6893751,
+            "manifest_sha256": "e7d6244b50c2e3b2752e25ab393dee0d5135133f087b10a0178d83a0bdb72ccb"
+          },
+          {
+            "chromosome": 19,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 5991870,
+            "manifest_sha256": "df905df6fec7a78b7a65108551deb1e8c29bd3a3dca06edf68f5488bf8e7d360"
+          },
+          {
+            "chromosome": 20,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 5516836,
+            "manifest_sha256": "5ffef94f04de22a04f846f3f06f2b33d1c6e828cc099efd15abeb6d6196a1db5"
+          },
+          {
+            "chromosome": 21,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 3483000,
+            "manifest_sha256": "869bb863c33345bfcedba5de9265f1acac3c5033460ef83cb11d432d7143cdf4"
+          },
+          {
+            "chromosome": 22,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 3567085,
+            "manifest_sha256": "872946e081799b83f30444581a23e5d7a4d3a4f46dba7e12a5185f8109e77895"
+          }
+        ],
+        "archives": [
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr1.echtvar.zip",
+            "bytes": 5123651180,
+            "central_directory_members": 118700,
+            "uncompressed_bytes": 17527475456,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr2.echtvar.zip",
+            "bytes": 5398570861,
+            "central_directory_members": 125204,
+            "uncompressed_bytes": 18815801585,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr3.echtvar.zip",
+            "bytes": 4396709608,
+            "central_directory_members": 101356,
+            "uncompressed_bytes": 15334578110,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr4.echtvar.zip",
+            "bytes": 4372074758,
+            "central_directory_members": 98104,
+            "uncompressed_bytes": 15000414640,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr5.echtvar.zip",
+            "bytes": 4015346448,
+            "central_directory_members": 92684,
+            "uncompressed_bytes": 14002770510,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr6.echtvar.zip",
+            "bytes": 3834498842,
+            "central_directory_members": 87806,
+            "uncompressed_bytes": 13088773102,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr7.echtvar.zip",
+            "bytes": 3752875084,
+            "central_directory_members": 81302,
+            "uncompressed_bytes": 12699326179,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr8.echtvar.zip",
+            "bytes": 3445232398,
+            "central_directory_members": 74798,
+            "uncompressed_bytes": 12093741209,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr9.echtvar.zip",
+            "bytes": 2927934457,
+            "central_directory_members": 64500,
+            "uncompressed_bytes": 9883896838,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr10.echtvar.zip",
+            "bytes": 3075555846,
+            "central_directory_members": 69378,
+            "uncompressed_bytes": 10438645523,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr11.echtvar.zip",
+            "bytes": 3075222135,
+            "central_directory_members": 68836,
+            "uncompressed_bytes": 10620876194,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr12.echtvar.zip",
+            "bytes": 3019225963,
+            "central_directory_members": 68294,
+            "uncompressed_bytes": 10271390853,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr13.echtvar.zip",
+            "bytes": 2190906161,
+            "central_directory_members": 49866,
+            "uncompressed_bytes": 7487102196,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr14.echtvar.zip",
+            "bytes": 2082208118,
+            "central_directory_members": 46072,
+            "uncompressed_bytes": 7077438370,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr15.echtvar.zip",
+            "bytes": 1966885592,
+            "central_directory_members": 42820,
+            "uncompressed_bytes": 6648377385,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr16.echtvar.zip",
+            "bytes": 2159856477,
+            "central_directory_members": 41736,
+            "uncompressed_bytes": 7407307841,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr17.echtvar.zip",
+            "bytes": 1890442581,
+            "central_directory_members": 41194,
+            "uncompressed_bytes": 6342630113,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr18.echtvar.zip",
+            "bytes": 1730167927,
+            "central_directory_members": 39568,
+            "uncompressed_bytes": 5936324589,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr19.echtvar.zip",
+            "bytes": 1612041534,
+            "central_directory_members": 29812,
+            "uncompressed_bytes": 5165403019,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr20.echtvar.zip",
+            "bytes": 1376525969,
+            "central_directory_members": 31980,
+            "uncompressed_bytes": 4746336425,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr21.echtvar.zip",
+            "bytes": 902589299,
+            "central_directory_members": 19514,
+            "uncompressed_bytes": 3004608164,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/archives/chr22.echtvar.zip",
+            "bytes": 945741018,
+            "central_directory_members": 18430,
+            "uncompressed_bytes": 3075770914,
+            "central_directory_valid": true
+          }
+        ],
+        "fields_sha256": "fa1f21636fcd186308e3d070a65b0c087a8813f6763a78f8db70dc96c65f7643"
+      },
+      "568": {
+        "query": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/query/hg001.decomp.vcf.gz",
+        "query_bytes": 139085616,
+        "query_sha256": "4c61188a183910ae4b80fa038139718d0ccf3b3fe3911a7c14917109b3ceee06",
+        "index_bytes": 1367830,
+        "library": "/mnt/data6t/tian/immkv_test_hdd/gnomad/immkv",
+        "manifests": [
+          {
+            "chromosome": 1,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 20370890,
+            "manifest_sha256": "e6502a10540c839e768f615df8081d70b4a71e61b2a0a88afa0821d687343e4d"
+          },
+          {
+            "chromosome": 2,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 21892245,
+            "manifest_sha256": "0be51c08eec7941cd997de60a6fef8e3f72f9f38c3a4af9d889e395a7de99ea7"
+          },
+          {
+            "chromosome": 3,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 17834355,
+            "manifest_sha256": "4fb8ff096c20282a966b468355676dc8e476b8400d7c200f4a42bd882d587e9c"
+          },
+          {
+            "chromosome": 4,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 17423639,
+            "manifest_sha256": "85e3fdd517978eefa71480c09b88efbfe179188da72392025e1c995802ff3e37"
+          },
+          {
+            "chromosome": 5,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 16290654,
+            "manifest_sha256": "88624fbba2bbc84b65c8ef80d78420d0b7a35928ed8ae9ac523b9f2e8f0f91a3"
+          },
+          {
+            "chromosome": 6,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 15190442,
+            "manifest_sha256": "bdf9562a2110e95c010b344e601f16f8a543a51dca79fa2ced4031c53896fb91"
+          },
+          {
+            "chromosome": 7,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 14752321,
+            "manifest_sha256": "77e5990e85572cbbbfce7871d79ee2fde5f7fc18cff2fe9a8f9c9900e2d824b5"
+          },
+          {
+            "chromosome": 8,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 14073574,
+            "manifest_sha256": "56f8047c1da4c09bdb6e15f44acd99c448132ae6230e32ef22cfa20239567b5e"
+          },
+          {
+            "chromosome": 9,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 11480614,
+            "manifest_sha256": "48b7a1d79c9a4a057bc7513eb930b850d7354f2abe380e3768aadaf87b45714f"
+          },
+          {
+            "chromosome": 10,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 12118750,
+            "manifest_sha256": "db671e979c2a949f8c0433112f9053bcb02dcf4bc09a30e3407cdffa9378788a"
+          },
+          {
+            "chromosome": 11,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 12345492,
+            "manifest_sha256": "0c8f3ed0470504385960e748aba1bc8854b806e3dd5044768739ef3d3a19a7f6"
+          },
+          {
+            "chromosome": 12,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 11933435,
+            "manifest_sha256": "f0d71794035581a52f8a9c49187e7c5d77f79f5300aa76fb147efa0afa65ff88"
+          },
+          {
+            "chromosome": 13,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 8693573,
+            "manifest_sha256": "563bb2b82c86652d08e862b28befc5be90d24897cf921aaad34621e79744f5d1"
+          },
+          {
+            "chromosome": 14,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 8220638,
+            "manifest_sha256": "0471ec2e516c76f6b89410c89d8825aebfa36bfc9b15378c0045f9b46f7035c7"
+          },
+          {
+            "chromosome": 15,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 7723667,
+            "manifest_sha256": "f9210d1c3b5ca3d8b36087dcc025a44f9e9934158ef77f78d85b5bb90c391667"
+          },
+          {
+            "chromosome": 16,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 8618657,
+            "manifest_sha256": "3cf4786236d60d3c5402f496bd1cd8cfbe2ac3a2773e32f7cb1e680ef96c9a77"
+          },
+          {
+            "chromosome": 17,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 7373819,
+            "manifest_sha256": "7f18009ed6de25e04fe6781dd2b181ad310ca3ecadeb5d65fd5f881be16eff8b"
+          },
+          {
+            "chromosome": 18,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 6893751,
+            "manifest_sha256": "e7d6244b50c2e3b2752e25ab393dee0d5135133f087b10a0178d83a0bdb72ccb"
+          },
+          {
+            "chromosome": 19,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 5991870,
+            "manifest_sha256": "df905df6fec7a78b7a65108551deb1e8c29bd3a3dca06edf68f5488bf8e7d360"
+          },
+          {
+            "chromosome": 20,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 5516836,
+            "manifest_sha256": "5ffef94f04de22a04f846f3f06f2b33d1c6e828cc099efd15abeb6d6196a1db5"
+          },
+          {
+            "chromosome": 21,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 3483000,
+            "manifest_sha256": "869bb863c33345bfcedba5de9265f1acac3c5033460ef83cb11d432d7143cdf4"
+          },
+          {
+            "chromosome": 22,
+            "build_id": "a6fa6f081196a359aec12e89ccdf8bcc",
+            "schema_hash": "1e91a99722c59d5e",
+            "records": 3567085,
+            "manifest_sha256": "872946e081799b83f30444581a23e5d7a4d3a4f46dba7e12a5185f8109e77895"
+          }
+        ],
+        "archives": [
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr1.echtvar.zip",
+            "bytes": 7257511949,
+            "central_directory_members": 124848,
+            "uncompressed_bytes": 38780286499,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr2.echtvar.zip",
+            "bytes": 7624945470,
+            "central_directory_members": 131688,
+            "uncompressed_bytes": 40899531669,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr3.echtvar.zip",
+            "bytes": 6263830958,
+            "central_directory_members": 106608,
+            "uncompressed_bytes": 34926259821,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr4.echtvar.zip",
+            "bytes": 6074278192,
+            "central_directory_members": 103188,
+            "uncompressed_bytes": 30168583462,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr5.echtvar.zip",
+            "bytes": 5622847357,
+            "central_directory_members": 97488,
+            "uncompressed_bytes": 28696987035,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr6.echtvar.zip",
+            "bytes": 5333501460,
+            "central_directory_members": 92358,
+            "uncompressed_bytes": 26290904570,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr7.echtvar.zip",
+            "bytes": 5284983462,
+            "central_directory_members": 85518,
+            "uncompressed_bytes": 27981956434,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr8.echtvar.zip",
+            "bytes": 4867485483,
+            "central_directory_members": 78678,
+            "uncompressed_bytes": 26040552400,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr9.echtvar.zip",
+            "bytes": 4063797988,
+            "central_directory_members": 67848,
+            "uncompressed_bytes": 19890246125,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr10.echtvar.zip",
+            "bytes": 4299658931,
+            "central_directory_members": 72978,
+            "uncompressed_bytes": 21839763121,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr11.echtvar.zip",
+            "bytes": 4415331558,
+            "central_directory_members": 72408,
+            "uncompressed_bytes": 24849737455,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr12.echtvar.zip",
+            "bytes": 4324593804,
+            "central_directory_members": 71838,
+            "uncompressed_bytes": 24288159769,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr13.echtvar.zip",
+            "bytes": 2982695276,
+            "central_directory_members": 52458,
+            "uncompressed_bytes": 13200835719,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr14.echtvar.zip",
+            "bytes": 2978458193,
+            "central_directory_members": 48468,
+            "uncompressed_bytes": 16672855058,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr15.echtvar.zip",
+            "bytes": 2821168599,
+            "central_directory_members": 45048,
+            "uncompressed_bytes": 16007926228,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr16.echtvar.zip",
+            "bytes": 3147128737,
+            "central_directory_members": 43908,
+            "uncompressed_bytes": 18820464097,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr17.echtvar.zip",
+            "bytes": 2804825536,
+            "central_directory_members": 43338,
+            "uncompressed_bytes": 17740105448,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr18.echtvar.zip",
+            "bytes": 2434370983,
+            "central_directory_members": 41628,
+            "uncompressed_bytes": 12818068081,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr19.echtvar.zip",
+            "bytes": 2393428912,
+            "central_directory_members": 31368,
+            "uncompressed_bytes": 14771573347,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr20.echtvar.zip",
+            "bytes": 1939275218,
+            "central_directory_members": 33648,
+            "uncompressed_bytes": 10042845922,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr21.echtvar.zip",
+            "bytes": 1259700453,
+            "central_directory_members": 20538,
+            "uncompressed_bytes": 6372577608,
+            "central_directory_valid": true
+          },
+          {
+            "path": "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/archives/chr22.echtvar.zip",
+            "bytes": 1362922300,
+            "central_directory_members": 19398,
+            "uncompressed_bytes": 7774267602,
+            "central_directory_valid": true
+          }
+        ],
+        "fields_sha256": "28e7720f959b1cf583af444f1290a9bad857e3d733ea8cd6d0b75442b78ebf86"
+      }
+    }
+  },
+  "query_data_sha256_from_readonly_preflight": "0250956380e1f6910a83f92a579810671e1fe4dfeb0b1d855394021a87148fd1"
+}

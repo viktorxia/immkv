@@ -1,0 +1,33 @@
+{
+  "created_ns": 1794708483601304708,
+  "reason": "No workload processes remain; remove only ephemeral pipe entries and stale memfd proxies left by OOM termination.",
+  "entries": [
+    {
+      "path": "tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-nvme-568-release/an2.vcf.gz",
+      "kind": "fifo"
+    },
+    {
+      "path": "tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-nvme-568-release/sl2.vcf.gz",
+      "kind": "stale_memfd_symlink",
+      "target": "/proc/93940/fd/6"
+    },
+    {
+      "path": "tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-nvme-568-release/sl1.vcf.gz",
+      "kind": "stale_memfd_symlink",
+      "target": "/proc/93940/fd/4"
+    },
+    {
+      "path": "tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-nvme-568-release/an1.vcf.gz",
+      "kind": "fifo"
+    },
+    {
+      "path": "tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-nvme-568-release/an4.vcf.gz",
+      "kind": "fifo"
+    },
+    {
+      "path": "tmp/vs_echtvar_hg19_hg001_4c16g_v003_release_20261115/runs/verify-echtvar-nvme-568-release/sl4.vcf.gz",
+      "kind": "stale_memfd_symlink",
+      "target": "/proc/93940/fd/7"
+    }
+  ]
+}
