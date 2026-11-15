@@ -5,6 +5,7 @@ package immkv
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"sync"
 	"sync/atomic"
 	"syscall"
@@ -134,7 +135,7 @@ func newIOUring(entries uint32) (*ioUring, error) {
 func (r *ioUring) close() {
 	for i, m := range r.mmaps {
 		if m != nil {
-			syscall.Munmap(m)
+			unix.Munmap(m)
 			r.mmaps[i] = nil
 		}
 	}
@@ -173,21 +174,26 @@ func (r *ioUring) prep(f *os.File, off uint64, buf []byte, userData uint64) erro
 // submitWait 提交全部已排 SQE；minComplete > 0 时阻塞等至少这么多完成事件。
 // Go 的异步抢占信号（SIGURG）会以 EINTR 打断 enter，按惯例重试。
 func (r *ioUring) submitWait(minComplete uint32) error {
-	pending := r.sqeTail - atomic.LoadUint32(r.sqTail)
-	if pending > 0 {
-		atomic.StoreUint32(r.sqTail, r.sqeTail) // store-release：SQE 与数组项先行
-	}
-	if pending == 0 && minComplete == 0 {
-		return nil
-	}
+	atomic.StoreUint32(r.sqTail, r.sqeTail) // store-release：SQE 与数组项先行
 	for {
-		_, _, errno := syscall.Syscall6(sysIoringEnter, uintptr(r.fd), uintptr(pending),
-			uintptr(minComplete), ioringEnterGetEvts, 0, 0)
-		if errno == 0 {
+		head := atomic.LoadUint32(r.sqHead)
+		pending := r.sqeTail - head
+		if pending == 0 && minComplete == 0 {
 			return nil
 		}
-		if errno != syscall.EINTR {
+		n, _, errno := syscall.Syscall6(sysIoringEnter, uintptr(r.fd), uintptr(pending),
+			uintptr(minComplete), ioringEnterGetEvts, 0, 0)
+		if errno == syscall.EINTR {
+			continue
+		}
+		if errno != 0 {
 			return errno
+		}
+		if pending == 0 || n >= uintptr(pending) {
+			return nil
+		}
+		if n == 0 && atomic.LoadUint32(r.sqHead) == head {
+			return fmt.Errorf("immkv: io_uring 提交未推进：%d 个 SQE 待提交", pending)
 		}
 	}
 }
@@ -256,8 +262,8 @@ func putDirectBuf(b []byte) {
 // 事件循环：①非阻塞收新块，为每段算对齐区间、取对齐缓冲、排 SQE ②提交
 // ③收割 CQE，整块完成的挂进 ready ④ready 非阻塞投给 decCh——投递绝不阻塞
 // 驱动，CQ 才能持续收割不溢出；无事可做且在途非空时 enter(WAIT) 睡等完成。
-// userData 打包为 块号<<8|段号（块 ≤64 段）。任何错误调 fail 后退出，在途
-// 请求随 ring 销毁作废。
+// userData 打包为 块号<<8|段号（块 ≤64 段）。退出前等已提交读取完成，关闭
+// ring 后再归还本驱动仍持有的缓冲；已投递的缓冲由解压池持有。
 func driveDirect(r *ioUring, extCh <-chan []extent, decCh chan<- []extent,
 	abort <-chan struct{}, fail func(error)) {
 
@@ -267,6 +273,38 @@ func driveDirect(r *ioUring, extCh <-chan []extent, decCh chan<- []extent,
 	}
 	pending := map[uint64]*cstate{}
 	ready := make([]*cstate, 0, 16)
+	defer func() {
+		// 停止提交后只等待内核已接走的读取；未提交的 SQE 不再执行。
+		for atomic.LoadUint32(r.cqHead) != atomic.LoadUint32(r.sqHead) {
+			r.reap(func(uint64, int32) {})
+			if atomic.LoadUint32(r.cqHead) == atomic.LoadUint32(r.sqHead) {
+				break
+			}
+			_, _, errno := syscall.Syscall6(sysIoringEnter, uintptr(r.fd), 0,
+				1, ioringEnterGetEvts, 0, 0)
+			if errno != 0 && errno != syscall.EINTR {
+				fail(errno)
+				runtime.Gosched()
+			}
+		}
+		r.close()
+		for _, st := range pending {
+			for i := range st.chunk {
+				e := &st.chunk[i]
+				putDirectBuf(e.dbuf)
+				e.buf, e.dbuf = nil, nil
+			}
+		}
+		for _, st := range ready {
+			for i := range st.chunk {
+				e := &st.chunk[i]
+				putDirectBuf(e.dbuf)
+				e.buf, e.dbuf = nil, nil
+			}
+		}
+		runtime.KeepAlive(pending)
+		runtime.KeepAlive(ready)
+	}()
 	var nextUD uint64
 	drained := false
 	dead := false
@@ -311,14 +349,15 @@ func driveDirect(r *ioUring, extCh <-chan []extent, decCh chan<- []extent,
 			return
 		}
 		e := &st.chunk[udFull&0xFF]
+		st.left--
 		// 对齐读可能越过文件尾：EOF 短读合法，覆盖到所需字节即成功
 		if res < 0 || res < e.dNeed {
-			fail(fmt.Errorf("immkv: O_DIRECT 读失败：res=%d need=%d", res, e.dNeed))
-			dead = true
+			if !dead {
+				dfail(fmt.Errorf("immkv: O_DIRECT 读失败：res=%d need=%d", res, e.dNeed))
+			}
 			return
 		}
-		st.left--
-		if st.left == 0 {
+		if st.left == 0 && !dead {
 			delete(pending, udFull>>8)
 			ready = append(ready, st)
 		}
@@ -342,6 +381,11 @@ func driveDirect(r *ioUring, extCh <-chan []extent, decCh chan<- []extent,
 		if dead {
 			return
 		}
+		select {
+		case <-abort:
+			return
+		default:
+		}
 		// ① 非阻塞收新块：SQ 有富余槽位才收
 		for !drained && int(r.inFlightSQEs())+64 <= len(r.sqes) {
 			var ch []extent
@@ -353,6 +397,9 @@ func driveDirect(r *ioUring, extCh <-chan []extent, decCh chan<- []extent,
 					break
 				}
 				prep(ch)
+				if dead {
+					return
+				}
 			default:
 				ok = false
 				ch = nil
@@ -368,6 +415,9 @@ func driveDirect(r *ioUring, extCh <-chan []extent, decCh chan<- []extent,
 		}
 		// ③ 收割
 		r.reap(complete)
+		if dead {
+			return
+		}
 		// ④ 非阻塞投递
 		dispatch()
 		// ⑤ 推进或等待（任何路径要么有进展要么睡，禁止空转）

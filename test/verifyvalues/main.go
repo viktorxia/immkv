@@ -32,6 +32,7 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 )
@@ -106,14 +107,14 @@ func isMiss(v string, found bool) bool {
 }
 
 type stats struct {
-	cmp     int
-	miss    int
+	cmp          int
+	miss         int
 	valErr       int
 	hitErr       int
 	overflowLoss int
-	rep     int
-	floatN  int
-	maxDiff float64
+	rep          int
+	floatN       int
+	maxDiff      float64
 }
 
 func (s *stats) report(maxReport, row int, field, kind, ev, iv string) {
@@ -125,6 +126,9 @@ func (s *stats) report(maxReport, row int, field, kind, ev, iv string) {
 }
 
 func compare(evPath, ivPath string, fields []fld, tol float64, maxReport int) (int, *stats, error) {
+	if tol < 0 || math.IsNaN(tol) || math.IsInf(tol, 0) {
+		return 0, nil, fmt.Errorf("float tolerance must be finite and non-negative (got %g)", tol)
+	}
 	fe, err := os.Open(evPath)
 	if err != nil {
 		return 0, nil, err
@@ -145,18 +149,13 @@ func compare(evPath, ivPath string, fields []fld, tol float64, maxReport int) (i
 	em := make(map[string]string, len(fields))
 	im := make(map[string]string, len(fields))
 	for {
-		var le, li []byte
-		for se.Scan() {
-			le = se.Bytes()
-			if len(le) > 0 && le[0] != '#' {
-				break
-			}
+		le, err := scanDataRow(se)
+		if err != nil {
+			return rows, st, fmt.Errorf("echtvar %s after %d data rows: %w", evPath, rows, err)
 		}
-		for si.Scan() {
-			li = si.Bytes()
-			if len(li) > 0 && li[0] != '#' {
-				break
-			}
+		li, err := scanDataRow(si)
+		if err != nil {
+			return rows, st, fmt.Errorf("immkv %s after %d data rows: %w", ivPath, rows, err)
 		}
 		if le == nil || li == nil {
 			if le != nil || li != nil {
@@ -191,26 +190,42 @@ func compare(evPath, ivPath string, fields []fld, tol float64, maxReport int) (i
 			eMiss := isMiss(evv, eOK)
 			iMiss := !iOK || ivv == "."
 			st.cmp++
+			var a, b float64
+			if f.typ == "Float" {
+				var e1, e2 error
+				if !eMiss {
+					a, e1 = strconv.ParseFloat(evv, 64)
+				}
+				if !iMiss {
+					b, e2 = strconv.ParseFloat(ivv, 64)
+				}
+				if e1 != nil || e2 != nil {
+					st.valErr++
+					st.report(maxReport, rows, f.name, "float unparseable", evv, ivv)
+					continue
+				}
+				if math.IsNaN(a) || math.IsInf(a, 0) || math.IsNaN(b) || math.IsInf(b, 0) {
+					st.valErr++
+					st.report(maxReport, rows, f.name, "float non-finite", evv, ivv)
+					continue
+				}
+			}
 			switch {
 			case eMiss && iMiss:
 				st.miss++
 			case eMiss != iMiss && f.typ == "Float" && evv == "-1":
-				// echtvar renders the miss marker and the true value -1
-				// identically ("-1"). If the other side carries -1.0 it is
-				// the VALUE; if |value| exceeds i32max/multiplier the
-				// quantization overflowed and echtvar silently DROPPED the
-				// value (source: (val*multiplier) as i32 saturates) -- a
-				// documented echtvar limitation, counted separately.
-				if bv, ok := strconv.ParseFloat(ivv, 64); ok == nil {
-					if bv > -1.0000001 && bv < -0.9999999 {
-						st.miss++ // value -1 on both sides, rendered differently
-						continue
-					}
-					if bv > 1073.741 || bv < -1073.741 {
-						st.overflowLoss++
-						st.report(maxReport, rows, f.name, "echtvar i32-overflow loss (|v|*2e6 > i32max)", evv, ivv)
-						continue
-					}
+				// echtvar renders a miss and the true value -1 identically.
+				if b > -1.0000001 && b < -0.9999999 {
+					st.miss++ // value -1 on both sides, rendered differently
+					continue
+				}
+				// The retained v0.2.4 encoder multiplies in f32 before the
+				// saturating i32 cast; -2^31 is representable, +2^31 is not.
+				scaled := float32(float32(b) * float32(2_000_000))
+				if scaled >= 1<<31 || scaled < -(1<<31) {
+					st.overflowLoss++
+					st.report(maxReport, rows, f.name, "echtvar i32-overflow loss (|v|*2e6 > i32max)", evv, ivv)
+					continue
 				}
 				st.hitErr++
 				st.report(maxReport, rows, f.name, "one side hit, other miss", evv, ivv)
@@ -218,13 +233,6 @@ func compare(evPath, ivPath string, fields []fld, tol float64, maxReport int) (i
 				st.hitErr++
 				st.report(maxReport, rows, f.name, "one side hit, other miss", evv, ivv)
 			case f.typ == "Float":
-				a, e1 := strconv.ParseFloat(evv, 64)
-				b, e2 := strconv.ParseFloat(ivv, 64)
-				if e1 != nil || e2 != nil {
-					st.valErr++
-					st.report(maxReport, rows, f.name, "float unparseable", evv, ivv)
-					continue
-				}
 				d := a - b
 				if d < 0 {
 					d = -d
@@ -245,6 +253,16 @@ func compare(evPath, ivPath string, fields []fld, tol float64, maxReport int) (i
 			}
 		}
 	}
+}
+
+func scanDataRow(s *bufio.Scanner) ([]byte, error) {
+	for s.Scan() {
+		line := s.Bytes()
+		if len(line) > 0 && line[0] != '#' {
+			return line, nil
+		}
+	}
+	return nil, s.Err()
 }
 
 // siteCols returns CHROM..FILTER (first 7 columns) for row correspondence.

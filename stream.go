@@ -185,7 +185,6 @@ func (d *StreamDB) GetBatch(keys [][]byte) ([][]byte, error) {
 	if r != nil {
 		// O_DIRECT + io_uring：单驱动 goroutine 深队列异步读（绕开页缓存，
 		// 在途读深度与线程数解耦；线程预算全部留给解压池）
-		defer r.close()
 		wgRead.Add(1)
 		go func() {
 			defer wgRead.Done()

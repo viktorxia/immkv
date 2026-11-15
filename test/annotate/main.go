@@ -151,6 +151,7 @@ type row struct {
 	altOff  int
 	altEnd  int
 	chrom   uint8
+	chromOK bool
 	pos     uint32
 }
 
@@ -342,8 +343,11 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 		spanStart := make([]int, len(rows))
 		spanN := make([]int, len(rows))
 		for i := range rows {
-			ref := string(rows[i].line[rows[i].refOff:rows[i].refEnd])
 			spanStart[i] = len(flat)
+			if !rows[i].chromOK {
+				continue // Unknown contigs have no keys and pass through unchanged.
+			}
+			ref := string(rows[i].line[rows[i].refOff:rows[i].refEnd])
 			for _, a := range bytes.Split(rows[i].line[rows[i].altOff:rows[i].altEnd], []byte(",")) {
 				flat = append(flat, immkv.VarKey(rows[i].chrom, rows[i].pos, ref, string(a)))
 				spanN[i]++
@@ -422,9 +426,6 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 			return fmt.Errorf("malformed data line: %q", line[:min(80, len(line))])
 		}
 		c, ok := immkv.ChromID(string(line[:tabs[0]]))
-		if !ok {
-			c = 0 // unknown contig: no keys, line passes through unchanged
-		}
 		pos, err := strconv.ParseUint(string(line[tabs[0]+1:tabs[1]]), 10, 32)
 		if err != nil {
 			return fmt.Errorf("POS: %w", err)
@@ -452,6 +453,7 @@ func run(in, libDir, out, fieldsPath, prefix string, batch, threads int) error {
 			altOff:  tabs[3] + 1,
 			altEnd:  altEnd(nt, tabs, infoEnd),
 			chrom:   c,
+			chromOK: ok,
 			pos:     uint32(pos),
 		})
 	}
