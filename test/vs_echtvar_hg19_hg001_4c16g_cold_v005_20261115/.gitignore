@@ -1,0 +1,8 @@
+# Raw per-invocation evidence stays on the test machine for this experiment.
+# Only the reusable tooling, documentation and final summary are committed.
+results/*
+!results/final-summary.md
+!results/final-summary.json
+
+__pycache__/
+*.pyc

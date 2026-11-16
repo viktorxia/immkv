@@ -1,0 +1,244 @@
+{
+  "attempts": {
+    "correctness_outcomes": {
+      "ok": 10,
+      "oom": 2
+    },
+    "correctness_total": 12,
+    "timing_outcomes": {
+      "ok": 30,
+      "oom": 6
+    },
+    "timing_total": 36
+  },
+  "correctness": {
+    "float_tolerance": 1.1e-06,
+    "hit_disagreements": 0,
+    "max_float_difference": 1e-06,
+    "per_field": [
+      {
+        "echtvar_i32_overflow_losses_per_medium": 0,
+        "field_comparisons_per_medium": 66873138,
+        "fields": 17,
+        "fresh_echtvar_reference": "fresh digest equivalent to historical reference",
+        "hit_disagreements": 0,
+        "immkv_hits_per_medium": 3875208,
+        "rows_per_medium": 3933714,
+        "true_float_minus_one_candidates_per_medium": 0,
+        "value_mismatches": 0
+      },
+      {
+        "echtvar_i32_overflow_losses_per_medium": 808,
+        "field_comparisons_per_medium": 2124205560,
+        "fields": 540,
+        "fresh_echtvar_reference": "fresh digest equivalent to historical reference",
+        "hit_disagreements": 0,
+        "immkv_hits_per_medium": 3875208,
+        "rows_per_medium": 3933714,
+        "true_float_minus_one_candidates_per_medium": 663,
+        "value_mismatches": 0
+      },
+      {
+        "echtvar_i32_overflow_losses_per_medium": 808,
+        "field_comparisons_per_medium": 2234349552,
+        "fields": 568,
+        "fresh_echtvar_reference": "historical-only correctness reference after fresh echtvar OOM",
+        "hit_disagreements": 0,
+        "immkv_hits_per_medium": 3875208,
+        "rows_per_medium": 3933714,
+        "true_float_minus_one_candidates_per_medium": 663,
+        "value_mismatches": 0
+      }
+    ],
+    "total_field_comparisons": 4425428250,
+    "total_rows_across_six_comparisons": 11801142,
+    "value_mismatches": 0
+  },
+  "limitations": [
+    "Raw per-invocation logs are not committed; they remain in the local results/ directory.",
+    "Cgroup io.stat is unavailable because the I/O controller is not delegated; GNU time input blocks are reported instead.",
+    "GNU time RSS is the maximum individual process RSS, not simultaneous group RSS; cgroup memory.peak includes charged page cache, memfd and kernel memory.",
+    "The six echtvar 568-field timing attempts OOMed; no timing median or speed ratio is reported for them.",
+    "Two fresh echtvar 568-field correctness attempts OOMed; historical complete outputs are used only as correctness references.",
+    "One HDD 568-field failed correctness cleanup overlapped the next cache completion by 0.607921622 seconds; old annotation children had exited before the next cache request.",
+    "Successful correctness scope status contains timing_sample:true metadata; summaries exclude verification records from timing medians.",
+    "Tool-output agreement does not independently prove every semantic detail of the original VCF."
+  ],
+  "protocol": {
+    "cache_clearing": "root sync plus write 3 to /proc/sys/vm/drop_caches before every independently timed invocation",
+    "cpu_affinity": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "echtvar_workers": 4,
+    "gomaxprocs": 4,
+    "immkv_batch": 4096,
+    "immkv_threads": 4,
+    "memory_max_bytes": 17179869184,
+    "memory_swap_max": 0,
+    "query_data_sha256": "0250956380e1f6910a83f92a579810671e1fe4dfeb0b1d855394021a87148fd1",
+    "query_rows": 3933714,
+    "round_order": [
+      "immkv/echtvar",
+      "echtvar/immkv",
+      "immkv/echtvar"
+    ],
+    "rounds": 3
+  },
+  "raw_evidence": {
+    "committed": false,
+    "note": "Raw verify-*, timing-*, preparation and preflight evidence remains on the test machine. This summary is the committed record.",
+    "path": "results/"
+  },
+  "status": "complete with recorded measurement limitations",
+  "tag": "v0.0.5",
+  "tested_engine_commit": "d2eac357f3fc126755b43ff8b44a64dc55bc0ec2",
+  "timing": [
+    {
+      "echtvar": {
+        "attempts": 3,
+        "cgroup_memory_peak_bytes_median": 3219034112,
+        "cpu_seconds_median": 102.59,
+        "gnu_file_system_input_blocks_median": 6182112,
+        "max_child_rss_kib_median": 31864,
+        "successful": 3,
+        "wall_seconds_median": 32.27
+      },
+      "echtvar_to_immkv_wall_ratio": 2.445,
+      "fields": 17,
+      "immkv": {
+        "attempts": 3,
+        "cgroup_memory_peak_bytes_median": 4798017536,
+        "cpu_seconds_median": 33.15,
+        "gnu_file_system_input_blocks_median": 20440848,
+        "max_child_rss_kib_median": 288500,
+        "successful": 3,
+        "wall_seconds_median": 13.2
+      },
+      "media": "nvme",
+      "outcome_note": "both engines completed three attempts"
+    },
+    {
+      "echtvar": {
+        "attempts": 3,
+        "cgroup_memory_peak_bytes_median": 17179869184,
+        "cpu_seconds_median": 2419.55,
+        "gnu_file_system_input_blocks_median": 123142120,
+        "max_child_rss_kib_median": 539360,
+        "successful": 3,
+        "wall_seconds_median": 619.24
+      },
+      "echtvar_to_immkv_wall_ratio": 3.898,
+      "fields": 540,
+      "immkv": {
+        "attempts": 3,
+        "cgroup_memory_peak_bytes_median": 6947467264,
+        "cpu_seconds_median": 616.0200000000001,
+        "gnu_file_system_input_blocks_median": 53651768,
+        "max_child_rss_kib_median": 2331400,
+        "successful": 3,
+        "wall_seconds_median": 158.86
+      },
+      "media": "nvme",
+      "outcome_note": "both engines completed three attempts"
+    },
+    {
+      "echtvar": {
+        "attempts": 3,
+        "cgroup_memory_peak_bytes_median": null,
+        "cpu_seconds_median": null,
+        "gnu_file_system_input_blocks_median": null,
+        "max_child_rss_kib_median": null,
+        "successful": 0,
+        "wall_seconds_median": null
+      },
+      "echtvar_to_immkv_wall_ratio": null,
+      "fields": 568,
+      "immkv": {
+        "attempts": 3,
+        "cgroup_memory_peak_bytes_median": 7959490560,
+        "cpu_seconds_median": 670.46,
+        "gnu_file_system_input_blocks_median": 53651968,
+        "max_child_rss_kib_median": 3317232,
+        "successful": 3,
+        "wall_seconds_median": 172.47
+      },
+      "media": "nvme",
+      "outcome_note": "echtvar OOM in all three attempts; no speed ratio"
+    },
+    {
+      "echtvar": {
+        "attempts": 3,
+        "cgroup_memory_peak_bytes_median": 3231981568,
+        "cpu_seconds_median": 96.57,
+        "gnu_file_system_input_blocks_median": 6207008,
+        "max_child_rss_kib_median": 31800,
+        "successful": 3,
+        "wall_seconds_median": 27.6
+      },
+      "echtvar_to_immkv_wall_ratio": 0.286,
+      "fields": 17,
+      "immkv": {
+        "attempts": 3,
+        "cgroup_memory_peak_bytes_median": 7506931712,
+        "cpu_seconds_median": 204.67,
+        "gnu_file_system_input_blocks_median": 17168968,
+        "max_child_rss_kib_median": 250988,
+        "successful": 3,
+        "wall_seconds_median": 96.46000000000001
+      },
+      "media": "hdd",
+      "outcome_note": "both engines completed three attempts"
+    },
+    {
+      "echtvar": {
+        "attempts": 3,
+        "cgroup_memory_peak_bytes_median": 17179869184,
+        "cpu_seconds_median": 2410.1400000000003,
+        "gnu_file_system_input_blocks_median": 124079536,
+        "max_child_rss_kib_median": 539340,
+        "successful": 3,
+        "wall_seconds_median": 640.94
+      },
+      "echtvar_to_immkv_wall_ratio": 0.437,
+      "fields": 540,
+      "immkv": {
+        "attempts": 3,
+        "cgroup_memory_peak_bytes_median": 5348339712,
+        "cpu_seconds_median": 674.01,
+        "gnu_file_system_input_blocks_median": 53865280,
+        "max_child_rss_kib_median": 675300,
+        "successful": 3,
+        "wall_seconds_median": 1468.32
+      },
+      "media": "hdd",
+      "outcome_note": "both engines completed three attempts"
+    },
+    {
+      "echtvar": {
+        "attempts": 3,
+        "cgroup_memory_peak_bytes_median": null,
+        "cpu_seconds_median": null,
+        "gnu_file_system_input_blocks_median": null,
+        "max_child_rss_kib_median": null,
+        "successful": 0,
+        "wall_seconds_median": null
+      },
+      "echtvar_to_immkv_wall_ratio": null,
+      "fields": 568,
+      "immkv": {
+        "attempts": 3,
+        "cgroup_memory_peak_bytes_median": 5525741568,
+        "cpu_seconds_median": 719.1999999999999,
+        "gnu_file_system_input_blocks_median": 53865504,
+        "max_child_rss_kib_median": 859164,
+        "successful": 3,
+        "wall_seconds_median": 1469.52
+      },
+      "media": "hdd",
+      "outcome_note": "echtvar OOM in all three attempts; no speed ratio"
+    }
+  ]
+}
