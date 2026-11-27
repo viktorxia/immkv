@@ -394,3 +394,74 @@ func TestSelectedColumnsWideSchemaBothPaths(t *testing.T) {
 		})
 	}
 }
+
+func TestPreferColumnarCountsColumnRanges(t *testing.T) {
+	work := t.TempDir()
+	var src strings.Builder
+	src.WriteString("##fileformat=VCFv4.2\n")
+	const numCols = 32
+	for i := 0; i < numCols; i++ {
+		fmt.Fprintf(&src, "##INFO=<ID=F%d,Number=1,Type=String,Description=\"t\">\n", i)
+	}
+	src.WriteString("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n")
+
+	const (
+		numBins    = 20
+		recsPerBin = 20
+	)
+	var queryKeys [][]byte
+	for b := 0; b < numBins; b++ {
+		for r := 0; r < recsPerBin; r++ {
+			pos := uint32(b*colBinWidth + 100 + r*10)
+			var info strings.Builder
+			for c := 0; c < numCols; c++ {
+				if c > 0 {
+					info.WriteByte(';')
+				}
+				fmt.Fprintf(&info, "F%d=val_%02d_%02d_%02d_padding_bytes", c, b, r, c)
+			}
+			fmt.Fprintf(&src, "1\t%d\t.\tA\tG\t.\t.\t%s\n", pos, info.String())
+			if r == 0 {
+				queryKeys = append(queryKeys, VarKey(0, pos, "A", "G"))
+			}
+		}
+	}
+
+	vcf := filepath.Join(work, "in.vcf")
+	if err := os.WriteFile(vcf, []byte(src.String()), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	lib := filepath.Join(work, "lib")
+	if err := BuildFromVCFs(lib, []string{vcf}, nil, "", BuildOptions{RawValueBelow: 4096, PackTarget: -1}); err != nil {
+		t.Fatal(err)
+	}
+
+	var sel []int
+	for c := 0; c < numCols; c += 2 {
+		sel = append(sel, c)
+	}
+	sdb, err := OpenStreaming(lib, StreamOptions{Threads: 1, Columns: sel})
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sdb.Close()
+	sdb.profile.rotational = true
+
+	hits, err := mergeJoin(sdb.shards[0], queryKeys, 0)
+	if err != nil {
+		t.Fatal(err)
+	}
+	extents := buildExtents(sdb.shards[0], hits)
+	if len(extents) != numBins {
+		t.Fatalf("record-order extents = %d, want %d", len(extents), numBins)
+	}
+
+	useCol, err := sdb.preferColumnar(sdb.cols[0], sdb.shards[0], hits)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if useCol {
+		t.Fatalf("preferColumnar chose columnar (true) for %d scattered column ranges (%d bins × %d non-adjacent cols) vs %d record-order extents on rotational media",
+			numBins*len(sel), numBins, len(sel), len(extents))
+	}
+}

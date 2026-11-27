@@ -322,28 +322,40 @@ func (c *colShard) groupHits(hits []sHit) ([]hitBinGroup, error) {
 	return out, nil
 }
 
-// estimate 估算一次列存查询要读的压缩字节与要解压的 typed payload 字节：每个
-// 命中 bin 的选中列位图、值流与 rawLen 合计（列目录常驻，不计）。
-func (c *colShard) estimate(hits []sHit, sel []int) (compressed, raw uint64, err error) {
+// estimate 估算一次列存查询要读的压缩字节、要解压的 typed payload 字节与按
+// loadBin 同规则合并后的实际 pread 读段数：每个命中 bin 的选中列位图、值流与
+// rawLen 合计（列目录常驻，不计）。
+func (c *colShard) estimate(hits []sHit, sel []int) (compressed, raw uint64, ranges int, err error) {
 	groups, err := c.groupHits(hits)
 	if err != nil {
-		return 0, 0, err
+		return 0, 0, 0, err
 	}
 	for _, g := range groups {
 		dir, err := c.loadDir(g.bin)
 		if err != nil {
-			return 0, 0, err
+			return 0, 0, 0, err
 		}
+		var rangeEnd uint64
 		for _, col := range sel {
 			e := c.entry(dir, col)
 			if e.bitmapOff == 0 {
 				continue
 			}
+			end := e.bitmapOff + uint64(e.bitmapLen)
+			if c.schema[col].Type != TypeFlag && e.valueLen > 0 {
+				end = e.valueOff + uint64(e.valueLen)
+			}
+			if rangeEnd == 0 || e.bitmapOff > rangeEnd {
+				ranges++
+				rangeEnd = end
+			} else if end > rangeEnd {
+				rangeEnd = end
+			}
 			compressed += uint64(e.bitmapLen) + uint64(e.valueLen)
 			raw += uint64(e.rawLen)
 		}
 	}
-	return compressed, raw, nil
+	return compressed, raw, ranges, nil
 }
 
 // colPart 是一次 bin 读取里的一列：压缩位图与值流在合并读段中的位置。

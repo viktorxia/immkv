@@ -325,7 +325,7 @@ func (d *StreamDB) preferColumnar(cs *colShard, s *shard, hits []sHit) (bool, er
 		return true, nil
 	}
 	sel := selectedColumns(cs.schema, d.colSel)
-	colBytes, colRaw, err := cs.estimate(hits, sel)
+	colBytes, colRaw, colRanges, err := cs.estimate(hits, sel)
 	if err != nil {
 		return false, err
 	}
@@ -368,10 +368,10 @@ func (d *StreamDB) preferColumnar(cs *colShard, s *shard, hits []sHit) (bool, er
 	decodeBps := colDecodePerThread * workers
 	recRaw := float64(recBytes) * typedRecCompressionRatio
 	recSec := float64(len(extents))*randSec + float64(seqBytes)/seqBps + recRaw/(recordDecodePerThread*workers)
-	colSec := float64(colBytes)/seqBps + float64(colRaw)/decodeBps
+	colSec := float64(colRanges)*randSec + float64(colBytes)/seqBps + float64(colRaw)/decodeBps
 	if os.Getenv("IMMKV_DEBUG_PATH") != "" {
-		fmt.Fprintf(os.Stderr, "path: pick=%v colBytes=%d colRaw=%d colSec=%.3f recExtents=%d recFrames=%d recBytes=%d recSec=%.3f rot=%v\n",
-			colSec < recSec, colBytes, colRaw, colSec, len(extents), frames, recBytes, recSec, d.profile.rotational)
+		fmt.Fprintf(os.Stderr, "path: pick=%v colRanges=%d colBytes=%d colRaw=%d colSec=%.3f recExtents=%d recFrames=%d recBytes=%d recSec=%.3f rot=%v\n",
+			colSec < recSec, colRanges, colBytes, colRaw, colSec, len(extents), frames, recBytes, recSec, d.profile.rotational)
 	}
 	return colSec < recSec, nil
 }

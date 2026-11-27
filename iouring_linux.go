@@ -145,9 +145,14 @@ func (r *ioUring) close() {
 	}
 }
 
-// inFlightSQEs 报已提交未回收槽位的 SQE 数（决定还能不能继续排）。
+// inFlightSQEs 报已排入 SQ 但尚未被内核消费的 SQE 数（决定 SQ 槽位是否需先提交腾槽）。
 func (r *ioUring) inFlightSQEs() uint32 {
 	return r.sqeTail - atomic.LoadUint32(r.sqHead)
+}
+
+// inFlightIO 报已排入/已提交但尚未从 CQ 收割的在途读请求总数（决定还能不能继续收新块）。
+func (r *ioUring) inFlightIO() uint32 {
+	return r.sqeTail - atomic.LoadUint32(r.cqHead)
 }
 
 // prep 排一个读请求；SQ 满时先 submitWait(0) 腾槽。
@@ -362,13 +367,20 @@ func driveDirect(r *ioUring, extCh <-chan []extent, decCh chan<- []extent,
 			ready = append(ready, st)
 		}
 	}
+	popReady := func() {
+		ready[0] = nil
+		ready = ready[1:]
+		if len(ready) == 0 {
+			ready = ready[:0]
+		}
+	}
 	dispatch := func() bool {
 		sent := false
 		for len(ready) > 0 {
 			st := ready[0]
 			select {
 			case decCh <- st.chunk:
-				ready = ready[1:]
+				popReady()
 				sent = true
 			default:
 				return sent
@@ -386,8 +398,8 @@ func driveDirect(r *ioUring, extCh <-chan []extent, decCh chan<- []extent,
 			return
 		default:
 		}
-		// ① 非阻塞收新块：SQ 有富余槽位才收
-		for !drained && int(r.inFlightSQEs())+64 <= len(r.sqes) {
+		// ① 非阻塞收新块：在途未收割请求有富余槽位才收
+		for !drained && int(r.inFlightIO())+64 <= len(r.sqes) {
 			var ch []extent
 			var ok bool
 			select {
@@ -429,13 +441,18 @@ func driveDirect(r *ioUring, extCh <-chan []extent, decCh chan<- []extent,
 				dfail(err)
 				return
 			}
+			r.reap(complete)
+			if dead {
+				return
+			}
+			dispatch()
 			continue
 		}
 		if len(ready) > 0 {
 			st := ready[0]
 			select {
 			case decCh <- st.chunk:
-				ready = ready[1:]
+				popReady()
 			case <-abort:
 				return
 			}

@@ -146,3 +146,98 @@ func TestDirectReadErrorReturns(t *testing.T) {
 		}
 	}
 }
+
+func TestDriveDirectInFlightRespectsRingDepth(t *testing.T) {
+	r, err := newIOUring(64)
+	if err != nil {
+		t.Skipf("io_uring unavailable: %v", err)
+	}
+	dir, err := os.MkdirTemp(".", ".tmp-iouring-test-*")
+	if err != nil {
+		r.close()
+		t.Fatal(err)
+	}
+	defer os.RemoveAll(dir)
+	path := dir + "/vals"
+	buf := make([]byte, 4<<20)
+	if err := os.WriteFile(path, buf, 0o600); err != nil {
+		r.close()
+		t.Fatal(err)
+	}
+	f, err := openDirect(path)
+	if err != nil {
+		r.close()
+		t.Skipf("O_DIRECT unavailable: %v", err)
+	}
+	defer f.Close()
+
+	const (
+		numChunks      = 8
+		extentsPerChunk = 64
+	)
+	s := &shard{vfDirect: f}
+	extCh := make(chan []extent, numChunks)
+	decCh := make(chan []extent)
+	abort := make(chan struct{})
+
+	for c := 0; c < numChunks; c++ {
+		ch := make([]extent, extentsPerChunk)
+		for i := 0; i < extentsPerChunk; i++ {
+			off := uint64(((c*extentsPerChunk + i) * directAlign) % len(buf))
+			ch[i] = extent{
+				s:    s,
+				off:  off,
+				hits: []sHit{{valOff: off, frameLen: directAlign}},
+			}
+		}
+		extCh <- ch
+	}
+	close(extCh)
+
+	var maxInFlight uint32
+	stopSample := make(chan struct{})
+	sampled := make(chan struct{})
+	go func() {
+		defer close(sampled)
+		for {
+			select {
+			case <-stopSample:
+				return
+			default:
+				submitted := atomic.LoadUint32(r.sqHead)
+				reaped := atomic.LoadUint32(r.cqHead)
+				inFlight := submitted - reaped
+				if inFlight > maxInFlight {
+					maxInFlight = inFlight
+				}
+			}
+		}
+	}()
+
+	done := make(chan struct{})
+	var derr error
+	go func() {
+		defer close(done)
+		driveDirect(r, extCh, decCh, abort, func(err error) {
+			derr = err
+		})
+	}()
+
+	for c := 0; c < numChunks; c++ {
+		ch := <-decCh
+		if c == 0 {
+			close(stopSample)
+			<-sampled
+		}
+		for i := range ch {
+			putDirectBuf(ch[i].dbuf)
+		}
+	}
+	<-done
+	if derr != nil {
+		t.Fatalf("driveDirect failed: %v", derr)
+	}
+	if maxInFlight > uint32(len(r.sqes)) {
+		t.Fatalf("kernel in-flight requests (sqHead - cqHead) reached %d, exceeding ring depth %d", maxInFlight, len(r.sqes))
+	}
+}
