@@ -1,0 +1,15 @@
+Usage of /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate:
+  -batch int
+    	rows per GetBatch window (default 4096)
+  -fields string
+    	field whitelist TSV from genfields (name/Type/Number)
+  -in string
+    	query VCF (.vcf or .vcf.gz, decomposed)
+  -lib string
+    	immkv library directory
+  -out string
+    	output plain-text VCF
+  -prefix string
+    	prefix for appended INFO keys (default "gnomad_")
+  -threads int
+    	format worker threads == immkv StreamOptions.Threads (default 4)

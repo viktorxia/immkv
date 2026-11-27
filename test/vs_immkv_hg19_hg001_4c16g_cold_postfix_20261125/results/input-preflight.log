@@ -1,0 +1,17 @@
+2026-11-25T14:29:42.564458+00:00 Preparation input preflight started
+2026-11-25T14:29:42.573081+00:00 Validated 17-field TSV
+2026-11-25T14:29:42.573615+00:00 Validated 540-field TSV
+2026-11-25T14:29:42.573977+00:00 Validated 568-field TSV
+2026-11-25T14:29:42.573995+00:00 Reading complete query: nvme 17
+2026-11-25T14:29:49.305933+00:00 Scenario passed: nvme 17
+2026-11-25T14:29:49.305995+00:00 Reading complete query: nvme 540
+2026-11-25T14:29:56.095055+00:00 Scenario passed: nvme 540
+2026-11-25T14:29:56.095100+00:00 Reading complete query: nvme 568
+2026-11-25T14:30:02.800047+00:00 Scenario passed: nvme 568
+2026-11-25T14:30:02.800126+00:00 Reading complete query: hdd 17
+2026-11-25T14:30:09.881830+00:00 Scenario passed: hdd 17
+2026-11-25T14:30:09.881878+00:00 Reading complete query: hdd 540
+2026-11-25T14:30:16.891186+00:00 Scenario passed: hdd 540
+2026-11-25T14:30:16.891248+00:00 Reading complete query: hdd 568
+2026-11-25T14:30:23.931873+00:00 Scenario passed: hdd 568
+2026-11-25T14:30:23.940289+00:00 Preflight complete: valid=True; queries=6

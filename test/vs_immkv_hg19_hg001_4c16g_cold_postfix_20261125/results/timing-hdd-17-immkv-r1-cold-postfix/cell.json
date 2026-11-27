@@ -1,0 +1,35 @@
+{
+  "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+  "command": [
+    "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+    "-in",
+    "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/query/hg001.decomp.vcf.gz",
+    "-lib",
+    "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/lib17",
+    "-out",
+    "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-17-immkv-r1-cold-postfix/output.vcf.gz",
+    "-fields",
+    "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv",
+    "-threads",
+    "4",
+    "-batch",
+    "4096"
+  ],
+  "compressed_output": true,
+  "engine": "immkv",
+  "exit_code": 0,
+  "fields": 17,
+  "finished": {
+    "monotonic_ns": 1145194295591276,
+    "time_ns": 1795771017485914778
+  },
+  "media": "hdd",
+  "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-17-immkv-r1-cold-postfix",
+  "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+  "started": {
+    "monotonic_ns": 1145094551758749,
+    "time_ns": 1795770917742079536
+  },
+  "status": "ok",
+  "timing_sample": true
+}

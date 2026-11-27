@@ -1,0 +1,6 @@
++ go -C /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/source list -m
+github.com/viktorxia/immkv
++ go -C /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/source build -trimpath -buildvcs=false -o /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate.partial ./test/annotate
++ mv -- /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate.partial /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate
++ go -C /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/source build -trimpath -buildvcs=false -o /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/verifyvalues.partial ./test/verifyvalues
++ mv -- /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/verifyvalues.partial /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/verifyvalues

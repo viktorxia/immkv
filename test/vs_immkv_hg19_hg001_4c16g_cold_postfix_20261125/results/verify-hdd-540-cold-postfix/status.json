@@ -1,0 +1,53 @@
+{
+  "cgroup_delta": {
+    "cpu.stat": {
+      "core_sched.force_idle_usec": 0,
+      "nice_usec": 0,
+      "system_usec": 142901174,
+      "usage_usec": 1939175651,
+      "user_usec": 1796274477
+    },
+    "memory.events": {
+      "high": 0,
+      "low": 0,
+      "max": 88,
+      "oom": 0,
+      "oom_group_kill": 0,
+      "oom_kill": 0,
+      "sock_throttled": 0
+    },
+    "memory.events.local": {
+      "high": 0,
+      "low": 0,
+      "max": 88,
+      "oom": 0,
+      "oom_group_kill": 0,
+      "oom_kill": 0,
+      "sock_throttled": 0
+    }
+  },
+  "cgroup_io_available": false,
+  "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+  "counter_baseline_available": true,
+  "counters_source": "memory-observer.json",
+  "exit137_is_not_oom_evidence": true,
+  "exit_code": 0,
+  "final_workload_handshake": true,
+  "finished_ns": 1795772767857380233,
+  "journal_sources": [
+    "journals/attempt-001/user-1.log",
+    "journals/attempt-001/user-2.log",
+    "journals/attempt-001/user-3.log",
+    "journals/attempt-001/system-1.log",
+    "journals/attempt-001/system-2.log",
+    "journals/attempt-001/system-3.log"
+  ],
+  "memory_peak_bytes": 17179869184,
+  "oom_from_counter_delta": false,
+  "oom_from_unit_journal": false,
+  "oom_kill_detected": false,
+  "scope_exit_code": 0,
+  "status": "ok",
+  "timeout_detected": false,
+  "timing_sample": false
+}

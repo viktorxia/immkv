@@ -1,0 +1,14 @@
+{
+  "cpu.stat": "usage_usec 731832656\nuser_usec 716256566\nsystem_usec 15576090\nnice_usec 0\ncore_sched.force_idle_usec 0",
+  "memory.current": "4551180288",
+  "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+  "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+  "memory.max": "17179869184",
+  "memory.peak": "7693586432",
+  "memory.swap.max": "0",
+  "monotonic_ns": 1144981898620402,
+  "read_errors": {
+    "io.stat": "'io.stat'"
+  },
+  "timestamp_ns": 1795770805088943614
+}

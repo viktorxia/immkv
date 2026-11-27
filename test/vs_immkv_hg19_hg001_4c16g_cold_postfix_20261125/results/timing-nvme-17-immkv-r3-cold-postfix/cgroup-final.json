@@ -1,0 +1,14 @@
+{
+  "cpu.stat": "usage_usec 35274284\nuser_usec 32202925\nsystem_usec 3071359\nnice_usec 0\ncore_sched.force_idle_usec 0",
+  "memory.current": "4497891328",
+  "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+  "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+  "memory.max": "17179869184",
+  "memory.peak": "4787634176",
+  "memory.swap.max": "0",
+  "monotonic_ns": 1142511160029032,
+  "read_errors": {
+    "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-17-immkv-r3-cold-postfix-1795768322420091305-404997.scope/io.stat'"
+  },
+  "timestamp_ns": 1795768334350349739
+}

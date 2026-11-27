@@ -1,0 +1,67 @@
+{
+  "after_scope_exit": true,
+  "complete_final_read": false,
+  "counters": {
+    "cpu.stat": "usage_usec 35274619\nuser_usec 32203230\nsystem_usec 3071388\nnice_usec 0\ncore_sched.force_idle_usec 0",
+    "memory.current": "4497891328",
+    "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+    "memory.max": "17179869184",
+    "memory.peak": "4787634176",
+    "memory.swap.max": "0",
+    "monotonic_ns": 1142511193174365,
+    "read_errors": {
+      "cpu.stat": "[Errno 19] No such device",
+      "io.stat": "'io.stat'",
+      "memory.current": "[Errno 19] No such device",
+      "memory.events": "[Errno 19] No such device",
+      "memory.events.local": "[Errno 19] No such device",
+      "memory.max": "[Errno 19] No such device",
+      "memory.peak": "[Errno 19] No such device",
+      "memory.swap.max": "[Errno 19] No such device"
+    },
+    "timestamp_ns": 1795768334383498539
+  },
+  "delta": {
+    "cpu.stat": {
+      "core_sched.force_idle_usec": 0,
+      "nice_usec": 0,
+      "system_usec": 3059829,
+      "usage_usec": 35223129,
+      "user_usec": 32163299
+    },
+    "memory.events": {
+      "high": 0,
+      "low": 0,
+      "max": 0,
+      "oom": 0,
+      "oom_group_kill": 0,
+      "oom_kill": 0,
+      "sock_throttled": 0
+    },
+    "memory.events.local": {
+      "high": 0,
+      "low": 0,
+      "max": 0,
+      "oom": 0,
+      "oom_group_kill": 0,
+      "oom_kill": 0,
+      "sock_throttled": 0
+    }
+  },
+  "last_read": {
+    "monotonic_ns": 1142511193174365,
+    "read_errors": {
+      "cpu.stat": "[Errno 19] No such device",
+      "io.stat": "'io.stat'",
+      "memory.current": "[Errno 19] No such device",
+      "memory.events": "[Errno 19] No such device",
+      "memory.events.local": "[Errno 19] No such device",
+      "memory.max": "[Errno 19] No such device",
+      "memory.peak": "[Errno 19] No such device",
+      "memory.swap.max": "[Errno 19] No such device"
+    },
+    "timestamp_ns": 1795768334383498539
+  },
+  "workload_final_handshake": true
+}

@@ -1,0 +1,15 @@
+{
+  "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-verify-hdd-17-cold-postfix-1795770806659608238-407768.scope",
+  "opened": [
+    "cpu.stat",
+    "memory.current",
+    "memory.events",
+    "memory.events.local",
+    "memory.max",
+    "memory.peak",
+    "memory.swap.max"
+  ],
+  "persistent_descriptors": true,
+  "pid": 407782,
+  "timestamp_ns": 1795770807084088939
+}

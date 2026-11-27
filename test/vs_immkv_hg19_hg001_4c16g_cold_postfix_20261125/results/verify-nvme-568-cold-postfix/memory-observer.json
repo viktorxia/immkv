@@ -1,0 +1,21 @@
+{
+  "cpu.stat": "usage_usec 2030752457\nuser_usec 1903392738\nsystem_usec 127359719\nnice_usec 0\ncore_sched.force_idle_usec 0",
+  "memory.current": "13967974400",
+  "memory.events": "low 0\nhigh 0\nmax 1044\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+  "memory.events.local": "low 0\nhigh 0\nmax 1044\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+  "memory.max": "17179869184",
+  "memory.peak": "17179869184",
+  "memory.swap.max": "0",
+  "monotonic_ns": 1144398747708359,
+  "read_errors": {
+    "cpu.stat": "[Errno 19] No such device",
+    "io.stat": "'io.stat'",
+    "memory.current": "[Errno 19] No such device",
+    "memory.events": "[Errno 19] No such device",
+    "memory.events.local": "[Errno 19] No such device",
+    "memory.max": "[Errno 19] No such device",
+    "memory.peak": "[Errno 19] No such device",
+    "memory.swap.max": "[Errno 19] No such device"
+  },
+  "timestamp_ns": 1795770221938032322
+}

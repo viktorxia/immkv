@@ -1,0 +1,11 @@
+Usage of /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/verifyvalues:
+  -ev string
+    	echtvar plain-text output
+  -fields string
+    	field whitelist TSV (name/Type/Number)
+  -iv string
+    	immkv plain-text output
+  -max-report int
+    	how many offending rows to print (default 10)
+  -tol float
+    	float tolerance: quantization 5e-7 (truncating, per echtvar v0.2.4 source) + printed-output truncation ~5e-7 (6-decimal rendering) + f32 slack; observed max across 31M comparisons: exactly 1.000e-06 (default 1.1e-06)

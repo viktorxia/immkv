@@ -1,0 +1,15 @@
+{
+  "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-verify-nvme-540-cold-postfix-1795768335779506797-405318.scope",
+  "opened": [
+    "cpu.stat",
+    "memory.current",
+    "memory.events",
+    "memory.events.local",
+    "memory.max",
+    "memory.peak",
+    "memory.swap.max"
+  ],
+  "persistent_descriptors": true,
+  "pid": 405332,
+  "timestamp_ns": 1795768336056309063
+}

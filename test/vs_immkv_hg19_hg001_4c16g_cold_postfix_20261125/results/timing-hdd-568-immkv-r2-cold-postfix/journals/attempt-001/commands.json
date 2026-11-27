@@ -1,0 +1,95 @@
+[
+  {
+    "argv": [
+      "journalctl",
+      "--user",
+      "--no-pager",
+      "--quiet",
+      "-o",
+      "short-iso-precise",
+      "-u",
+      "immkv-cold-timing-hdd-568-immkv-r2-cold-postfix-1795780210874467068-404997.scope"
+    ],
+    "kind": "user",
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "journals/attempt-001/user-1.log"
+  },
+  {
+    "argv": [
+      "journalctl",
+      "--user",
+      "--no-pager",
+      "--quiet",
+      "-o",
+      "short-iso-precise",
+      "-u",
+      "immkv-cold-timing-hdd-568-immkv-r2-cold-postfix-1795780210874467068-404997.scope"
+    ],
+    "kind": "user",
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "journals/attempt-001/user-2.log"
+  },
+  {
+    "argv": [
+      "journalctl",
+      "--user",
+      "--no-pager",
+      "--quiet",
+      "-o",
+      "short-iso-precise",
+      "-u",
+      "immkv-cold-timing-hdd-568-immkv-r2-cold-postfix-1795780210874467068-404997.scope"
+    ],
+    "kind": "user",
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "journals/attempt-001/user-3.log"
+  },
+  {
+    "argv": [
+      "journalctl",
+      "--no-pager",
+      "--quiet",
+      "-o",
+      "short-iso-precise",
+      "-u",
+      "immkv-cold-timing-hdd-568-immkv-r2-cold-postfix-1795780210874467068-404997.scope"
+    ],
+    "kind": "system",
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "journals/attempt-001/system-1.log"
+  },
+  {
+    "argv": [
+      "journalctl",
+      "--no-pager",
+      "--quiet",
+      "-o",
+      "short-iso-precise",
+      "-u",
+      "immkv-cold-timing-hdd-568-immkv-r2-cold-postfix-1795780210874467068-404997.scope"
+    ],
+    "kind": "system",
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "journals/attempt-001/system-2.log"
+  },
+  {
+    "argv": [
+      "journalctl",
+      "--no-pager",
+      "--quiet",
+      "-o",
+      "short-iso-precise",
+      "-u",
+      "immkv-cold-timing-hdd-568-immkv-r2-cold-postfix-1795780210874467068-404997.scope"
+    ],
+    "kind": "system",
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "journals/attempt-001/system-3.log"
+  }
+]

@@ -1,0 +1,261 @@
++ go -C /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/source test -buildvcs=false -count=1 -v -run 'TestDriveDirectInFlightRespectsRingDepth|TestPreferColumnarCountsColumnRanges' .
+=== RUN   TestPreferColumnarCountsColumnRanges
+--- PASS: TestPreferColumnarCountsColumnRanges (0.77s)
+=== RUN   TestDriveDirectInFlightRespectsRingDepth
+--- PASS: TestDriveDirectInFlightRespectsRingDepth (0.01s)
+PASS
+ok  	github.com/viktorxia/immkv	0.785s
++ go -C /home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/source test -buildvcs=false -count=1 -v ./test/annotate ./test/verifyvalues
+=== RUN   TestRunUnknownContigs
+=== RUN   TestRunUnknownContigs/all_unknown_with_samples
+=== RUN   TestRunUnknownContigs/all_unknown_with_samples/batch_1_threads_1
+rows 3, hits 0 (0.00%), read 0.0GiB; key 0.00s / query 0.00s / format 0.00s (1 threads); wall 1ms
+=== RUN   TestRunUnknownContigs/all_unknown_with_samples/batch_2_threads_3
+rows 3, hits 0 (0.00%), read 0.0GiB; key 0.00s / query 0.00s / format 0.00s (3 threads); wall 0s
+=== RUN   TestRunUnknownContigs/all_unknown_with_samples/batch_64_threads_3
+rows 3, hits 0 (0.00%), read 0.0GiB; key 0.00s / query 0.00s / format 0.00s (3 threads); wall 0s
+=== RUN   TestRunUnknownContigs/all_unknown_without_samples
+=== RUN   TestRunUnknownContigs/all_unknown_without_samples/batch_1_threads_1
+rows 2, hits 0 (0.00%), read 0.0GiB; key 0.00s / query 0.00s / format 0.00s (1 threads); wall 0s
+=== RUN   TestRunUnknownContigs/all_unknown_without_samples/batch_2_threads_3
+rows 2, hits 0 (0.00%), read 0.0GiB; key 0.00s / query 0.00s / format 0.00s (3 threads); wall 0s
+=== RUN   TestRunUnknownContigs/all_unknown_without_samples/batch_64_threads_3
+rows 2, hits 0 (0.00%), read 0.0GiB; key 0.00s / query 0.00s / format 0.00s (3 threads); wall 0s
+=== RUN   TestRunUnknownContigs/mixed_contigs_and_alt_expansions
+=== RUN   TestRunUnknownContigs/mixed_contigs_and_alt_expansions/batch_1_threads_1
+rows 12, hits 4 (33.33%), read 0.0GiB; key 0.00s / query 0.00s / format 0.00s (1 threads); wall 2ms
+=== RUN   TestRunUnknownContigs/mixed_contigs_and_alt_expansions/batch_2_threads_3
+rows 12, hits 4 (33.33%), read 0.0GiB; key 0.00s / query 0.00s / format 0.00s (3 threads); wall 2ms
+=== RUN   TestRunUnknownContigs/mixed_contigs_and_alt_expansions/batch_64_threads_3
+rows 12, hits 4 (33.33%), read 0.0GiB; key 0.00s / query 0.00s / format 0.00s (3 threads); wall 1ms
+--- PASS: TestRunUnknownContigs (0.03s)
+    --- PASS: TestRunUnknownContigs/all_unknown_with_samples (0.00s)
+        --- PASS: TestRunUnknownContigs/all_unknown_with_samples/batch_1_threads_1 (0.00s)
+        --- PASS: TestRunUnknownContigs/all_unknown_with_samples/batch_2_threads_3 (0.00s)
+        --- PASS: TestRunUnknownContigs/all_unknown_with_samples/batch_64_threads_3 (0.00s)
+    --- PASS: TestRunUnknownContigs/all_unknown_without_samples (0.00s)
+        --- PASS: TestRunUnknownContigs/all_unknown_without_samples/batch_1_threads_1 (0.00s)
+        --- PASS: TestRunUnknownContigs/all_unknown_without_samples/batch_2_threads_3 (0.00s)
+        --- PASS: TestRunUnknownContigs/all_unknown_without_samples/batch_64_threads_3 (0.00s)
+    --- PASS: TestRunUnknownContigs/mixed_contigs_and_alt_expansions (0.01s)
+        --- PASS: TestRunUnknownContigs/mixed_contigs_and_alt_expansions/batch_1_threads_1 (0.00s)
+        --- PASS: TestRunUnknownContigs/mixed_contigs_and_alt_expansions/batch_2_threads_3 (0.00s)
+        --- PASS: TestRunUnknownContigs/mixed_contigs_and_alt_expansions/batch_64_threads_3 (0.00s)
+PASS
+ok  	github.com/viktorxia/immkv/test/annotate	0.030s
+=== RUN   TestCompareFiniteFloats
+=== RUN   TestCompareFiniteFloats/equality_with_zero_tolerance
+=== RUN   TestCompareFiniteFloats/equality_with_negative_zero_tolerance
+=== RUN   TestCompareFiniteFloats/equal_largest_finite_values
+=== RUN   TestCompareFiniteFloats/within_default_tolerance
+=== RUN   TestCompareFiniteFloats/beyond_default_tolerance
+=== RUN   TestCompareFiniteFloats/at_tolerance
+=== RUN   TestCompareFiniteFloats/below_tolerance
+=== RUN   TestCompareFiniteFloats/above_tolerance
+=== RUN   TestCompareFiniteFloats/negative_difference
+=== RUN   TestCompareFiniteFloats/zero_tolerance_rejects_difference
+=== RUN   TestCompareFiniteFloats/finite_subtraction_overflows
+--- PASS: TestCompareFiniteFloats (0.01s)
+    --- PASS: TestCompareFiniteFloats/equality_with_zero_tolerance (0.00s)
+    --- PASS: TestCompareFiniteFloats/equality_with_negative_zero_tolerance (0.00s)
+    --- PASS: TestCompareFiniteFloats/equal_largest_finite_values (0.00s)
+    --- PASS: TestCompareFiniteFloats/within_default_tolerance (0.00s)
+    --- PASS: TestCompareFiniteFloats/beyond_default_tolerance (0.00s)
+    --- PASS: TestCompareFiniteFloats/at_tolerance (0.00s)
+    --- PASS: TestCompareFiniteFloats/below_tolerance (0.00s)
+    --- PASS: TestCompareFiniteFloats/above_tolerance (0.00s)
+    --- PASS: TestCompareFiniteFloats/negative_difference (0.00s)
+    --- PASS: TestCompareFiniteFloats/zero_tolerance_rejects_difference (0.00s)
+    --- PASS: TestCompareFiniteFloats/finite_subtraction_overflows (0.00s)
+=== RUN   TestCompareNonFiniteFloats
+=== RUN   TestCompareNonFiniteFloats/NaN
+=== RUN   TestCompareNonFiniteFloats/NaN/echtvar_value
+=== RUN   TestCompareNonFiniteFloats/NaN/immkv_value
+=== RUN   TestCompareNonFiniteFloats/NaN/same_value_on_both_sides
+=== RUN   TestCompareNonFiniteFloats/NaN/immkv_absent
+=== RUN   TestCompareNonFiniteFloats/NaN/echtvar_absent
+=== RUN   TestCompareNonFiniteFloats/NaN/echtvar_miss_marker
+=== RUN   TestCompareNonFiniteFloats/NaN/immkv_true_minus_one
+=== RUN   TestCompareNonFiniteFloats/+Inf
+=== RUN   TestCompareNonFiniteFloats/+Inf/echtvar_value
+=== RUN   TestCompareNonFiniteFloats/+Inf/immkv_value
+=== RUN   TestCompareNonFiniteFloats/+Inf/same_value_on_both_sides
+=== RUN   TestCompareNonFiniteFloats/+Inf/immkv_absent
+=== RUN   TestCompareNonFiniteFloats/+Inf/echtvar_absent
+=== RUN   TestCompareNonFiniteFloats/+Inf/echtvar_miss_marker
+=== RUN   TestCompareNonFiniteFloats/+Inf/immkv_true_minus_one
+=== RUN   TestCompareNonFiniteFloats/-Inf
+=== RUN   TestCompareNonFiniteFloats/-Inf/echtvar_value
+=== RUN   TestCompareNonFiniteFloats/-Inf/immkv_value
+=== RUN   TestCompareNonFiniteFloats/-Inf/same_value_on_both_sides
+=== RUN   TestCompareNonFiniteFloats/-Inf/immkv_absent
+=== RUN   TestCompareNonFiniteFloats/-Inf/echtvar_absent
+=== RUN   TestCompareNonFiniteFloats/-Inf/echtvar_miss_marker
+=== RUN   TestCompareNonFiniteFloats/-Inf/immkv_true_minus_one
+=== RUN   TestCompareNonFiniteFloats/Infinity
+=== RUN   TestCompareNonFiniteFloats/Infinity/echtvar_value
+=== RUN   TestCompareNonFiniteFloats/Infinity/immkv_value
+=== RUN   TestCompareNonFiniteFloats/Infinity/same_value_on_both_sides
+=== RUN   TestCompareNonFiniteFloats/Infinity/immkv_absent
+=== RUN   TestCompareNonFiniteFloats/Infinity/echtvar_absent
+=== RUN   TestCompareNonFiniteFloats/Infinity/echtvar_miss_marker
+=== RUN   TestCompareNonFiniteFloats/Infinity/immkv_true_minus_one
+--- PASS: TestCompareNonFiniteFloats (0.02s)
+    --- PASS: TestCompareNonFiniteFloats/NaN (0.01s)
+        --- PASS: TestCompareNonFiniteFloats/NaN/echtvar_value (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/NaN/immkv_value (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/NaN/same_value_on_both_sides (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/NaN/immkv_absent (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/NaN/echtvar_absent (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/NaN/echtvar_miss_marker (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/NaN/immkv_true_minus_one (0.00s)
+    --- PASS: TestCompareNonFiniteFloats/+Inf (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/+Inf/echtvar_value (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/+Inf/immkv_value (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/+Inf/same_value_on_both_sides (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/+Inf/immkv_absent (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/+Inf/echtvar_absent (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/+Inf/echtvar_miss_marker (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/+Inf/immkv_true_minus_one (0.00s)
+    --- PASS: TestCompareNonFiniteFloats/-Inf (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/-Inf/echtvar_value (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/-Inf/immkv_value (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/-Inf/same_value_on_both_sides (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/-Inf/immkv_absent (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/-Inf/echtvar_absent (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/-Inf/echtvar_miss_marker (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/-Inf/immkv_true_minus_one (0.00s)
+    --- PASS: TestCompareNonFiniteFloats/Infinity (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/Infinity/echtvar_value (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/Infinity/immkv_value (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/Infinity/same_value_on_both_sides (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/Infinity/immkv_absent (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/Infinity/echtvar_absent (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/Infinity/echtvar_miss_marker (0.00s)
+        --- PASS: TestCompareNonFiniteFloats/Infinity/immkv_true_minus_one (0.00s)
+=== RUN   TestCompareUnparseableFloats
+=== RUN   TestCompareUnparseableFloats/invalid
+=== RUN   TestCompareUnparseableFloats/1e309
+=== RUN   TestCompareUnparseableFloats/-1e309
+--- PASS: TestCompareUnparseableFloats (0.01s)
+    --- PASS: TestCompareUnparseableFloats/invalid (0.00s)
+    --- PASS: TestCompareUnparseableFloats/1e309 (0.00s)
+    --- PASS: TestCompareUnparseableFloats/-1e309 (0.00s)
+=== RUN   TestCompareInvalidTolerance
+--- PASS: TestCompareInvalidTolerance (0.00s)
+=== RUN   TestCompareOverflowAndMinusOne
+=== RUN   TestCompareOverflowAndMinusOne/old_positive_cutoff
+=== RUN   TestCompareOverflowAndMinusOne/old_negative_cutoff
+=== RUN   TestCompareOverflowAndMinusOne/last_safe_positive_f32
+=== RUN   TestCompareOverflowAndMinusOne/first_overflowing_positive_f32
+=== RUN   TestCompareOverflowAndMinusOne/positive_f32_rounding
+=== RUN   TestCompareOverflowAndMinusOne/exact_positive_i32_ratio
+=== RUN   TestCompareOverflowAndMinusOne/last_safe_negative_f32
+=== RUN   TestCompareOverflowAndMinusOne/exact_negative_i32_ratio
+=== RUN   TestCompareOverflowAndMinusOne/first_overflowing_negative_f32
+=== RUN   TestCompareOverflowAndMinusOne/positive_overflow
+=== RUN   TestCompareOverflowAndMinusOne/negative_overflow
+=== RUN   TestCompareOverflowAndMinusOne/largest_finite_positive_overflow
+=== RUN   TestCompareOverflowAndMinusOne/largest_finite_negative_overflow
+=== RUN   TestCompareOverflowAndMinusOne/true_minus_one
+=== RUN   TestCompareOverflowAndMinusOne/decimal_true_minus_one
+=== RUN   TestCompareOverflowAndMinusOne/exponent_true_minus_one
+=== RUN   TestCompareOverflowAndMinusOne/both_missing
+=== RUN   TestCompareOverflowAndMinusOne/ordinary_miss_disagreement
+=== RUN   TestCompareOverflowAndMinusOne/other_miss_marker_is_not_overflow
+=== RUN   TestCompareOverflowAndMinusOne/reverse_miss_is_not_overflow
+--- PASS: TestCompareOverflowAndMinusOne (0.01s)
+    --- PASS: TestCompareOverflowAndMinusOne/old_positive_cutoff (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/old_negative_cutoff (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/last_safe_positive_f32 (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/first_overflowing_positive_f32 (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/positive_f32_rounding (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/exact_positive_i32_ratio (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/last_safe_negative_f32 (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/exact_negative_i32_ratio (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/first_overflowing_negative_f32 (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/positive_overflow (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/negative_overflow (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/largest_finite_positive_overflow (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/largest_finite_negative_overflow (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/true_minus_one (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/decimal_true_minus_one (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/exponent_true_minus_one (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/both_missing (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/ordinary_miss_disagreement (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/other_miss_marker_is_not_overflow (0.00s)
+    --- PASS: TestCompareOverflowAndMinusOne/reverse_miss_is_not_overflow (0.00s)
+=== RUN   TestCompareRows
+=== RUN   TestCompareRows/empty
+=== RUN   TestCompareRows/headers_only
+=== RUN   TestCompareRows/echtvar_headers_versus_empty
+=== RUN   TestCompareRows/immkv_headers_versus_empty
+=== RUN   TestCompareRows/blank_versus_empty
+=== RUN   TestCompareRows/empty_versus_blank
+=== RUN   TestCompareRows/different_trailing_comments
+=== RUN   TestCompareRows/echtvar_trailing_blanks
+=== RUN   TestCompareRows/immkv_trailing_blanks
+=== RUN   TestCompareRows/comments_and_blanks_between_rows
+=== RUN   TestCompareRows/no_final_newline
+=== RUN   TestCompareRows/echtvar_extra_row
+=== RUN   TestCompareRows/immkv_extra_row
+=== RUN   TestCompareRows/echtvar_data_versus_headers
+=== RUN   TestCompareRows/immkv_data_versus_headers
+--- PASS: TestCompareRows (0.01s)
+    --- PASS: TestCompareRows/empty (0.00s)
+    --- PASS: TestCompareRows/headers_only (0.00s)
+    --- PASS: TestCompareRows/echtvar_headers_versus_empty (0.00s)
+    --- PASS: TestCompareRows/immkv_headers_versus_empty (0.00s)
+    --- PASS: TestCompareRows/blank_versus_empty (0.00s)
+    --- PASS: TestCompareRows/empty_versus_blank (0.00s)
+    --- PASS: TestCompareRows/different_trailing_comments (0.00s)
+    --- PASS: TestCompareRows/echtvar_trailing_blanks (0.00s)
+    --- PASS: TestCompareRows/immkv_trailing_blanks (0.00s)
+    --- PASS: TestCompareRows/comments_and_blanks_between_rows (0.00s)
+    --- PASS: TestCompareRows/no_final_newline (0.00s)
+    --- PASS: TestCompareRows/echtvar_extra_row (0.00s)
+    --- PASS: TestCompareRows/immkv_extra_row (0.00s)
+    --- PASS: TestCompareRows/echtvar_data_versus_headers (0.00s)
+    --- PASS: TestCompareRows/immkv_data_versus_headers (0.00s)
+=== RUN   TestCompareScannerErrors
+=== RUN   TestCompareScannerErrors/before_data
+=== RUN   TestCompareScannerErrors/before_data/echtvar
+=== RUN   TestCompareScannerErrors/before_data/immkv
+=== RUN   TestCompareScannerErrors/before_data/both
+=== RUN   TestCompareScannerErrors/after_data
+=== RUN   TestCompareScannerErrors/after_data/echtvar
+=== RUN   TestCompareScannerErrors/after_data/immkv
+=== RUN   TestCompareScannerErrors/after_data/both
+--- PASS: TestCompareScannerErrors (0.17s)
+    --- PASS: TestCompareScannerErrors/before_data (0.10s)
+        --- PASS: TestCompareScannerErrors/before_data/echtvar (0.04s)
+        --- PASS: TestCompareScannerErrors/before_data/immkv (0.03s)
+        --- PASS: TestCompareScannerErrors/before_data/both (0.03s)
+    --- PASS: TestCompareScannerErrors/after_data (0.07s)
+        --- PASS: TestCompareScannerErrors/after_data/echtvar (0.02s)
+        --- PASS: TestCompareScannerErrors/after_data/immkv (0.02s)
+        --- PASS: TestCompareScannerErrors/after_data/both (0.03s)
+=== RUN   TestCompareIntegerStringAndFlag
+=== RUN   TestCompareIntegerStringAndFlag/integer_exact
+=== RUN   TestCompareIntegerStringAndFlag/integer_different_bytes
+=== RUN   TestCompareIntegerStringAndFlag/integer_minus_one_marker
+=== RUN   TestCompareIntegerStringAndFlag/string_exact
+=== RUN   TestCompareIntegerStringAndFlag/string_different_bytes
+=== RUN   TestCompareIntegerStringAndFlag/string_NaN_remains_text
+=== RUN   TestCompareIntegerStringAndFlag/flag_present
+=== RUN   TestCompareIntegerStringAndFlag/flag_absent
+=== RUN   TestCompareIntegerStringAndFlag/flag_echtvar_only
+=== RUN   TestCompareIntegerStringAndFlag/flag_immkv_only
+--- PASS: TestCompareIntegerStringAndFlag (0.00s)
+    --- PASS: TestCompareIntegerStringAndFlag/integer_exact (0.00s)
+    --- PASS: TestCompareIntegerStringAndFlag/integer_different_bytes (0.00s)
+    --- PASS: TestCompareIntegerStringAndFlag/integer_minus_one_marker (0.00s)
+    --- PASS: TestCompareIntegerStringAndFlag/string_exact (0.00s)
+    --- PASS: TestCompareIntegerStringAndFlag/string_different_bytes (0.00s)
+    --- PASS: TestCompareIntegerStringAndFlag/string_NaN_remains_text (0.00s)
+    --- PASS: TestCompareIntegerStringAndFlag/flag_present (0.00s)
+    --- PASS: TestCompareIntegerStringAndFlag/flag_absent (0.00s)
+    --- PASS: TestCompareIntegerStringAndFlag/flag_echtvar_only (0.00s)
+    --- PASS: TestCompareIntegerStringAndFlag/flag_immkv_only (0.00s)
+PASS
+ok  	github.com/viktorxia/immkv/test/verifyvalues	0.245s

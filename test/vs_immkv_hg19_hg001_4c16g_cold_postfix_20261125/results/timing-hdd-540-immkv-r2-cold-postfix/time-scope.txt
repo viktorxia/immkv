@@ -1,0 +1,23 @@
+	Command being timed: "systemd-run --user --scope --collect --unit=immkv-cold-timing-hdd-540-immkv-r2-cold-postfix-1795774238740247065-404997 -p MemoryMax=16G -p MemorySwapMax=0 -p IOAccounting=yes taskset -c 0-3 env -u IMMKV_FORCE_RECORD -u IMMKV_FORCE_COLUMNAR -u IMMKV_DEBUG_PATH -u GODEBUG -u GOGC -u GOMEMLIMIT GOMAXPROCS=4 RUN_TIMEOUT_SECONDS=3600 bash /home/tian/projects/immkv/test/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/run_limited.sh /home/tian/projects/immkv/test/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/results/timing-hdd-540-immkv-r2-cold-postfix python3 -I /home/tian/projects/immkv/test/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/run_cell.py --engine immkv --media hdd --fields 540 --record /home/tian/projects/immkv/test/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/results/timing-hdd-540-immkv-r2-cold-postfix"
+	User time (seconds): 684.53
+	System time (seconds): 41.50
+	Percent of CPU this job got: 49%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 24:28.61
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 679312
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 82
+	Minor (reclaiming a frame) page faults: 198756
+	Voluntary context switches: 1599285
+	Involuntary context switches: 87477
+	Swaps: 0
+	File system inputs: 53858760
+	File system outputs: 88
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

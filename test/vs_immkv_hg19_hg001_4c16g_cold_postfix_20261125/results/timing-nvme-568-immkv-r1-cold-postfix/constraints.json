@@ -1,0 +1,48 @@
+{
+  "GOMAXPROCS": "4",
+  "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-568-immkv-r1-cold-postfix-1795770223325123832-404997.scope",
+  "cgroup_controllers": "memory pids",
+  "cpu.stat": "usage_usec 41441\nuser_usec 32767\nsystem_usec 8673\nnice_usec 0\ncore_sched.force_idle_usec 0",
+  "cpu_topology": [
+    {
+      "core_id": "0",
+      "cpu": 0,
+      "physical_package_id": "0"
+    },
+    {
+      "core_id": "1",
+      "cpu": 1,
+      "physical_package_id": "0"
+    },
+    {
+      "core_id": "2",
+      "cpu": 2,
+      "physical_package_id": "0"
+    },
+    {
+      "core_id": "3",
+      "cpu": 3,
+      "physical_package_id": "0"
+    }
+  ],
+  "cpus": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+  "io_stat_available": false,
+  "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+  "memory.current": "12386304",
+  "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+  "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+  "memory.max": "17179869184",
+  "memory.peak": "12386304",
+  "memory.swap.max": "0",
+  "monotonic_ns": 1144400513237157,
+  "read_errors": {
+    "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-568-immkv-r1-cold-postfix-1795770223325123832-404997.scope/io.stat'"
+  },
+  "timestamp_ns": 1795770223702945246
+}

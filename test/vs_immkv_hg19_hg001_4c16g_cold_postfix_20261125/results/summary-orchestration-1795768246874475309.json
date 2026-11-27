@@ -1,0 +1,3288 @@
+{
+  "records": [
+    {
+      "record": "timing-hdd-17-immkv-r1-cold-postfix",
+      "media": "hdd",
+      "fields": 17,
+      "engine": "immkv",
+      "round": "r1",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 3918397,
+            "usage_usec": 215847655,
+            "user_usec": 211929259
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795771018920351008,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 7508865024,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/lib17",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-17-immkv-r1-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 17,
+        "finished": {
+          "monotonic_ns": 1145194295591276,
+          "time_ns": 1795771017485914778
+        },
+        "media": "hdd",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-17-immkv-r1-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1145094551758749,
+          "time_ns": 1795770917742079536
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795770917425833245,
+        "request": "drop\\n",
+        "requested_ns": 1795770917143980120,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.2812600811012089,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T09:15:17.425506+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85231896 kB\nMemAvailable:   86239644 kB\nBuffers:            4476 kB\nCached:          2100440 kB\nSwapCached:           20 kB\nActive:          9415680 kB\nInactive:         571308 kB\nActive(anon):    8074628 kB\nInactive(anon):   193776 kB\nActive(file):    1341052 kB\nInactive(file):   377532 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               456 kB\nWriteback:            88 kB\nAnonPages:       7882216 kB\nMapped:          2046104 kB\nShmem:            386432 kB\nKReclaimable:     152088 kB\nSlab:             538384 kB\nSReclaimable:     152088 kB\nSUnreclaim:       386296 kB\nKernelStack:       29248 kB\nPageTables:       145180 kB\nSecPageTables:      5612 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26643552 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108248 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        470812 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        77608328 kB\nMemAvailable:   86220352 kB\nBuffers:           22120 kB\nCached:          9686968 kB\nSwapCached:           20 kB\nActive:          9544364 kB\nInactive:        8045584 kB\nActive(anon):    8073344 kB\nInactive(anon):   193776 kB\nActive(file):    1471020 kB\nInactive(file):  7851808 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              5156 kB\nWriteback:             0 kB\nAnonPages:       7881488 kB\nMapped:          2046056 kB\nShmem:            386296 kB\nKReclaimable:     152148 kB\nSlab:             538444 kB\nSReclaimable:     152148 kB\nSUnreclaim:       386296 kB\nKernelStack:       29168 kB\nPageTables:       145040 kB\nSecPageTables:      5612 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26643552 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108248 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:   4941824 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        470812 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T09:15:17.144102+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-17-immkv-r1-cold-postfix-1795770917101541298-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 36880\nuser_usec 24263\nsystem_usec 12617\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12197888",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12197888",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1145094458202292,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-17-immkv-r1-cold-postfix-1795770917101541298-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795770917648284589
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 211.86,
+        "system_seconds": 3.9,
+        "wall_seconds": 99.78999999999999,
+        "max_child_rss_kib": 255064,
+        "file_system_inputs": 17196952,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 215.76000000000002,
+        "cgroup_memory_peak_bytes": 7508865024
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-hdd-17-immkv-r2-cold-postfix",
+      "media": "hdd",
+      "fields": 17,
+      "engine": "immkv",
+      "round": "r2",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 4175638,
+            "usage_usec": 216335656,
+            "user_usec": 212160018
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795771120502189659,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 7497940992,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/lib17",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-17-immkv-r2-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 17,
+        "finished": {
+          "monotonic_ns": 1145295879618581,
+          "time_ns": 1795771119069941051
+        },
+        "media": "hdd",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-17-immkv-r2-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1145196149763892,
+          "time_ns": 1795771019340078568
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795771019154754186,
+        "request": "drop\\n",
+        "requested_ns": 1795771018980791275,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.17326261708512902,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T09:16:59.154346+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85201736 kB\nMemAvailable:   86208604 kB\nBuffers:            4440 kB\nCached:          2099616 kB\nSwapCached:           20 kB\nActive:          9421216 kB\nInactive:         570856 kB\nActive(anon):    8080560 kB\nInactive(anon):   193776 kB\nActive(file):    1340656 kB\nInactive(file):   377080 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               456 kB\nWriteback:             0 kB\nAnonPages:       7888132 kB\nMapped:          2045976 kB\nShmem:            386364 kB\nKReclaimable:     152024 kB\nSlab:             538288 kB\nSReclaimable:     152024 kB\nSUnreclaim:       386264 kB\nKernelStack:       29248 kB\nPageTables:       145176 kB\nSecPageTables:      5640 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26644552 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108264 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        470812 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        77982640 kB\nMemAvailable:   86192120 kB\nBuffers:           21812 kB\nCached:          9284788 kB\nSwapCached:           20 kB\nActive:          9546440 kB\nInactive:        7646592 kB\nActive(anon):    8078924 kB\nInactive(anon):   193776 kB\nActive(file):    1467516 kB\nInactive(file):  7452816 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              2428 kB\nWriteback:             0 kB\nAnonPages:       7886708 kB\nMapped:          2045392 kB\nShmem:            386296 kB\nKReclaimable:     152052 kB\nSlab:             538316 kB\nSReclaimable:     152052 kB\nSUnreclaim:       386264 kB\nKernelStack:       29264 kB\nPageTables:       144688 kB\nSecPageTables:      5640 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26644552 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108264 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:   4941824 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        470812 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T09:16:58.980928+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-17-immkv-r2-cold-postfix-1795771018941589067-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 38321\nuser_usec 26825\nsystem_usec 11496\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12177408",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12177408",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1145196058851393,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-17-immkv-r2-cold-postfix-1795771018941589067-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795771019241041900
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 212.1,
+        "system_seconds": 4.16,
+        "wall_seconds": 99.77000000000001,
+        "max_child_rss_kib": 255796,
+        "file_system_inputs": 17197104,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 216.26,
+        "cgroup_memory_peak_bytes": 7497940992
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-hdd-17-immkv-r3-cold-postfix",
+      "media": "hdd",
+      "fields": 17,
+      "engine": "immkv",
+      "round": "r3",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 4068421,
+            "usage_usec": 216053353,
+            "user_usec": 211984932
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795771221731768582,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 7498162176,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/mnt/data6t/tian/immkv_test_hdd/test/17_fields/lib17",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-17-immkv-r3-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 17,
+        "finished": {
+          "monotonic_ns": 1145397118121331,
+          "time_ns": 1795771220308444964
+        },
+        "media": "hdd",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-17-immkv-r3-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1145297679996128,
+          "time_ns": 1795771120870313008
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795771120704174993,
+        "request": "drop\\n",
+        "requested_ns": 1795771120551265493,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.15207825205288827,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T09:18:40.703832+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85211140 kB\nMemAvailable:   86217852 kB\nBuffers:            4452 kB\nCached:          2099768 kB\nSwapCached:           20 kB\nActive:          9412708 kB\nInactive:         570856 kB\nActive(anon):    8071956 kB\nInactive(anon):   193776 kB\nActive(file):    1340752 kB\nInactive(file):   377080 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               664 kB\nWriteback:             0 kB\nAnonPages:       7879568 kB\nMapped:          2046072 kB\nShmem:            386432 kB\nKReclaimable:     151516 kB\nSlab:             537796 kB\nSReclaimable:     151516 kB\nSUnreclaim:       386280 kB\nKernelStack:       29264 kB\nPageTables:       145200 kB\nSecPageTables:      5684 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26642704 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108312 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        472860 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        77991448 kB\nMemAvailable:   86202176 kB\nBuffers:           21280 kB\nCached:          9286960 kB\nSwapCached:           20 kB\nActive:          9543500 kB\nInactive:        7647232 kB\nActive(anon):    8075108 kB\nInactive(anon):   193776 kB\nActive(file):    1468392 kB\nInactive(file):  7453456 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              2320 kB\nWriteback:             0 kB\nAnonPages:       7882988 kB\nMapped:          2046104 kB\nShmem:            386432 kB\nKReclaimable:     151516 kB\nSlab:             537796 kB\nSReclaimable:     151516 kB\nSUnreclaim:       386280 kB\nKernelStack:       29184 kB\nPageTables:       144956 kB\nSecPageTables:      5684 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26642704 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108312 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:   4941824 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        472860 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T09:18:40.551505+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-17-immkv-r3-cold-postfix-1795771120517894946-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 37044\nuser_usec 25346\nsystem_usec 11698\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12460032",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12460032",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1145297592761301,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-17-immkv-r3-cold-postfix-1795771120517894946-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795771120782447104
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 211.92,
+        "system_seconds": 4.04,
+        "wall_seconds": 99.47,
+        "max_child_rss_kib": 280780,
+        "file_system_inputs": 17196960,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 215.95999999999998,
+        "cgroup_memory_peak_bytes": 7498162176
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-hdd-540-immkv-r1-cold-postfix",
+      "media": "hdd",
+      "fields": 540,
+      "engine": "immkv",
+      "round": "r1",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 41128583,
+            "usage_usec": 727031140,
+            "user_usec": 685902557
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795774238722540081,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 5349715968,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/mnt/data6t/tian/immkv_test_hdd/gnomad/immkv",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-540-immkv-r1-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_540_fields/fields540.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 540,
+        "finished": {
+          "monotonic_ns": 1148414118546452,
+          "time_ns": 1795774237308869905
+        },
+        "media": "hdd",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-540-immkv-r1-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1146945142458961,
+          "time_ns": 1795772768332777283
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795772768163239545,
+        "request": "drop\\n",
+        "requested_ns": 1795772767937608712,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.22509408299811184,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T09:46:08.162976+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85207792 kB\nMemAvailable:   86214656 kB\nBuffers:            4560 kB\nCached:          2099736 kB\nSwapCached:           20 kB\nActive:          9415636 kB\nInactive:         570828 kB\nActive(anon):    8074744 kB\nInactive(anon):   193776 kB\nActive(file):    1340892 kB\nInactive(file):   377052 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               132 kB\nWriteback:             0 kB\nAnonPages:       7882760 kB\nMapped:          2046092 kB\nShmem:            386368 kB\nKReclaimable:     151596 kB\nSlab:             537712 kB\nSReclaimable:     151596 kB\nSUnreclaim:       386116 kB\nKernelStack:       29248 kB\nPageTables:       145132 kB\nSecPageTables:      5724 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26652340 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108232 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        472860 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        69419000 kB\nMemAvailable:   86200584 kB\nBuffers:           26904 kB\nCached:         17851856 kB\nSwapCached:           20 kB\nActive:          9569996 kB\nInactive:       16193096 kB\nActive(anon):    8076628 kB\nInactive(anon):   193776 kB\nActive(file):    1493368 kB\nInactive(file): 15999320 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              2672 kB\nWriteback:             0 kB\nAnonPages:       7884424 kB\nMapped:          2045668 kB\nShmem:            386096 kB\nKReclaimable:     151548 kB\nSlab:             537728 kB\nSReclaimable:     151548 kB\nSUnreclaim:       386180 kB\nKernelStack:       29264 kB\nPageTables:       145568 kB\nSecPageTables:      5724 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26652404 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108232 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:  11040768 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        472860 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T09:46:07.937730+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-540-immkv-r1-cold-postfix-1795772767899767508-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 40337\nuser_usec 30252\nsystem_usec 10084\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12185600",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12185600",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1146945053156574,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-540-immkv-r1-cold-postfix-1795772767899767508-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795772768242858598
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 685.83,
+        "system_seconds": 41.11,
+        "wall_seconds": 1469.02,
+        "max_child_rss_kib": 685620,
+        "file_system_inputs": 53852128,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 726.94,
+        "cgroup_memory_peak_bytes": 5349715968
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-hdd-540-immkv-r2-cold-postfix",
+      "media": "hdd",
+      "fields": 540,
+      "engine": "immkv",
+      "round": "r2",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 41463705,
+            "usage_usec": 725977459,
+            "user_usec": 684513754
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795775708918363425,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 5342957568,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/mnt/data6t/tian/immkv_test_hdd/gnomad/immkv",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-540-immkv-r2-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_540_fields/fields540.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 540,
+        "finished": {
+          "monotonic_ns": 1149884298866550,
+          "time_ns": 1795775707489189782
+        },
+        "media": "hdd",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-540-immkv-r2-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1148415917192636,
+          "time_ns": 1795774239107513694
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795774238943694177,
+        "request": "drop\\n",
+        "requested_ns": 1795774238772193084,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.17082046996802092,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T10:10:38.943348+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85248280 kB\nMemAvailable:   86256272 kB\nBuffers:            4476 kB\nCached:          2100856 kB\nSwapCached:           16 kB\nActive:          9429288 kB\nInactive:         571264 kB\nActive(anon):    8087744 kB\nInactive(anon):   193700 kB\nActive(file):    1341544 kB\nInactive(file):   377564 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388588 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               608 kB\nWriteback:             0 kB\nAnonPages:       7895196 kB\nMapped:          2046564 kB\nShmem:            386248 kB\nKReclaimable:     151528 kB\nSlab:             537356 kB\nSReclaimable:     151528 kB\nSUnreclaim:       385828 kB\nKernelStack:       29376 kB\nPageTables:       145384 kB\nSecPageTables:      5724 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26694440 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108400 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        472860 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        80409220 kB\nMemAvailable:   86246580 kB\nBuffers:           39544 kB\nCached:          6895100 kB\nSwapCached:           16 kB\nActive:          9644188 kB\nInactive:        5185172 kB\nActive(anon):    8087184 kB\nInactive(anon):   193700 kB\nActive(file):    1557004 kB\nInactive(file):  4991472 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388588 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              5084 kB\nWriteback:             0 kB\nAnonPages:       7894592 kB\nMapped:          2046660 kB\nShmem:            386180 kB\nKReclaimable:     151528 kB\nSlab:             537356 kB\nSReclaimable:     151528 kB\nSUnreclaim:       385828 kB\nKernelStack:       29312 kB\nPageTables:       145244 kB\nSecPageTables:      5724 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26694440 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108384 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:   2705408 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        472860 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T10:10:38.772354+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-540-immkv-r2-cold-postfix-1795774238740247065-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 37185\nuser_usec 27135\nsystem_usec 10050\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12464128",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12464128",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1148415832014276,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-540-immkv-r2-cold-postfix-1795774238740247065-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795774239021719746
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 684.43,
+        "system_seconds": 41.45,
+        "wall_seconds": 1468.42,
+        "max_child_rss_kib": 679312,
+        "file_system_inputs": 53852096,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 725.88,
+        "cgroup_memory_peak_bytes": 5342957568
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-hdd-540-immkv-r3-cold-postfix",
+      "media": "hdd",
+      "fields": 540,
+      "engine": "immkv",
+      "round": "r3",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 41187788,
+            "usage_usec": 725077864,
+            "user_usec": 683890077
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795777178756519876,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 5346287616,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/mnt/data6t/tian/immkv_test_hdd/test/540_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/mnt/data6t/tian/immkv_test_hdd/gnomad/immkv",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-540-immkv-r3-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_540_fields/fields540.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 540,
+        "finished": {
+          "monotonic_ns": 1151354171082995,
+          "time_ns": 1795777177361406598
+        },
+        "media": "hdd",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-540-immkv-r3-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1149886110039248,
+          "time_ns": 1795775709300359444
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795775709135940130,
+        "request": "drop\\n",
+        "requested_ns": 1795775708975204788,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.16016881703399122,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T10:35:09.135673+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85234376 kB\nMemAvailable:   86241792 kB\nBuffers:            4588 kB\nCached:          2100432 kB\nSwapCached:           16 kB\nActive:          9425776 kB\nInactive:         570952 kB\nActive(anon):    8084324 kB\nInactive(anon):   193700 kB\nActive(file):    1341452 kB\nInactive(file):   377252 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388588 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:                 0 kB\nWriteback:             0 kB\nAnonPages:       7891804 kB\nMapped:          2046804 kB\nShmem:            386308 kB\nKReclaimable:     151184 kB\nSlab:             537000 kB\nSReclaimable:     151184 kB\nSUnreclaim:       385816 kB\nKernelStack:       29344 kB\nPageTables:       145404 kB\nSecPageTables:      5728 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26667428 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108336 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        472860 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        80531188 kB\nMemAvailable:   86243704 kB\nBuffers:           27632 kB\nCached:          6782260 kB\nSwapCached:           16 kB\nActive:          9555400 kB\nInactive:        5145444 kB\nActive(anon):    8083340 kB\nInactive(anon):   193700 kB\nActive(file):    1472060 kB\nInactive(file):  4951744 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388588 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              5620 kB\nWriteback:             0 kB\nAnonPages:       7890616 kB\nMapped:          2046192 kB\nShmem:            386104 kB\nKReclaimable:     151184 kB\nSlab:             537000 kB\nSReclaimable:     151184 kB\nSUnreclaim:       385816 kB\nKernelStack:       29328 kB\nPageTables:       145112 kB\nSecPageTables:      5728 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26667428 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108336 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:   2705408 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        472860 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T10:35:08.975335+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-540-immkv-r3-cold-postfix-1795775708936080007-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 42481\nuser_usec 27999\nsystem_usec 14482\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12693504",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12693504",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1149886024946598,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-540-immkv-r3-cold-postfix-1795775708936080007-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795775709215012987
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 683.81,
+        "system_seconds": 41.18,
+        "wall_seconds": 1468.1,
+        "max_child_rss_kib": 682192,
+        "file_system_inputs": 53852120,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 724.9899999999999,
+        "cgroup_memory_peak_bytes": 5346287616
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-hdd-568-immkv-r1-cold-postfix",
+      "media": "hdd",
+      "fields": 568,
+      "engine": "immkv",
+      "round": "r1",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 41558596,
+            "usage_usec": 773607907,
+            "user_usec": 732049310
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795780210857281107,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 5499441152,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/mnt/data6t/tian/immkv_test_hdd/gnomad/immkv",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-568-immkv-r1-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_568_fields/fields568.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 568,
+        "finished": {
+          "monotonic_ns": 1154386266301644,
+          "time_ns": 1795780209456624766
+        },
+        "media": "hdd",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-568-immkv-r1-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1152916991040112,
+          "time_ns": 1795778740181360689
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795778740007963597,
+        "request": "drop\\n",
+        "requested_ns": 1795778739794078738,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.2132059179712087,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T11:25:40.007626+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85153784 kB\nMemAvailable:   86161644 kB\nBuffers:            4404 kB\nCached:          2100648 kB\nSwapCached:           16 kB\nActive:          9432368 kB\nInactive:         570780 kB\nActive(anon):    8090196 kB\nInactive(anon):   193700 kB\nActive(file):    1342172 kB\nInactive(file):   377080 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388588 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               212 kB\nWriteback:             0 kB\nAnonPages:       7897148 kB\nMapped:          2046752 kB\nShmem:            386656 kB\nKReclaimable:     150976 kB\nSlab:             536392 kB\nSReclaimable:     150976 kB\nSUnreclaim:       385416 kB\nKernelStack:       29264 kB\nPageTables:       145440 kB\nSecPageTables:      5740 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26661568 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108272 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        472860 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        69451092 kB\nMemAvailable:   86117476 kB\nBuffers:           28624 kB\nCached:         17735812 kB\nSwapCached:           16 kB\nActive:          9585212 kB\nInactive:       16075368 kB\nActive(anon):    8089104 kB\nInactive(anon):   193700 kB\nActive(file):    1496108 kB\nInactive(file): 15881668 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388588 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              2276 kB\nWriteback:             0 kB\nAnonPages:       7896276 kB\nMapped:          2046856 kB\nShmem:            386656 kB\nKReclaimable:     150976 kB\nSlab:             536392 kB\nSReclaimable:     150976 kB\nSUnreclaim:       385416 kB\nKernelStack:       29184 kB\nPageTables:       145424 kB\nSecPageTables:      5740 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26661568 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108256 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:  11149312 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        472860 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T11:25:39.794236+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-568-immkv-r1-cold-postfix-1795778739761286202-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 42809\nuser_usec 32853\nsystem_usec 9955\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12218368",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12218368",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1152916906784491,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-568-immkv-r1-cold-postfix-1795778739761286202-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795778740096835868
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 731.97,
+        "system_seconds": 41.55,
+        "wall_seconds": 1469.31,
+        "max_child_rss_kib": 858900,
+        "file_system_inputs": 53852168,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 773.52,
+        "cgroup_memory_peak_bytes": 5499441152
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-hdd-568-immkv-r2-cold-postfix",
+      "media": "hdd",
+      "fields": 568,
+      "engine": "immkv",
+      "round": "r2",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 41594926,
+            "usage_usec": 780971857,
+            "user_usec": 739376931
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795781682423485386,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 5522644992,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/mnt/data6t/tian/immkv_test_hdd/gnomad/immkv",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-568-immkv-r2-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_568_fields/fields568.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 568,
+        "finished": {
+          "monotonic_ns": 1155857820652033,
+          "time_ns": 1795781681010975796
+        },
+        "media": "hdd",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-568-immkv-r2-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1154388051442374,
+          "time_ns": 1795780211241762500
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795780211072380102,
+        "request": "drop\\n",
+        "requested_ns": 1795780210910564518,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.16115577309392393,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T11:50:11.072046+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85241456 kB\nMemAvailable:   86248368 kB\nBuffers:            4396 kB\nCached:          2100240 kB\nSwapCached:           16 kB\nActive:          9429960 kB\nInactive:         570784 kB\nActive(anon):    8088632 kB\nInactive(anon):   193700 kB\nActive(file):    1341328 kB\nInactive(file):   377084 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388588 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               152 kB\nWriteback:            24 kB\nAnonPages:       7896376 kB\nMapped:          2046896 kB\nShmem:            386248 kB\nKReclaimable:     150756 kB\nSlab:             536084 kB\nSReclaimable:     150756 kB\nSUnreclaim:       385328 kB\nKernelStack:       29136 kB\nPageTables:       145292 kB\nSecPageTables:      5740 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26658908 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108224 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        472860 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        80516156 kB\nMemAvailable:   86239360 kB\nBuffers:           29072 kB\nCached:          6792396 kB\nSwapCached:           16 kB\nActive:          9565088 kB\nInactive:        5150960 kB\nActive(anon):    8087644 kB\nInactive(anon):   193700 kB\nActive(file):    1477444 kB\nInactive(file):  4957260 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388588 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              2644 kB\nWriteback:             0 kB\nAnonPages:       7895504 kB\nMapped:          2046496 kB\nShmem:            386316 kB\nKReclaimable:     150756 kB\nSlab:             536084 kB\nSReclaimable:     150756 kB\nSUnreclaim:       385328 kB\nKernelStack:       29104 kB\nPageTables:       145276 kB\nSecPageTables:      5740 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26658908 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108224 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:   2705408 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        472860 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T11:50:10.910723+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-568-immkv-r2-cold-postfix-1795780210874467068-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 41567\nuser_usec 30680\nsystem_usec 10886\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12767232",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12767232",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1154387965799695,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-568-immkv-r2-cold-postfix-1795780210874467068-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795780211155529328
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 739.29,
+        "system_seconds": 41.58,
+        "wall_seconds": 1469.8,
+        "max_child_rss_kib": 863952,
+        "file_system_inputs": 53852168,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 780.87,
+        "cgroup_memory_peak_bytes": 5522644992
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-hdd-568-immkv-r3-cold-postfix",
+      "media": "hdd",
+      "fields": 568,
+      "engine": "immkv",
+      "round": "r3",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 41724618,
+            "usage_usec": 776199621,
+            "user_usec": 734475004
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795783154377679083,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 5497843712,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/mnt/data6t/tian/immkv_test_hdd/test/568_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/mnt/data6t/tian/immkv_test_hdd/gnomad/immkv",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-568-immkv-r3-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_568_fields/fields568.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 568,
+        "finished": {
+          "monotonic_ns": 1157329758184429,
+          "time_ns": 1795783152948507600
+        },
+        "media": "hdd",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-hdd-568-immkv-r3-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1155859592525419,
+          "time_ns": 1795781682782846136
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795781682624678466,
+        "request": "drop\\n",
+        "requested_ns": 1795781682472475161,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.15149071509949863,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T12:14:42.624323+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85228044 kB\nMemAvailable:   86234848 kB\nBuffers:            4384 kB\nCached:          2100824 kB\nSwapCached:           16 kB\nActive:          9440956 kB\nInactive:         570800 kB\nActive(anon):    8099344 kB\nInactive(anon):   193700 kB\nActive(file):    1341612 kB\nInactive(file):   377100 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388588 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               368 kB\nWriteback:            32 kB\nAnonPages:       7906904 kB\nMapped:          2047180 kB\nShmem:            386520 kB\nKReclaimable:     149940 kB\nSlab:             535044 kB\nSReclaimable:     149940 kB\nSUnreclaim:       385104 kB\nKernelStack:       29248 kB\nPageTables:       145924 kB\nSecPageTables:      5748 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26663724 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108256 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        472860 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        80509924 kB\nMemAvailable:   86233284 kB\nBuffers:           29720 kB\nCached:          6791796 kB\nSwapCached:           16 kB\nActive:          9575696 kB\nInactive:        5151884 kB\nActive(anon):    8098788 kB\nInactive(anon):   193700 kB\nActive(file):    1476908 kB\nInactive(file):  4958184 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388588 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              2612 kB\nWriteback:             0 kB\nAnonPages:       7906108 kB\nMapped:          2047328 kB\nShmem:            386384 kB\nKReclaimable:     150296 kB\nSlab:             535496 kB\nSReclaimable:     150296 kB\nSUnreclaim:       385200 kB\nKernelStack:       29232 kB\nPageTables:       146216 kB\nSecPageTables:      5748 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26663724 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108256 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:   2705408 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        472860 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      754608 kB\nDirectMap2M:    50399232 kB\nDirectMap1G:    48234496 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T12:14:42.472658+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-568-immkv-r3-cold-postfix-1795781682439502284-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 38219\nuser_usec 24842\nsystem_usec 13376\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12144640",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12144640",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1155859509948423,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-hdd-568-immkv-r3-cold-postfix-1795781682439502284-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795781682699683149
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 734.39,
+        "system_seconds": 41.72,
+        "wall_seconds": 1470.2,
+        "max_child_rss_kib": 866020,
+        "file_system_inputs": 53852224,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 776.11,
+        "cgroup_memory_peak_bytes": 5497843712
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-nvme-17-immkv-r1-cold-postfix",
+      "media": "nvme",
+      "fields": 17,
+      "engine": "immkv",
+      "round": "r1",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 3082591,
+            "usage_usec": 36026288,
+            "user_usec": 32943697
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795768309352654178,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 4759334912,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/home/tian/immkv_test_nvme/test/17_fields/lib17",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-17-immkv-r1-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 17,
+        "finished": {
+          "monotonic_ns": 1142484740842753,
+          "time_ns": 1795768307931165935
+        },
+        "media": "nvme",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-17-immkv-r1-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1142473097420018,
+          "time_ns": 1795768296287740334
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795768296114060905,
+        "request": "drop\\n",
+        "requested_ns": 1795768295934376610,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.17899284604936838,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T08:31:36.113712+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85276284 kB\nMemAvailable:   86288700 kB\nBuffers:            4948 kB\nCached:          2099652 kB\nSwapCached:           20 kB\nActive:          9382116 kB\nInactive:         571212 kB\nActive(anon):    8041276 kB\nInactive(anon):   193776 kB\nActive(file):    1340840 kB\nInactive(file):   377436 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:                 0 kB\nWriteback:             0 kB\nAnonPages:       7848964 kB\nMapped:          2046164 kB\nShmem:            386368 kB\nKReclaimable:     162040 kB\nSlab:             550340 kB\nSReclaimable:     162040 kB\nSUnreclaim:       388300 kB\nKernelStack:       29504 kB\nPageTables:       145004 kB\nSecPageTables:      5564 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26553404 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108536 kB\nVmallocChunk:          0 kB\nPercpu:            37696 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        451624 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      721840 kB\nDirectMap2M:    47286272 kB\nDirectMap1G:    51380224 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        80272768 kB\nMemAvailable:   86228036 kB\nBuffers:           31556 kB\nCached:          7014064 kB\nSwapCached:           20 kB\nActive:          9514928 kB\nInactive:        5381060 kB\nActive(anon):    8042716 kB\nInactive(anon):   193776 kB\nActive(file):    1472212 kB\nInactive(file):  5187284 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              3576 kB\nWriteback:             0 kB\nAnonPages:       7851092 kB\nMapped:          2045700 kB\nShmem:            386168 kB\nKReclaimable:     165300 kB\nSlab:             553664 kB\nSReclaimable:     165300 kB\nSUnreclaim:       388364 kB\nKernelStack:       29504 kB\nPageTables:       144652 kB\nSecPageTables:      5564 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26553404 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108536 kB\nVmallocChunk:          0 kB\nPercpu:            37696 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        451624 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      721840 kB\nDirectMap2M:    47286272 kB\nDirectMap1G:    51380224 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T08:31:35.934546+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-17-immkv-r1-cold-postfix-1795768295896711364-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 40592\nuser_usec 28415\nsystem_usec 12177\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12193792",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12193792",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1142473007209179,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-17-immkv-r1-cold-postfix-1795768295896711364-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795768296196888392
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 32.88,
+        "system_seconds": 3.05,
+        "wall_seconds": 11.68,
+        "max_child_rss_kib": 260052,
+        "file_system_inputs": 20427760,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 35.93,
+        "cgroup_memory_peak_bytes": 4759334912
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-nvme-17-immkv-r2-cold-postfix",
+      "media": "nvme",
+      "fields": 17,
+      "engine": "immkv",
+      "round": "r2",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 3005472,
+            "usage_usec": 34491172,
+            "user_usec": 31485700
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795768322403670320,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 4767973376,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/home/tian/immkv_test_nvme/test/17_fields/lib17",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-17-immkv-r2-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 17,
+        "finished": {
+          "monotonic_ns": 1142497781526037,
+          "time_ns": 1795768320971849039
+        },
+        "media": "nvme",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-17-immkv-r2-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1142486546099746,
+          "time_ns": 1795768309736419852
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795768309574741100,
+        "request": "drop\\n",
+        "requested_ns": 1795768309406471136,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.1676723649725318,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T08:31:49.574474+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85208460 kB\nMemAvailable:   86218948 kB\nBuffers:            4808 kB\nCached:          2099568 kB\nSwapCached:           20 kB\nActive:          9411676 kB\nInactive:         571468 kB\nActive(anon):    8070932 kB\nInactive(anon):   193776 kB\nActive(file):    1340744 kB\nInactive(file):   377692 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:                 0 kB\nWriteback:             0 kB\nAnonPages:       7878596 kB\nMapped:          2046036 kB\nShmem:            386368 kB\nKReclaimable:     157864 kB\nSlab:             545636 kB\nSReclaimable:     157864 kB\nSUnreclaim:       387772 kB\nKernelStack:       29584 kB\nPageTables:       146104 kB\nSecPageTables:      5564 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26590276 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108552 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        449576 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      721840 kB\nDirectMap2M:    47286272 kB\nDirectMap1G:    51380224 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        80661644 kB\nMemAvailable:   86202524 kB\nBuffers:           26248 kB\nCached:          6608988 kB\nSwapCached:           20 kB\nActive:          9544524 kB\nInactive:        4972452 kB\nActive(anon):    8074492 kB\nInactive(anon):   193776 kB\nActive(file):    1470032 kB\nInactive(file):  4778676 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              4800 kB\nWriteback:             0 kB\nAnonPages:       7882488 kB\nMapped:          2046076 kB\nShmem:            386524 kB\nKReclaimable:     158100 kB\nSlab:             545936 kB\nSReclaimable:     158100 kB\nSUnreclaim:       387836 kB\nKernelStack:       29616 kB\nPageTables:       145952 kB\nSecPageTables:      5564 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26590276 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108552 kB\nVmallocChunk:          0 kB\nPercpu:            37696 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        449576 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      721840 kB\nDirectMap2M:    47286272 kB\nDirectMap1G:    51380224 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T08:31:49.406632+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-17-immkv-r2-cold-postfix-1795768309372062232-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 36400\nuser_usec 22400\nsystem_usec 14000\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12185600",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12185600",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1142486464720647,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-17-immkv-r2-cold-postfix-1795768309372062232-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795768309654722641
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 31.42,
+        "system_seconds": 2.98,
+        "wall_seconds": 11.27,
+        "max_child_rss_kib": 268964,
+        "file_system_inputs": 20427544,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 34.4,
+        "cgroup_memory_peak_bytes": 4767973376
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-nvme-17-immkv-r3-cold-postfix",
+      "media": "nvme",
+      "fields": 17,
+      "engine": "immkv",
+      "round": "r3",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 3059829,
+            "usage_usec": 35223129,
+            "user_usec": 32163299
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795768335733552326,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 4787634176,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/home/tian/immkv_test_nvme/test/17_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/home/tian/immkv_test_nvme/test/17_fields/lib17",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-17-immkv-r3-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_17_fields/fields17.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 17,
+        "finished": {
+          "monotonic_ns": 1142511114346789,
+          "time_ns": 1795768334304670101
+        },
+        "media": "nvme",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-17-immkv-r3-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1142499581375984,
+          "time_ns": 1795768322771697543
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795768322608167182,
+        "request": "drop\\n",
+        "requested_ns": 1795768322452448282,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.15504122711718082,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T08:32:02.607818+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85289476 kB\nMemAvailable:   86298940 kB\nBuffers:            4532 kB\nCached:          2100124 kB\nSwapCached:           20 kB\nActive:          9383176 kB\nInactive:         571496 kB\nActive(anon):    8042316 kB\nInactive(anon):   193776 kB\nActive(file):    1340860 kB\nInactive(file):   377720 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               296 kB\nWriteback:            72 kB\nAnonPages:       7850108 kB\nMapped:          2046036 kB\nShmem:            386096 kB\nKReclaimable:     155524 kB\nSlab:             543084 kB\nSReclaimable:     155524 kB\nSUnreclaim:       387560 kB\nKernelStack:       29536 kB\nPageTables:       144732 kB\nSecPageTables:      5564 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26554868 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108488 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        451624 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      723888 kB\nDirectMap2M:    47284224 kB\nDirectMap1G:    51380224 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        80740908 kB\nMemAvailable:   86248700 kB\nBuffers:           14236 kB\nCached:          6588816 kB\nSwapCached:           20 kB\nActive:          9506524 kB\nInactive:        4946100 kB\nActive(anon):    8041944 kB\nInactive(anon):   193776 kB\nActive(file):    1464580 kB\nInactive(file):  4752324 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              4056 kB\nWriteback:             0 kB\nAnonPages:       7849896 kB\nMapped:          2045932 kB\nShmem:            386164 kB\nKReclaimable:     155532 kB\nSlab:             543092 kB\nSReclaimable:     155532 kB\nSUnreclaim:       387560 kB\nKernelStack:       29552 kB\nPageTables:       144740 kB\nSecPageTables:      5564 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26554868 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108488 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        451624 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      723888 kB\nDirectMap2M:    47284224 kB\nDirectMap1G:    51380224 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T08:32:02.452607+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-17-immkv-r3-cold-postfix-1795768322420091305-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 36421\nuser_usec 27851\nsystem_usec 8569\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12464128",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12464128",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1142499495861620,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-17-immkv-r3-cold-postfix-1795768322420091305-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795768322685921105
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 32.11,
+        "system_seconds": 3.03,
+        "wall_seconds": 11.57,
+        "max_child_rss_kib": 287864,
+        "file_system_inputs": 20427816,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 35.14,
+        "cgroup_memory_peak_bytes": 4787634176
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-nvme-540-immkv-r1-cold-postfix",
+      "media": "nvme",
+      "fields": 540,
+      "engine": "immkv",
+      "round": "r1",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 14897906,
+            "usage_usec": 669772170,
+            "user_usec": 654874265
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795769158538670199,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 6945189888,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/home/tian/immkv_test_nvme/test/540_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/home/tian/immkv_test_nvme/gnomad/immkv",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-540-immkv-r1-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_540_fields/fields540.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 540,
+        "finished": {
+          "monotonic_ns": 1143333716868814,
+          "time_ns": 1795769156907192557
+        },
+        "media": "nvme",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-540-immkv-r1-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1143159750008743,
+          "time_ns": 1795768982940330572
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795768982778405976,
+        "request": "drop\\n",
+        "requested_ns": 1795768982508392152,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.269258433021605,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T08:43:02.778040+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85195708 kB\nMemAvailable:   86204944 kB\nBuffers:            4488 kB\nCached:          2099856 kB\nSwapCached:           20 kB\nActive:          9351492 kB\nInactive:         570956 kB\nActive(anon):    8010648 kB\nInactive(anon):   193776 kB\nActive(file):    1340844 kB\nInactive(file):   377180 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               132 kB\nWriteback:             0 kB\nAnonPages:       7818352 kB\nMapped:          2045956 kB\nShmem:            386364 kB\nKReclaimable:     156184 kB\nSlab:             543336 kB\nSReclaimable:     156184 kB\nSUnreclaim:       387152 kB\nKernelStack:       29312 kB\nPageTables:       144912 kB\nSecPageTables:      5564 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26556548 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108296 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        451624 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      723888 kB\nDirectMap2M:    47284224 kB\nDirectMap1G:    51380224 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        70606592 kB\nMemAvailable:   86164128 kB\nBuffers:           24832 kB\nCached:         16622496 kB\nSwapCached:           20 kB\nActive:          9489232 kB\nInactive:       14978348 kB\nActive(anon):    8012932 kB\nInactive(anon):   193776 kB\nActive(file):    1476300 kB\nInactive(file): 14784572 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              2820 kB\nWriteback:             0 kB\nAnonPages:       7820524 kB\nMapped:          2045628 kB\nShmem:            386492 kB\nKReclaimable:     167088 kB\nSlab:             554376 kB\nSReclaimable:     167088 kB\nSUnreclaim:       387288 kB\nKernelStack:       29296 kB\nPageTables:       144588 kB\nSecPageTables:      5564 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26556548 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108296 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        451624 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      723888 kB\nDirectMap2M:    47284224 kB\nDirectMap1G:    51380224 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T08:43:02.508582+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-540-immkv-r1-cold-postfix-1795768982470458019-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 37934\nuser_usec 21812\nsystem_usec 16121\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12455936",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12455936",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1143159665581898,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-540-immkv-r1-cold-postfix-1795768982470458019-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795768982855315664
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 654.8,
+        "system_seconds": 14.88,
+        "wall_seconds": 174.0,
+        "max_child_rss_kib": 2338604,
+        "file_system_inputs": 53638576,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 669.68,
+        "cgroup_memory_peak_bytes": 6945189888
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-nvme-540-immkv-r2-cold-postfix",
+      "media": "nvme",
+      "fields": 540,
+      "engine": "immkv",
+      "round": "r2",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 14698973,
+            "usage_usec": 660213150,
+            "user_usec": 645514178
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795769331560725009,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 6948024320,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/home/tian/immkv_test_nvme/test/540_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/home/tian/immkv_test_nvme/gnomad/immkv",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-540-immkv-r2-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_540_fields/fields540.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 540,
+        "finished": {
+          "monotonic_ns": 1143506941300600,
+          "time_ns": 1795769330131623601
+        },
+        "media": "nvme",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-540-immkv-r2-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1143336099652884,
+          "time_ns": 1795769159289966929
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795769158985158887,
+        "request": "drop\\n",
+        "requested_ns": 1795769158727161421,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.257433048915118,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T08:45:58.984821+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85314332 kB\nMemAvailable:   86323356 kB\nBuffers:            4544 kB\nCached:          2097992 kB\nSwapCached:           20 kB\nActive:          9361628 kB\nInactive:         571192 kB\nActive(anon):    8020800 kB\nInactive(anon):   193776 kB\nActive(file):    1340828 kB\nInactive(file):   377416 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               172 kB\nWriteback:             0 kB\nAnonPages:       7829976 kB\nMapped:          2044412 kB\nShmem:            384812 kB\nKReclaimable:     155320 kB\nSlab:             542408 kB\nSReclaimable:     155320 kB\nSUnreclaim:       387088 kB\nKernelStack:       29456 kB\nPageTables:       145108 kB\nSecPageTables:      5564 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26540076 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108360 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        457124 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      723888 kB\nDirectMap2M:    47284224 kB\nDirectMap1G:    51380224 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        80681736 kB\nMemAvailable:   86281016 kB\nBuffers:           25700 kB\nCached:          6667712 kB\nSwapCached:           20 kB\nActive:          9493448 kB\nInactive:        5029168 kB\nActive(anon):    8020456 kB\nInactive(anon):   193776 kB\nActive(file):    1472992 kB\nInactive(file):  4835392 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              5132 kB\nWriteback:             0 kB\nAnonPages:       7829748 kB\nMapped:          2044240 kB\nShmem:            384812 kB\nKReclaimable:     155552 kB\nSlab:             542640 kB\nSReclaimable:     155552 kB\nSUnreclaim:       387088 kB\nKernelStack:       29248 kB\nPageTables:       144828 kB\nSecPageTables:      5564 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26540076 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108280 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        457124 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      723888 kB\nDirectMap2M:    47284224 kB\nDirectMap1G:    51380224 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T08:45:58.727265+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-540-immkv-r2-cold-postfix-1795769158688495370-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 44321\nuser_usec 31226\nsystem_usec 13094\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12709888",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12812288",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1143335884087022,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-540-immkv-r2-cold-postfix-1795769158688495370-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795769159067840772
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 645.44,
+        "system_seconds": 14.67,
+        "wall_seconds": 171.01,
+        "max_child_rss_kib": 2340680,
+        "file_system_inputs": 53638600,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 660.11,
+        "cgroup_memory_peak_bytes": 6948024320
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-nvme-540-immkv-r3-cold-postfix",
+      "media": "nvme",
+      "fields": 540,
+      "engine": "immkv",
+      "round": "r3",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 14422144,
+            "usage_usec": 658743609,
+            "user_usec": 644321465
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795769504145892947,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 6947954688,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/home/tian/immkv_test_nvme/test/540_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/home/tian/immkv_test_nvme/gnomad/immkv",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-540-immkv-r3-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_540_fields/fields540.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 540,
+        "finished": {
+          "monotonic_ns": 1143679506182203,
+          "time_ns": 1795769502696505285
+        },
+        "media": "nvme",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-540-immkv-r3-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1143508757008071,
+          "time_ns": 1795769331947322245
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795769331789388901,
+        "request": "drop\\n",
+        "requested_ns": 1795769331612805522,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.17593791987746954,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T08:48:51.789075+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85221708 kB\nMemAvailable:   86231016 kB\nBuffers:            4536 kB\nCached:          2099052 kB\nSwapCached:           20 kB\nActive:          9433576 kB\nInactive:         571512 kB\nActive(anon):    8092632 kB\nInactive(anon):   193776 kB\nActive(file):    1340944 kB\nInactive(file):   377736 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               276 kB\nWriteback:           164 kB\nAnonPages:       7901820 kB\nMapped:          2044228 kB\nShmem:            385300 kB\nKReclaimable:     155016 kB\nSlab:             541948 kB\nSReclaimable:     155016 kB\nSUnreclaim:       386932 kB\nKernelStack:       29376 kB\nPageTables:       146364 kB\nSecPageTables:      5564 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26631800 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108312 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        462944 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      740272 kB\nDirectMap2M:    48316416 kB\nDirectMap1G:    50331648 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        80552080 kB\nMemAvailable:   86139652 kB\nBuffers:           23628 kB\nCached:          6668744 kB\nSwapCached:           20 kB\nActive:          9571288 kB\nInactive:        5021852 kB\nActive(anon):    8102524 kB\nInactive(anon):   193776 kB\nActive(file):    1468764 kB\nInactive(file):  4828076 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              2516 kB\nWriteback:             0 kB\nAnonPages:       7901384 kB\nMapped:          2044064 kB\nShmem:            395512 kB\nKReclaimable:     155224 kB\nSlab:             542156 kB\nSReclaimable:     155224 kB\nSUnreclaim:       386932 kB\nKernelStack:       29392 kB\nPageTables:       146096 kB\nSecPageTables:      5564 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26631800 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108312 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        461220 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      740272 kB\nDirectMap2M:    48316416 kB\nDirectMap1G:    50331648 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T08:48:51.612966+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-540-immkv-r3-cold-postfix-1795769331576054692-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 40044\nuser_usec 29032\nsystem_usec 11012\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12546048",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12546048",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1143508676842574,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-540-immkv-r3-cold-postfix-1795769331576054692-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795769331866457358
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 644.29,
+        "system_seconds": 14.42,
+        "wall_seconds": 170.79,
+        "max_child_rss_kib": 2341140,
+        "file_system_inputs": 53638600,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 658.7099999999999,
+        "cgroup_memory_peak_bytes": 6947954688
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-nvme-568-immkv-r1-cold-postfix",
+      "media": "nvme",
+      "fields": 568,
+      "engine": "immkv",
+      "round": "r1",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 15207826,
+            "usage_usec": 729794557,
+            "user_usec": 714586731
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795770416442217928,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 7679475712,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/home/tian/immkv_test_nvme/test/568_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/home/tian/immkv_test_nvme/gnomad/immkv",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-568-immkv-r1-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_568_fields/fields568.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 568,
+        "finished": {
+          "monotonic_ns": 1144591847889727,
+          "time_ns": 1795770415038213631
+        },
+        "media": "nvme",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-568-immkv-r1-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1144400600121902,
+          "time_ns": 1795770223790441056
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795770223618365620,
+        "request": "drop\\n",
+        "requested_ns": 1795770223360007988,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.25424277991987765,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T09:03:43.615255+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85069688 kB\nMemAvailable:   86077624 kB\nBuffers:            4644 kB\nCached:          2099512 kB\nSwapCached:           20 kB\nActive:          9445912 kB\nInactive:         570944 kB\nActive(anon):    8104996 kB\nInactive(anon):   193776 kB\nActive(file):    1340916 kB\nInactive(file):   377168 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              1104 kB\nWriteback:             0 kB\nAnonPages:       7912592 kB\nMapped:          2045988 kB\nShmem:            386368 kB\nKReclaimable:     153460 kB\nSlab:             539984 kB\nSReclaimable:     153460 kB\nSUnreclaim:       386524 kB\nKernelStack:       29680 kB\nPageTables:       145188 kB\nSecPageTables:      5568 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26661608 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108696 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        468764 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      752560 kB\nDirectMap2M:    49352704 kB\nDirectMap1G:    49283072 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        71233448 kB\nMemAvailable:   86051244 kB\nBuffers:           37108 kB\nCached:         15877260 kB\nSwapCached:           20 kB\nActive:          9585012 kB\nInactive:       14240460 kB\nActive(anon):    8103788 kB\nInactive(anon):   193776 kB\nActive(file):    1481224 kB\nInactive(file): 14046684 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              3772 kB\nWriteback:             0 kB\nAnonPages:       7911572 kB\nMapped:          2045988 kB\nShmem:            386448 kB\nKReclaimable:     153536 kB\nSlab:             540092 kB\nSReclaimable:     153536 kB\nSUnreclaim:       386556 kB\nKernelStack:       29696 kB\nPageTables:       144924 kB\nSecPageTables:      5568 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26661608 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108680 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:   7634944 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        460896 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      752560 kB\nDirectMap2M:    49352704 kB\nDirectMap1G:    49283072 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T09:03:43.360470+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-568-immkv-r1-cold-postfix-1795770223325123832-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 41441\nuser_usec 32767\nsystem_usec 8673\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12386304",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12386304",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1144400513237157,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-568-immkv-r1-cold-postfix-1795770223325123832-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795770223702945246
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 714.52,
+        "system_seconds": 15.19,
+        "wall_seconds": 191.29,
+        "max_child_rss_kib": 3053680,
+        "file_system_inputs": 53638792,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 729.71,
+        "cgroup_memory_peak_bytes": 7679475712
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-nvme-568-immkv-r2-cold-postfix",
+      "media": "nvme",
+      "fields": 568,
+      "engine": "immkv",
+      "round": "r2",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 15709599,
+            "usage_usec": 735013786,
+            "user_usec": 719304188
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795770611412793451,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 8007254016,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/home/tian/immkv_test_nvme/test/568_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/home/tian/immkv_test_nvme/gnomad/immkv",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-568-immkv-r2-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_568_fields/fields568.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 568,
+        "finished": {
+          "monotonic_ns": 1144786597197145,
+          "time_ns": 1795770609787520377
+        },
+        "media": "nvme",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-568-immkv-r2-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1144593651396698,
+          "time_ns": 1795770416841716834
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795770416674171748,
+        "request": "drop\\n",
+        "requested_ns": 1795770416499051173,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.17457493883557618,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T09:06:56.673843+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85192932 kB\nMemAvailable:   86200888 kB\nBuffers:            4456 kB\nCached:          2100116 kB\nSwapCached:           20 kB\nActive:          9463108 kB\nInactive:         571300 kB\nActive(anon):    8122336 kB\nInactive(anon):   193776 kB\nActive(file):    1340772 kB\nInactive(file):   377524 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:               336 kB\nWriteback:            36 kB\nAnonPages:       7930036 kB\nMapped:          2045648 kB\nShmem:            386300 kB\nKReclaimable:     153080 kB\nSlab:             539540 kB\nSReclaimable:     153080 kB\nSUnreclaim:       386460 kB\nKernelStack:       29376 kB\nPageTables:       146416 kB\nSecPageTables:      5568 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26689032 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108360 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        470812 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      752560 kB\nDirectMap2M:    49352704 kB\nDirectMap1G:    49283072 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        80585344 kB\nMemAvailable:   86168304 kB\nBuffers:           23024 kB\nCached:          6656556 kB\nSwapCached:           20 kB\nActive:          9591524 kB\nInactive:        5019924 kB\nActive(anon):    8124384 kB\nInactive(anon):   193776 kB\nActive(file):    1467140 kB\nInactive(file):  4826148 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              2516 kB\nWriteback:             0 kB\nAnonPages:       7932220 kB\nMapped:          2046080 kB\nShmem:            386300 kB\nKReclaimable:     153104 kB\nSlab:             539564 kB\nSReclaimable:     153104 kB\nSUnreclaim:       386460 kB\nKernelStack:       29328 kB\nPageTables:       146644 kB\nSecPageTables:      5568 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26689032 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108360 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        468764 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      752560 kB\nDirectMap2M:    49352704 kB\nDirectMap1G:    49283072 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T09:06:56.499155+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-568-immkv-r2-cold-postfix-1795770416460278851-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 41094\nuser_usec 30821\nsystem_usec 10273\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12120064",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12120064",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1144593565615060,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-568-immkv-r2-cold-postfix-1795770416460278851-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795770416755688907
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 719.24,
+        "system_seconds": 15.69,
+        "wall_seconds": 192.98,
+        "max_child_rss_kib": 3373044,
+        "file_system_inputs": 53638800,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 734.9300000000001,
+        "cgroup_memory_peak_bytes": 8007254016
+      },
+      "accepted_timing_sample": true
+    },
+    {
+      "record": "timing-nvme-568-immkv-r3-cold-postfix",
+      "media": "nvme",
+      "fields": 568,
+      "engine": "immkv",
+      "round": "r3",
+      "status": {
+        "cgroup_delta": {
+          "cpu.stat": {
+            "core_sched.force_idle_usec": 0,
+            "nice_usec": 0,
+            "system_usec": 15559034,
+            "usage_usec": 731778130,
+            "user_usec": 716219095
+          },
+          "memory.events": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          },
+          "memory.events.local": {
+            "high": 0,
+            "low": 0,
+            "max": 0,
+            "oom": 0,
+            "oom_group_kill": 0,
+            "oom_kill": 0,
+            "sock_throttled": 0
+          }
+        },
+        "cgroup_io_available": false,
+        "cgroup_io_unavailable_reason": "io controller not delegated; use GNU time File system inputs; no cgroup byte delta available",
+        "counter_baseline_available": true,
+        "counters_source": "memory-observer.json",
+        "exit137_is_not_oom_evidence": true,
+        "exit_code": 0,
+        "final_workload_handshake": true,
+        "finished_ns": 1795770806614712863,
+        "journal_sources": [
+          "journals/attempt-001/user-1.log",
+          "journals/attempt-001/user-2.log",
+          "journals/attempt-001/user-3.log",
+          "journals/attempt-001/system-1.log",
+          "journals/attempt-001/system-2.log",
+          "journals/attempt-001/system-3.log"
+        ],
+        "memory_peak_bytes": 7693586432,
+        "oom_from_counter_delta": false,
+        "oom_from_unit_journal": false,
+        "oom_kill_detected": false,
+        "scope_exit_code": 0,
+        "status": "ok",
+        "timeout_detected": false,
+        "timing_sample": true
+      },
+      "cell": {
+        "base_commit": "904948f0db6f59d94e8a69d97d300fba82aae24b",
+        "command": [
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/bin/annotate",
+          "-in",
+          "/home/tian/immkv_test_nvme/test/568_fields/query/hg001.decomp.vcf.gz",
+          "-lib",
+          "/home/tian/immkv_test_nvme/gnomad/immkv",
+          "-out",
+          "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-568-immkv-r3-cold-postfix/output.vcf.gz",
+          "-fields",
+          "/home/tian/projects/immkv/test/vs_echtvar_hg19_gnomad_genomes_568_fields/fields568.tsv",
+          "-threads",
+          "4",
+          "-batch",
+          "4096"
+        ],
+        "compressed_output": true,
+        "engine": "immkv",
+        "exit_code": 0,
+        "fields": 568,
+        "finished": {
+          "monotonic_ns": 1144981854893561,
+          "time_ns": 1795770805045217254
+        },
+        "media": "nvme",
+        "scratch": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/runs/timing-nvme-568-immkv-r3-cold-postfix",
+        "sources_manifest_sha256": "9775500f8502e62d9c0d7fa02453de8e9fce696544a6a9f524b1ab4752d97944",
+        "started": {
+          "monotonic_ns": 1144788743522151,
+          "time_ns": 1795770611933840995
+        },
+        "status": "ok",
+        "timing_sample": true
+      },
+      "cache_drop": {
+        "recorded_ns": 1795770611718709710,
+        "request": "drop\\n",
+        "requested_ns": 1795770611535417804,
+        "response": {
+          "command": "os.sync(); write 3 to /proc/sys/vm/drop_caches",
+          "effective_uid": 0,
+          "elapsed_seconds": 0.18268690607510507,
+          "exit_status": 0,
+          "finished_utc": "2026-11-27T09:10:11.718339+00:00",
+          "meminfo_after": "MemTotal:       96578668 kB\nMemFree:        85211928 kB\nMemAvailable:   86219748 kB\nBuffers:            4432 kB\nCached:          2099452 kB\nSwapCached:           20 kB\nActive:          9427000 kB\nInactive:         571100 kB\nActive(anon):    8086020 kB\nInactive(anon):   193776 kB\nActive(file):    1340980 kB\nInactive(file):   377324 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:                12 kB\nWriteback:             0 kB\nAnonPages:       7893920 kB\nMapped:          2046016 kB\nShmem:            385956 kB\nKReclaimable:     152792 kB\nSlab:             539252 kB\nSReclaimable:     152792 kB\nSUnreclaim:       386460 kB\nKernelStack:       29280 kB\nPageTables:       145324 kB\nSecPageTables:      5568 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26651516 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108232 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        470812 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      752560 kB\nDirectMap2M:    49352704 kB\nDirectMap1G:    49283072 kB\n",
+          "meminfo_before": "MemTotal:       96578668 kB\nMemFree:        80630880 kB\nMemAvailable:   86214928 kB\nBuffers:           22360 kB\nCached:          6658376 kB\nSwapCached:           20 kB\nActive:          9552764 kB\nInactive:        5020796 kB\nActive(anon):    8085252 kB\nInactive(anon):   193776 kB\nActive(file):    1467512 kB\nInactive(file):  4827020 kB\nUnevictable:         136 kB\nMlocked:             128 kB\nSwapTotal:       8388604 kB\nSwapFree:        8388584 kB\nZswap:                 0 kB\nZswapped:              0 kB\nDirty:              2644 kB\nWriteback:             0 kB\nAnonPages:       7893332 kB\nMapped:          2045952 kB\nShmem:            386092 kB\nKReclaimable:     152792 kB\nSlab:             539252 kB\nSReclaimable:     152792 kB\nSUnreclaim:       386460 kB\nKernelStack:       29184 kB\nPageTables:       145012 kB\nSecPageTables:      5568 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:    56677936 kB\nCommitted_AS:   26651516 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:      108232 kB\nVmallocChunk:          0 kB\nPercpu:            37440 kB\nHardwareCorrupted:     0 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:      4096 kB\nFilePmdMapped:         0 kB\nCmaTotal:              0 kB\nCmaFree:         6826304 kB\nUnaccepted:            0 kB\nBalloon:               0 kB\nGPUActive:        470812 kB\nGPUReclaim:            0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      752560 kB\nDirectMap2M:    49352704 kB\nDirectMap1G:    49283072 kB\n",
+          "peer_uid": 1000,
+          "started_utc": "2026-11-27T09:10:11.535525+00:00"
+        },
+        "socket": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache.sock",
+        "status": "ok"
+      },
+      "constraints": {
+        "GOMAXPROCS": "4",
+        "cgroup": "/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-568-immkv-r3-cold-postfix-1795770611494988924-404997.scope",
+        "cgroup_controllers": "memory pids",
+        "cpu.stat": "usage_usec 39181\nuser_usec 28130\nsystem_usec 11051\nnice_usec 0\ncore_sched.force_idle_usec 0",
+        "cpu_topology": [
+          {
+            "core_id": "0",
+            "cpu": 0,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "1",
+            "cpu": 1,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "2",
+            "cpu": 2,
+            "physical_package_id": "0"
+          },
+          {
+            "core_id": "3",
+            "cpu": 3,
+            "physical_package_id": "0"
+          }
+        ],
+        "cpus": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "gnu_time_rss": "Maximum child RSS, not simultaneous total RSS; aggregate memory uses cgroup memory.peak.",
+        "io_stat_available": false,
+        "io_unavailable_reason": "io controller is not delegated in the user cgroup hierarchy; IOAccounting=yes alone cannot expose io.stat; GNU time File system inputs remains available, cgroup byte deltas are unavailable.",
+        "memory.current": "12173312",
+        "memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.events.local": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\nsock_throttled 0",
+        "memory.max": "17179869184",
+        "memory.peak": "12173312",
+        "memory.swap.max": "0",
+        "monotonic_ns": 1144788635792798,
+        "read_errors": {
+          "io.stat": "[Errno 2] No such file or directory: '/sys/fs/cgroup/user.slice/user-1000.slice/user@1000.service/app.slice/immkv-cold-timing-nvme-568-immkv-r3-cold-postfix-1795770611494988924-404997.scope/io.stat'"
+        },
+        "timestamp_ns": 1795770611815323778
+      },
+      "time_source": "time.txt",
+      "time": {
+        "user_seconds": 716.16,
+        "system_seconds": 15.54,
+        "wall_seconds": 193.16,
+        "max_child_rss_kib": 3067360,
+        "file_system_inputs": 53638800,
+        "file_system_outputs": 16,
+        "time_exit_status": 0,
+        "cpu_seconds": 731.6999999999999,
+        "cgroup_memory_peak_bytes": 7693586432
+      },
+      "accepted_timing_sample": true
+    }
+  ],
+  "aggregates": [
+    {
+      "media": "nvme",
+      "fields": 17,
+      "engine": "immkv",
+      "attempts": 3,
+      "successful": 3,
+      "medians": {
+        "wall_seconds": 11.57,
+        "cpu_seconds": 35.14,
+        "max_child_rss_kib": 268964,
+        "file_system_inputs": 20427760,
+        "cgroup_memory_peak_bytes": 4767973376
+      },
+      "v005_baseline": {
+        "wall_seconds": 13.2,
+        "cpu_seconds": 33.15,
+        "max_child_rss_kib": 288500,
+        "cgroup_memory_peak_bytes": 4798017536
+      },
+      "records": [
+        "timing-nvme-17-immkv-r1-cold-postfix",
+        "timing-nvme-17-immkv-r2-cold-postfix",
+        "timing-nvme-17-immkv-r3-cold-postfix"
+      ]
+    },
+    {
+      "media": "nvme",
+      "fields": 540,
+      "engine": "immkv",
+      "attempts": 3,
+      "successful": 3,
+      "medians": {
+        "wall_seconds": 171.01,
+        "cpu_seconds": 660.11,
+        "max_child_rss_kib": 2340680,
+        "file_system_inputs": 53638600,
+        "cgroup_memory_peak_bytes": 6947954688
+      },
+      "v005_baseline": {
+        "wall_seconds": 158.86,
+        "cpu_seconds": 616.02,
+        "max_child_rss_kib": 2331400,
+        "cgroup_memory_peak_bytes": 6947467264
+      },
+      "records": [
+        "timing-nvme-540-immkv-r1-cold-postfix",
+        "timing-nvme-540-immkv-r2-cold-postfix",
+        "timing-nvme-540-immkv-r3-cold-postfix"
+      ]
+    },
+    {
+      "media": "nvme",
+      "fields": 568,
+      "engine": "immkv",
+      "attempts": 3,
+      "successful": 3,
+      "medians": {
+        "wall_seconds": 192.98,
+        "cpu_seconds": 731.6999999999999,
+        "max_child_rss_kib": 3067360,
+        "file_system_inputs": 53638800,
+        "cgroup_memory_peak_bytes": 7693586432
+      },
+      "v005_baseline": {
+        "wall_seconds": 172.47,
+        "cpu_seconds": 670.46,
+        "max_child_rss_kib": 3317232,
+        "cgroup_memory_peak_bytes": 7959490560
+      },
+      "records": [
+        "timing-nvme-568-immkv-r1-cold-postfix",
+        "timing-nvme-568-immkv-r2-cold-postfix",
+        "timing-nvme-568-immkv-r3-cold-postfix"
+      ]
+    },
+    {
+      "media": "hdd",
+      "fields": 17,
+      "engine": "immkv",
+      "attempts": 3,
+      "successful": 3,
+      "medians": {
+        "wall_seconds": 99.77000000000001,
+        "cpu_seconds": 215.95999999999998,
+        "max_child_rss_kib": 255796,
+        "file_system_inputs": 17196960,
+        "cgroup_memory_peak_bytes": 7498162176
+      },
+      "v005_baseline": {
+        "wall_seconds": 96.46,
+        "cpu_seconds": 204.67,
+        "max_child_rss_kib": 250988,
+        "cgroup_memory_peak_bytes": 7506931712
+      },
+      "records": [
+        "timing-hdd-17-immkv-r1-cold-postfix",
+        "timing-hdd-17-immkv-r2-cold-postfix",
+        "timing-hdd-17-immkv-r3-cold-postfix"
+      ]
+    },
+    {
+      "media": "hdd",
+      "fields": 540,
+      "engine": "immkv",
+      "attempts": 3,
+      "successful": 3,
+      "medians": {
+        "wall_seconds": 1468.42,
+        "cpu_seconds": 725.88,
+        "max_child_rss_kib": 682192,
+        "file_system_inputs": 53852120,
+        "cgroup_memory_peak_bytes": 5346287616
+      },
+      "v005_baseline": {
+        "wall_seconds": 1468.32,
+        "cpu_seconds": 674.01,
+        "max_child_rss_kib": 675300,
+        "cgroup_memory_peak_bytes": 5348339712
+      },
+      "records": [
+        "timing-hdd-540-immkv-r1-cold-postfix",
+        "timing-hdd-540-immkv-r2-cold-postfix",
+        "timing-hdd-540-immkv-r3-cold-postfix"
+      ]
+    },
+    {
+      "media": "hdd",
+      "fields": 568,
+      "engine": "immkv",
+      "attempts": 3,
+      "successful": 3,
+      "medians": {
+        "wall_seconds": 1469.8,
+        "cpu_seconds": 776.11,
+        "max_child_rss_kib": 863952,
+        "file_system_inputs": 53852168,
+        "cgroup_memory_peak_bytes": 5499441152
+      },
+      "v005_baseline": {
+        "wall_seconds": 1469.52,
+        "cpu_seconds": 719.2,
+        "max_child_rss_kib": 859164,
+        "cgroup_memory_peak_bytes": 5525741568
+      },
+      "records": [
+        "timing-hdd-568-immkv-r1-cold-postfix",
+        "timing-hdd-568-immkv-r2-cold-postfix",
+        "timing-hdd-568-immkv-r3-cold-postfix"
+      ]
+    }
+  ]
+}

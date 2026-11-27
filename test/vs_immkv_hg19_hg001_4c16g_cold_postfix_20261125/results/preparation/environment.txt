@@ -1,0 +1,83 @@
+2026-11-25T14:29:32Z
+Linux tian-mini 7.0.0-42-generic #42~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Oct 19 14:43:01 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+go version go1.27.1 linux/amd64
+{
+	"AR": "ar",
+	"CC": "gcc",
+	"CGO_CFLAGS": "-O2 -g",
+	"CGO_CPPFLAGS": "",
+	"CGO_CXXFLAGS": "-O2 -g",
+	"CGO_ENABLED": "1",
+	"CGO_FFLAGS": "-O2 -g",
+	"CGO_LDFLAGS": "-O2 -g",
+	"CXX": "g++",
+	"GCCGO": "gccgo",
+	"GO111MODULE": "",
+	"GOAMD64": "v1",
+	"GOARCH": "amd64",
+	"GOAUTH": "netrc",
+	"GOBIN": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache/gopath/bin",
+	"GOCACHE": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache/go-build",
+	"GOCACHEPROG": "",
+	"GODEBUG": "",
+	"GOENV": "",
+	"GOEXE": "",
+	"GOEXPERIMENT": "",
+	"GOFIPS140": "off",
+	"GOFLAGS": "-mod=readonly",
+	"GOGCCFLAGS": "-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=0 -ffile-prefix-map=/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache/tmp/go-build4197892902=/tmp/go-build -gno-record-gcc-switches",
+	"GOHOSTARCH": "amd64",
+	"GOHOSTOS": "linux",
+	"GOINSECURE": "",
+	"GOMOD": "/home/tian/projects/immkv/go.mod",
+	"GOMODCACHE": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache/mod",
+	"GONOPROXY": "",
+	"GONOSUMDB": "",
+	"GOOS": "linux",
+	"GOPACKAGESDRIVER": "",
+	"GOPATH": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache/gopath",
+	"GOPRIVATE": "",
+	"GOPROXY": "off",
+	"GOROOT": "/home/tian/.local/go",
+	"GOSUMDB": "off",
+	"GOTELEMETRY": "local",
+	"GOTELEMETRYDIR": "/home/tian/.config/go/telemetry",
+	"GOTMPDIR": "/home/tian/projects/immkv/tmp/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/cache/tmp",
+	"GOTOOLCHAIN": "local",
+	"GOTOOLDIR": "/home/tian/.local/go/pkg/tool/linux_amd64",
+	"GOVCS": "",
+	"GOVERSION": "go1.27.1",
+	"GOWORK": "off",
+	"PKG_CONFIG": "pkg-config"
+}
+/home/tian/.local/go/bin/go
+/usr/bin/gcc
+/usr/bin/g++
+/usr/bin/ld
+/home/tian/miniforge3/bin/python3
+/usr/bin/git
+/usr/bin/tar
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Copyright (C) 2023 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+g++ (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0
+Copyright (C) 2023 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+GNU ld (GNU Binutils for Ubuntu) 2.42
+Copyright (C) 2024 Free Software Foundation, Inc.
+This program is free software; you may redistribute it under the terms of
+the GNU General Public License version 3 or (at your option) a later version.
+This program has absolutely no warranty.
+Python 3.14.7
+git version 2.43.0
+tar (GNU tar) 1.35
+Copyright (C) 2023 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+Written by John Gilmore and Jay Fenlason.

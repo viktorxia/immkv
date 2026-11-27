@@ -1,0 +1,7 @@
+30969f97169d7f43fe6a085873d75613adc21e30818a8c61d95bd27275df4624  /home/tian/.local/go/bin/go
+1b99826121ae6682a634e5efe09bd3e3df58ce58e0b28f849114ab5b89139c26  /usr/bin/gcc
+1353e9bdd29a7295c7226bf6c63abccce056d8cac31f112e5cdbecc3f28c2769  /usr/bin/g++
+e9ceb054c12207970f2726dfc07e9a66b411602748628baf27399f02a9bbb31b  /usr/bin/ld
+3780fc07130d6d45096373acf062cc316940d253e2a1d892ece03a3bdd0d21d4  /home/tian/.local/go/pkg/tool/linux_amd64/compile
+a29ac5e8f64111b0b5c5d31e452f18abf7ee79f44b421081b5509c8939d92ba9  /home/tian/.local/go/pkg/tool/linux_amd64/link
+a4d0ca3e67972d33fc28016a82b4e3a4fa551d9449a550f3cc68b0a7787281fd  /home/tian/.local/go/pkg/tool/linux_amd64/cgo

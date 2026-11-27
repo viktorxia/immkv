@@ -1,0 +1,335 @@
+diff --git a/col_test.go b/col_test.go
+index 2a19763..0bd8978 100644
+--- a/col_test.go
++++ b/col_test.go
+@@ -394,3 +394,74 @@ func TestSelectedColumnsWideSchemaBothPaths(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func TestPreferColumnarCountsColumnRanges(t *testing.T) {
++	work := t.TempDir()
++	var src strings.Builder
++	src.WriteString("##fileformat=VCFv4.2\n")
++	const numCols = 32
++	for i := 0; i < numCols; i++ {
++		fmt.Fprintf(&src, "##INFO=<ID=F%d,Number=1,Type=String,Description=\"t\">\n", i)
++	}
++	src.WriteString("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n")
++
++	const (
++		numBins    = 20
++		recsPerBin = 20
++	)
++	var queryKeys [][]byte
++	for b := 0; b < numBins; b++ {
++		for r := 0; r < recsPerBin; r++ {
++			pos := uint32(b*colBinWidth + 100 + r*10)
++			var info strings.Builder
++			for c := 0; c < numCols; c++ {
++				if c > 0 {
++					info.WriteByte(';')
++				}
++				fmt.Fprintf(&info, "F%d=val_%02d_%02d_%02d_padding_bytes", c, b, r, c)
++			}
++			fmt.Fprintf(&src, "1\t%d\t.\tA\tG\t.\t.\t%s\n", pos, info.String())
++			if r == 0 {
++				queryKeys = append(queryKeys, VarKey(0, pos, "A", "G"))
++			}
++		}
++	}
++
++	vcf := filepath.Join(work, "in.vcf")
++	if err := os.WriteFile(vcf, []byte(src.String()), 0o600); err != nil {
++		t.Fatal(err)
++	}
++	lib := filepath.Join(work, "lib")
++	if err := BuildFromVCFs(lib, []string{vcf}, nil, "", BuildOptions{RawValueBelow: 4096, PackTarget: -1}); err != nil {
++		t.Fatal(err)
++	}
++
++	var sel []int
++	for c := 0; c < numCols; c += 2 {
++		sel = append(sel, c)
++	}
++	sdb, err := OpenStreaming(lib, StreamOptions{Threads: 1, Columns: sel})
++	if err != nil {
++		t.Fatal(err)
++	}
++	defer sdb.Close()
++	sdb.profile.rotational = true
++
++	hits, err := mergeJoin(sdb.shards[0], queryKeys, 0)
++	if err != nil {
++		t.Fatal(err)
++	}
++	extents := buildExtents(sdb.shards[0], hits)
++	if len(extents) != numBins {
++		t.Fatalf("record-order extents = %d, want %d", len(extents), numBins)
++	}
++
++	useCol, err := sdb.preferColumnar(sdb.cols[0], sdb.shards[0], hits)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if useCol {
++		t.Fatalf("preferColumnar chose columnar (true) for %d scattered column ranges (%d bins × %d non-adjacent cols) vs %d record-order extents on rotational media",
++			numBins*len(sel), numBins, len(sel), len(extents))
++	}
++}
+diff --git a/colread.go b/colread.go
+index 8beaa2b..32eba87 100644
+--- a/colread.go
++++ b/colread.go
+@@ -322,28 +322,40 @@ func (c *colShard) groupHits(hits []sHit) ([]hitBinGroup, error) {
+ 	return out, nil
+ }
+ 
+-// estimate 估算一次列存查询要读的压缩字节与要解压的 typed payload 字节：每个
+-// 命中 bin 的选中列位图、值流与 rawLen 合计（列目录常驻，不计）。
+-func (c *colShard) estimate(hits []sHit, sel []int) (compressed, raw uint64, err error) {
++// estimate 估算一次列存查询要读的压缩字节、要解压的 typed payload 字节与按
++// loadBin 同规则合并后的实际 pread 读段数：每个命中 bin 的选中列位图、值流与
++// rawLen 合计（列目录常驻，不计）。
++func (c *colShard) estimate(hits []sHit, sel []int) (compressed, raw uint64, ranges int, err error) {
+ 	groups, err := c.groupHits(hits)
+ 	if err != nil {
+-		return 0, 0, err
++		return 0, 0, 0, err
+ 	}
+ 	for _, g := range groups {
+ 		dir, err := c.loadDir(g.bin)
+ 		if err != nil {
+-			return 0, 0, err
++			return 0, 0, 0, err
+ 		}
++		var rangeEnd uint64
+ 		for _, col := range sel {
+ 			e := c.entry(dir, col)
+ 			if e.bitmapOff == 0 {
+ 				continue
+ 			}
++			end := e.bitmapOff + uint64(e.bitmapLen)
++			if c.schema[col].Type != TypeFlag && e.valueLen > 0 {
++				end = e.valueOff + uint64(e.valueLen)
++			}
++			if rangeEnd == 0 || e.bitmapOff > rangeEnd {
++				ranges++
++				rangeEnd = end
++			} else if end > rangeEnd {
++				rangeEnd = end
++			}
+ 			compressed += uint64(e.bitmapLen) + uint64(e.valueLen)
+ 			raw += uint64(e.rawLen)
+ 		}
+ 	}
+-	return compressed, raw, nil
++	return compressed, raw, ranges, nil
+ }
+ 
+ // colPart 是一次 bin 读取里的一列：压缩位图与值流在合并读段中的位置。
+diff --git a/iouring_linux.go b/iouring_linux.go
+index 81dcbbf..e4e3eb9 100644
+--- a/iouring_linux.go
++++ b/iouring_linux.go
+@@ -145,11 +145,16 @@ func (r *ioUring) close() {
+ 	}
+ }
+ 
+-// inFlightSQEs 报已提交未回收槽位的 SQE 数（决定还能不能继续排）。
++// inFlightSQEs 报已排入 SQ 但尚未被内核消费的 SQE 数（决定 SQ 槽位是否需先提交腾槽）。
+ func (r *ioUring) inFlightSQEs() uint32 {
+ 	return r.sqeTail - atomic.LoadUint32(r.sqHead)
+ }
+ 
++// inFlightIO 报已排入/已提交但尚未从 CQ 收割的在途读请求总数（决定还能不能继续收新块）。
++func (r *ioUring) inFlightIO() uint32 {
++	return r.sqeTail - atomic.LoadUint32(r.cqHead)
++}
++
+ // prep 排一个读请求；SQ 满时先 submitWait(0) 腾槽。
+ func (r *ioUring) prep(f *os.File, off uint64, buf []byte, userData uint64) error {
+ 	if int(r.inFlightSQEs()) >= len(r.sqes) {
+@@ -362,13 +367,20 @@ func driveDirect(r *ioUring, extCh <-chan []extent, decCh chan<- []extent,
+ 			ready = append(ready, st)
+ 		}
+ 	}
++	popReady := func() {
++		ready[0] = nil
++		ready = ready[1:]
++		if len(ready) == 0 {
++			ready = ready[:0]
++		}
++	}
+ 	dispatch := func() bool {
+ 		sent := false
+ 		for len(ready) > 0 {
+ 			st := ready[0]
+ 			select {
+ 			case decCh <- st.chunk:
+-				ready = ready[1:]
++				popReady()
+ 				sent = true
+ 			default:
+ 				return sent
+@@ -386,8 +398,8 @@ func driveDirect(r *ioUring, extCh <-chan []extent, decCh chan<- []extent,
+ 			return
+ 		default:
+ 		}
+-		// ① 非阻塞收新块：SQ 有富余槽位才收
+-		for !drained && int(r.inFlightSQEs())+64 <= len(r.sqes) {
++		// ① 非阻塞收新块：在途未收割请求有富余槽位才收
++		for !drained && int(r.inFlightIO())+64 <= len(r.sqes) {
+ 			var ch []extent
+ 			var ok bool
+ 			select {
+@@ -429,13 +441,18 @@ func driveDirect(r *ioUring, extCh <-chan []extent, decCh chan<- []extent,
+ 				dfail(err)
+ 				return
+ 			}
++			r.reap(complete)
++			if dead {
++				return
++			}
++			dispatch()
+ 			continue
+ 		}
+ 		if len(ready) > 0 {
+ 			st := ready[0]
+ 			select {
+ 			case decCh <- st.chunk:
+-				ready = ready[1:]
++				popReady()
+ 			case <-abort:
+ 				return
+ 			}
+diff --git a/iouring_linux_test.go b/iouring_linux_test.go
+index 0b4b75b..8ab149b 100644
+--- a/iouring_linux_test.go
++++ b/iouring_linux_test.go
+@@ -146,3 +146,98 @@ func TestDirectReadErrorReturns(t *testing.T) {
+ 		}
+ 	}
+ }
++
++func TestDriveDirectInFlightRespectsRingDepth(t *testing.T) {
++	r, err := newIOUring(64)
++	if err != nil {
++		t.Skipf("io_uring unavailable: %v", err)
++	}
++	dir, err := os.MkdirTemp(".", ".tmp-iouring-test-*")
++	if err != nil {
++		r.close()
++		t.Fatal(err)
++	}
++	defer os.RemoveAll(dir)
++	path := dir + "/vals"
++	buf := make([]byte, 4<<20)
++	if err := os.WriteFile(path, buf, 0o600); err != nil {
++		r.close()
++		t.Fatal(err)
++	}
++	f, err := openDirect(path)
++	if err != nil {
++		r.close()
++		t.Skipf("O_DIRECT unavailable: %v", err)
++	}
++	defer f.Close()
++
++	const (
++		numChunks      = 8
++		extentsPerChunk = 64
++	)
++	s := &shard{vfDirect: f}
++	extCh := make(chan []extent, numChunks)
++	decCh := make(chan []extent)
++	abort := make(chan struct{})
++
++	for c := 0; c < numChunks; c++ {
++		ch := make([]extent, extentsPerChunk)
++		for i := 0; i < extentsPerChunk; i++ {
++			off := uint64(((c*extentsPerChunk + i) * directAlign) % len(buf))
++			ch[i] = extent{
++				s:    s,
++				off:  off,
++				hits: []sHit{{valOff: off, frameLen: directAlign}},
++			}
++		}
++		extCh <- ch
++	}
++	close(extCh)
++
++	var maxInFlight uint32
++	stopSample := make(chan struct{})
++	sampled := make(chan struct{})
++	go func() {
++		defer close(sampled)
++		for {
++			select {
++			case <-stopSample:
++				return
++			default:
++				submitted := atomic.LoadUint32(r.sqHead)
++				reaped := atomic.LoadUint32(r.cqHead)
++				inFlight := submitted - reaped
++				if inFlight > maxInFlight {
++					maxInFlight = inFlight
++				}
++			}
++		}
++	}()
++
++	done := make(chan struct{})
++	var derr error
++	go func() {
++		defer close(done)
++		driveDirect(r, extCh, decCh, abort, func(err error) {
++			derr = err
++		})
++	}()
++
++	for c := 0; c < numChunks; c++ {
++		ch := <-decCh
++		if c == 0 {
++			close(stopSample)
++			<-sampled
++		}
++		for i := range ch {
++			putDirectBuf(ch[i].dbuf)
++		}
++	}
++	<-done
++	if derr != nil {
++		t.Fatalf("driveDirect failed: %v", derr)
++	}
++	if maxInFlight > uint32(len(r.sqes)) {
++		t.Fatalf("kernel in-flight requests (sqHead - cqHead) reached %d, exceeding ring depth %d", maxInFlight, len(r.sqes))
++	}
++}
+diff --git a/stream.go b/stream.go
+index 17da3d7..978928d 100644
+--- a/stream.go
++++ b/stream.go
+@@ -325,7 +325,7 @@ func (d *StreamDB) preferColumnar(cs *colShard, s *shard, hits []sHit) (bool, er
+ 		return true, nil
+ 	}
+ 	sel := selectedColumns(cs.schema, d.colSel)
+-	colBytes, colRaw, err := cs.estimate(hits, sel)
++	colBytes, colRaw, colRanges, err := cs.estimate(hits, sel)
+ 	if err != nil {
+ 		return false, err
+ 	}
+@@ -368,10 +368,10 @@ func (d *StreamDB) preferColumnar(cs *colShard, s *shard, hits []sHit) (bool, er
+ 	decodeBps := colDecodePerThread * workers
+ 	recRaw := float64(recBytes) * typedRecCompressionRatio
+ 	recSec := float64(len(extents))*randSec + float64(seqBytes)/seqBps + recRaw/(recordDecodePerThread*workers)
+-	colSec := float64(colBytes)/seqBps + float64(colRaw)/decodeBps
++	colSec := float64(colRanges)*randSec + float64(colBytes)/seqBps + float64(colRaw)/decodeBps
+ 	if os.Getenv("IMMKV_DEBUG_PATH") != "" {
+-		fmt.Fprintf(os.Stderr, "path: pick=%v colBytes=%d colRaw=%d colSec=%.3f recExtents=%d recFrames=%d recBytes=%d recSec=%.3f rot=%v\n",
+-			colSec < recSec, colBytes, colRaw, colSec, len(extents), frames, recBytes, recSec, d.profile.rotational)
++		fmt.Fprintf(os.Stderr, "path: pick=%v colRanges=%d colBytes=%d colRaw=%d colSec=%.3f recExtents=%d recFrames=%d recBytes=%d recSec=%.3f rot=%v\n",
++			colSec < recSec, colRanges, colBytes, colRaw, colSec, len(extents), frames, recBytes, recSec, d.profile.rotational)
+ 	}
+ 	return colSec < recSec, nil
+ }

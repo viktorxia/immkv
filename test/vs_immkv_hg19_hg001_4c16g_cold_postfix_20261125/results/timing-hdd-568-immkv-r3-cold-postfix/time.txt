@@ -1,0 +1,23 @@
+	Command being timed: "timeout --verbose --signal=TERM --kill-after=15s 3600 python3 -I /home/tian/projects/immkv/test/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/run_cell.py --engine immkv --media hdd --fields 568 --record /home/tian/projects/immkv/test/vs_immkv_hg19_hg001_4c16g_cold_postfix_20261125/results/timing-hdd-568-immkv-r3-cold-postfix"
+	User time (seconds): 734.39
+	System time (seconds): 41.72
+	Percent of CPU this job got: 52%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 24:30.20
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 866020
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 51
+	Minor (reclaiming a frame) page faults: 433706
+	Voluntary context switches: 1620743
+	Involuntary context switches: 92028
+	Swaps: 0
+	File system inputs: 53852224
+	File system outputs: 16
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
